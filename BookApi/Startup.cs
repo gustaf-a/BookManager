@@ -1,4 +1,7 @@
-﻿namespace BookApi;
+﻿using BookApi.Repositories;
+using BookApi.Services;
+
+namespace BookApi;
 
 public class Startup
 {
@@ -13,6 +16,9 @@ public class Startup
             s.SwaggerDoc("v1",
                 new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BookApi", Version = "v1" });
         });
+
+        services.AddSingleton<IBookRepository, JsonFileBookRepository>();
+        services.AddSingleton<IBookService, BookService>();
     }
 
     public void Configure(WebApplication app)
