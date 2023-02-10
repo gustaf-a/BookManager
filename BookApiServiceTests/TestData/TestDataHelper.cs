@@ -4,7 +4,6 @@ namespace BookApiServiceTests.TestData;
 
 internal static class TestDataHelper
 {
-    //private static readonly string DataFilePath = Path.Combine(Environment.CurrentDirectory, @"C:\Users\gusta\source\repos\BookManager\BookManager\BookApiServiceTests\TestData\testbooks.json";
     private static readonly string DataFilePath = Path.Combine(Environment.CurrentDirectory, @"TestData\testbooks.json");
 
     /// <summary>
