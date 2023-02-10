@@ -8,6 +8,8 @@ namespace BookApiServiceTests.TestData;
 /// Helps to convert yyyy-MM-dd strings to DateOnly
 /// It should also be possible to use the new NewtonSoft v 13.0.2, but I include this way of doing it 
 /// as it's important for me to show that I can implement the a custom JsonConverter attribute.
+/// 
+/// Edit: Turns out it worked without this in the end.
 /// </summary>
 public class DateOnlyParseExactJsonConverter : JsonConverter<DateOnly>
 {

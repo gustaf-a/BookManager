@@ -23,9 +23,6 @@ internal class TestBook
     [JsonPropertyName("genre")]
     public string Genre { get; set; }
 
-    //Attribute using custom JsonConverter needed to convert yyyy-MM-dd 
-    [JsonConverter(typeof(DateOnlyParseExactJsonConverter))] //JsonSerializer
-    //[JsonConverter(typeof(DateOnlyNewtonSoftJsonConverter))] //NewtonSoft
     [JsonPropertyName("publish_date")]
     public DateOnly PublishDate { get; set; }
 }
