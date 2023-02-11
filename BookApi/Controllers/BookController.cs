@@ -1,11 +1,10 @@
-﻿using BookApi.Data;
-using BookApi.Services;
+﻿using BookApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookApi.Controllers;
 
 [ApiController]
-[Produces("application/json")]
+[Produces("application/json")] // Ensures JSON is returned
 [Route("api/books")]
 public class BookController : Controller
 {
@@ -16,6 +15,9 @@ public class BookController : Controller
         _bookService = bookService;
     }
 
+    /// <summary>
+    /// Returns all books as an unsorted JSON collection.
+    /// </summary>
     [HttpGet]
     public JsonResult GetAllBooks()
     {
