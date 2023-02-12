@@ -94,8 +94,8 @@ public class SqliteDatabaseQueryCreatorTests
 
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Id),
-            Type = ReadBooksRequest.FieldType.Text
+            SortResultByField = nameof(Book.Id),
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text
         };
 
         // Act
@@ -121,8 +121,8 @@ public class SqliteDatabaseQueryCreatorTests
 
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = fieldToSortBy,
-            Type = fieldType
+            SortResultByField = fieldToSortBy,
+            SortResultByFieldType = fieldType
         };
 
         // Act
@@ -172,10 +172,10 @@ public class SqliteDatabaseQueryCreatorTests
 
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = fieldToSortBy,
+            SortResultByField = fieldToSortBy,
             FilterByText = true,
             FilterByTextValue = valueToFilterBy,
-            Type = fieldType
+            SortResultByFieldType = fieldType
         };
 
         // Act

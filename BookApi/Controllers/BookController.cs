@@ -39,9 +39,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Id),
+            SortResultByField = nameof(Book.Id),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
@@ -57,9 +57,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Author),
+            SortResultByField = nameof(Book.Author),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
@@ -75,9 +75,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Title),
+            SortResultByField = nameof(Book.Title),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
@@ -93,9 +93,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Genre),
+            SortResultByField = nameof(Book.Genre),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
@@ -110,8 +110,8 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Price),
-            Type = ReadBooksRequest.FieldType.Numeric
+            SortResultByField = nameof(Book.Price),
+            SortResultByFieldType = ReadBooksRequest.FieldType.Numeric
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -125,8 +125,8 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.PublishDate),
-            Type = ReadBooksRequest.FieldType.Text
+            SortResultByField = nameof(Book.PublishDate),
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -141,9 +141,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Description),
+            SortResultByField = nameof(Book.Description),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 

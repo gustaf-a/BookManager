@@ -21,25 +21,18 @@ public class ReadBooksRequest
     }
 
     public bool SortResult { get; set; } = true;
-    public string FieldToSortBy { get; set; } = nameof(Book.Id);
-    public FieldType Type { get; set; } = FieldType.Text;
-
-    public bool HasFilters => FilterByText || FilterByDouble || FilterByDate || FilterByPrice;
+    public string SortResultByField { get; set; } = nameof(Book.Id);
+    public FieldType SortResultByFieldType { get; set; } = FieldType.Text;
 
     public bool FilterByText { get; set; } = false;
     public string FilterByTextValue { get; set; } = string.Empty;
 
     public bool FilterByDouble { get; set; } = false;
-    public string FilterByDoubleValue { get; set; } = string.Empty;
+    public double FilterByDoubleValue { get; set; } = double.MinValue;
+    public double FilterByDoubleValue2 { get; set; } = double.MinValue;
+    public bool FilterByDoubleRange => FilterByDoubleValue > double.MinValue && FilterByDoubleValue2 > double.MinValue;
 
     public bool FilterByDate { get; set; } = false;
-    public DatePrecision DatePrecisionToFilterOn { get; set; } = DatePrecision.None;
+    public DatePrecision FilterByDatePrecision { get; set; } = DatePrecision.None;
     public DateOnly FilterByDateValue { get; set; } = DateOnly.MinValue;
-
-    public bool FilterByPrice { get; set; } = false;
-    public double PriceExact { get; set; } = double.MinValue;
-    public double PriceMin { get; set; } = double.MinValue;
-    public double PriceMax { get; set; } = double.MaxValue;
-
-    public bool PriceIsRanged => PriceMin > double.MinValue || PriceMax < double.MaxValue;
 }
