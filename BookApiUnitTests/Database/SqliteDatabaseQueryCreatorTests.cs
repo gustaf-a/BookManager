@@ -190,6 +190,66 @@ public class SqliteDatabaseQueryCreatorTests
         parameter.Value.Should().Be($"%{valueToFilterBy}%");
     }
 
+    [Theory]
+    [InlineData(nameof(Book.Price), nameof(BookSqlite.Price), ReadBooksRequest.FieldType.Numeric, 5)]
+    [InlineData(nameof(Book.Price), nameof(BookSqlite.Price), ReadBooksRequest.FieldType.Numeric, 10.00)]
+    public void Read_ReturnsSelectAllBooksQuery_Where_FilterByDoubleValue(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.FieldType fieldType, double valueToFilterBy)
+    {
+        // Arrange
+        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} = @FilterByDoubleValue ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResultByField = fieldToSortBy,
+            FilterByDouble = true,
+            FilterByDoubleValue = valueToFilterBy,
+            SortResultByFieldType = fieldType
+        };
+
+        // Act
+        var query = _queryCreator.Read(readBooksRequest);
+
+        // Assert
+        query.QueryString.ToString().Should().Be(expectedQuery);
+
+        var parameter = query.Parameters.First();
+
+        parameter.Key.Should().Be("@FilterByDoubleValue");
+        parameter.Value.Should().Be(valueToFilterBy);
+    }
+
+    [Theory]
+    [InlineData(nameof(Book.Price), nameof(BookSqlite.Price), ReadBooksRequest.FieldType.Numeric, 5, 99.05)]
+    [InlineData(nameof(Book.Price), nameof(BookSqlite.Price), ReadBooksRequest.FieldType.Numeric, 10.00, 19.33)]
+    public void Read_ReturnsSelectAllBooksQuery_Where_FilterByDoubleValue_Ranged(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.FieldType fieldType, double valueToFilterBy, double valueToFilterBy2)
+    {
+        // Arrange
+        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} BETWEEN @FilterByDoubleValue AND @FilterByDoubleValue2 ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResultByField = fieldToSortBy,
+            FilterByDouble = true,
+            FilterByDoubleValue = valueToFilterBy,
+            FilterByDoubleValue2 = valueToFilterBy2,
+            SortResultByFieldType = fieldType
+        };
+
+        // Act
+        var query = _queryCreator.Read(readBooksRequest);
+
+        // Assert
+        query.QueryString.ToString().Should().Be(expectedQuery);
+
+        var parameter = query.Parameters.First();
+        parameter.Key.Should().Be("@FilterByDoubleValue");
+        parameter.Value.Should().Be(valueToFilterBy);
+
+        var parameter2 = query.Parameters.Last();
+        parameter2.Key.Should().Be("@FilterByDoubleValue2");
+        parameter2.Value.Should().Be(valueToFilterBy2);
+    }
+
     // --------------------- UPDATE ------------------------------------
 
     //[Fact]
