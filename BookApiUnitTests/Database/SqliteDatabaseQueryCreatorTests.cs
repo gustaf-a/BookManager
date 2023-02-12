@@ -135,10 +135,10 @@ public class SqliteDatabaseQueryCreatorTests
     }
 
     [Fact]
-    public void Read_ReturnsSelectAllBooksQuery_WithParameter_WithWhereId_When_ReadBooksRequest_WithStrings()
+    public void Read_ReturnsSelectAllBooksQuery_WhereLike_ValueToFilterBy_WhenSortBy_Id()
     {
         // Arrange
-        var expectedQuery = "SELECT * FROM books WHERE id=@ValueToFilterBy ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
+        var expectedQuery = "SELECT * FROM books WHERE id LIKE @ValueToFilterBy ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -157,7 +157,37 @@ public class SqliteDatabaseQueryCreatorTests
         var parameter = query.Parameters.First();
 
         parameter.Key.Should().Be("@ValueToFilterBy");
-        parameter.Value.Should().Be("'b'");
+        parameter.Value.Should().Be("%b%");
+    }
+
+    [Theory]
+    [InlineData(nameof(Book.Author), nameof(BookSqlite.Author), ReadBooksRequest.FieldType.Text, "testAuthor")]
+    [InlineData(nameof(Book.Title), nameof(BookSqlite.Title), ReadBooksRequest.FieldType.Text, "testTitle")]
+    [InlineData(nameof(Book.Description), nameof(BookSqlite.Description), ReadBooksRequest.FieldType.Text, "test description phrase")]
+    [InlineData(nameof(Book.Genre), nameof(BookSqlite.Genre), ReadBooksRequest.FieldType.Text, "TestGenre")]
+    public void Read_ReturnsSelectAllBooksQuery_WhereLike_ValueToFilterBy_WhenSortBy_TextValue(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.FieldType fieldType, string valueToFilterBy)
+    {
+        // Arrange
+        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} LIKE @ValueToFilterBy ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FieldToSortBy = fieldToSortBy,
+            FilterByValue = true,
+            ValueToFilterBy = valueToFilterBy,
+            Type = fieldType
+        };
+
+        // Act
+        var query = _queryCreator.Read(readBooksRequest);
+
+        // Assert
+        query.QueryString.ToString().Should().Be(expectedQuery);
+
+        var parameter = query.Parameters.First();
+
+        parameter.Key.Should().Be("@ValueToFilterBy");
+        parameter.Value.Should().Be($"%{valueToFilterBy}%");
     }
 
     // --------------------- UPDATE ------------------------------------

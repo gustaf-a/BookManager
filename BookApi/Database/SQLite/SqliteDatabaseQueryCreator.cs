@@ -1,5 +1,6 @@
 ﻿using BookApi.Configuration;
 using BookApi.Data;
+using Dapper;
 
 namespace BookApi.Database.SQLite;
 
@@ -66,7 +67,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         var valueToFilterByPlaceHolder = GetPlaceHolder(nameof(readBooksRequest.ValueToFilterBy));
 
-        sqlQuery.QueryString.Append($" WHERE {fieldToSortBy}={valueToFilterByPlaceHolder}");
+        sqlQuery.QueryString.Append($" WHERE {fieldToSortBy} LIKE {valueToFilterByPlaceHolder}");
 
         sqlQuery.Parameters.Add(valueToFilterByPlaceHolder, GetFormattedValueToFilterBy(readBooksRequest));
     }
@@ -79,7 +80,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
         return readBooksRequest.Type switch
         {
             ReadBooksRequest.FieldType.Numeric => readBooksRequest.ValueToFilterBy,
-            ReadBooksRequest.FieldType.Text => $"'{readBooksRequest.ValueToFilterBy}'",
+            ReadBooksRequest.FieldType.Text => $"%{readBooksRequest.ValueToFilterBy}%",
             ReadBooksRequest.FieldType.Date => throw new NotImplementedException($"Filtering by value when {nameof(readBooksRequest.FieldToSortBy)} is {readBooksRequest.Type} not supported."),
             _ => throw new NotImplementedException($"ValueToFilterBy conversion not implemented for type {readBooksRequest.Type}."),
         };
