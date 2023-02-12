@@ -1,5 +1,6 @@
 ﻿using BookApi.Configuration;
 using BookApi.Data;
+using Dapper;
 
 namespace BookApi.Database.SQLite;
 
@@ -44,56 +45,64 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
         if (readBooksRequest == null)
             throw new ArgumentNullException($"{nameof(ReadBooksRequest)} cannot be null.");
 
-        if (!readBooksRequest.HasFilters && !readBooksRequest.SortResult)
-            return GetNoFiltersQuery();
+        var sqlQuery = new SqlQuery();
 
-        if (readBooksRequest.FilterByValue)
-            return GetFilterByValueQuery(readBooksRequest);
+        sqlQuery.QueryString.Append($"SELECT * FROM {_booksTableName}");
 
-        return GetSortedByFieldQuery(readBooksRequest);
+        AddFiltersToQuery(sqlQuery, readBooksRequest);
+
+        AddSortingToQuery(sqlQuery, readBooksRequest);
+
+        sqlQuery.QueryString.Append(';');
+
+        return sqlQuery;
     }
 
-    private SqlQuery GetSortedByFieldQuery(ReadBooksRequest readBooksRequest)
+    private static void AddFiltersToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
-        if (readBooksRequest.FieldToSortBy == nameof(Book.Id))
-            return GetByIdWithSortingQuery();
-
-        return new SqlQuery { QueryString = $"SELECT * FROM {_booksTableName} ORDER BY {readBooksRequest.FieldToSortBy.ToBookSqliteName()} ASC;" };
-    }
-
-    private SqlQuery GetByIdWithSortingQuery()
-        => new() { QueryString = $"SELECT * FROM books ORDER BY CAST(SUBSTRING(id,{_idNumbersStartPosition},{_databaseOptions.IdNumberMaxLength}) AS NUMERIC);" };
-
-    private SqlQuery GetNoFiltersQuery()
-        => new() { QueryString = $"SELECT * FROM {_booksTableName};" };
-
-    private SqlQuery GetFilterByValueQuery(ReadBooksRequest readBooksRequest)
-    {
-        var query = new SqlQuery();
+        if (!readBooksRequest.HasFilters)
+            return;
 
         var fieldToSortBy = readBooksRequest.FieldToSortBy.ToBookSqliteName();
 
-        var fieldToSortByPlaceHolder = GetPlaceHolder(nameof(fieldToSortBy));
+        if (readBooksRequest.FilterByText)
+        {
+            var valueToFilterByPlaceHolder = GetPlaceHolder(nameof(readBooksRequest.FilterByTextValue));
 
-        query.QueryString = $"SELECT * FROM {_booksTableName} WHERE {fieldToSortBy}={fieldToSortByPlaceHolder} ORDER BY {fieldToSortBy} ASC;";
+            sqlQuery.QueryString.Append($" WHERE {fieldToSortBy} LIKE {valueToFilterByPlaceHolder}");
 
-        query.Parameters.Add(fieldToSortByPlaceHolder, GetFormattedValueToFilterBy(readBooksRequest));
+            sqlQuery.Parameters.Add(valueToFilterByPlaceHolder, CreateStringParameter(readBooksRequest));
+        }
 
-        return query;
+        if (readBooksRequest.FilterByDouble)
+        {
+            throw new NotImplementedException();
+        }
+
+        if (readBooksRequest.FilterByDate)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private static string GetPlaceHolder(string variableName)
         => $"@{variableName}";
 
-    private static string GetFormattedValueToFilterBy(ReadBooksRequest readBooksRequest)
+    private static object CreateStringParameter(ReadBooksRequest readBooksRequest)
+        => $"%{readBooksRequest.FilterByTextValue}%";
+
+    private void AddSortingToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
-        return readBooksRequest.Type switch
+        if (!readBooksRequest.SortResult)
+            return;
+
+        if (readBooksRequest.FieldToSortBy == nameof(Book.Id))
         {
-            ReadBooksRequest.FieldType.Numeric => readBooksRequest.ValueToFilterBy,
-            ReadBooksRequest.FieldType.Text => $"'{readBooksRequest.ValueToFilterBy}'",
-            ReadBooksRequest.FieldType.Date => throw new NotImplementedException($"Filtering by value when {nameof(readBooksRequest.FieldToSortBy)} is {readBooksRequest.Type} not supported."),
-            _ => throw new NotImplementedException($"ValueToFilterBy conversion not implemented for type {readBooksRequest.Type}."),
-        };
+            sqlQuery.QueryString.Append($" ORDER BY CAST(SUBSTRING(id,{_idNumbersStartPosition},{_databaseOptions.IdNumberMaxLength}) AS NUMERIC)");
+            return;
+        }
+
+        sqlQuery.QueryString.Append($" ORDER BY {readBooksRequest.FieldToSortBy.ToBookSqliteName()} ASC");
     }
 
     public string Update(Book book)
