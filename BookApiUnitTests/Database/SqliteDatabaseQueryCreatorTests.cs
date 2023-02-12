@@ -79,7 +79,7 @@ public class SqliteDatabaseQueryCreatorTests
         var query = _queryCreator.Read(readBooksRequest);
 
         // Assert
-        query.QueryString.Should().Be(expectedQuery);
+        query.QueryString.ToString().Should().Be(expectedQuery);
 
         query.Parameters.Count().Should().Be(0);
     }
@@ -102,7 +102,7 @@ public class SqliteDatabaseQueryCreatorTests
         var query = _queryCreator.Read(readBooksRequest);
 
         // Assert
-        query.QueryString.Should().Be(expectedQuery);
+        query.QueryString.ToString().Should().Be(expectedQuery);
 
         query.Parameters.Count().Should().Be(0);
     }
@@ -129,7 +129,7 @@ public class SqliteDatabaseQueryCreatorTests
         var query = _queryCreator.Read(readBooksRequest);
 
         // Assert
-        query.QueryString.Should().Be(expectedQuery);
+        query.QueryString.ToString().Should().Be(expectedQuery);
 
         query.Parameters.Count().Should().Be(0);
     }
@@ -138,7 +138,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_WithParameter_WithWhereId_When_ReadBooksRequest_WithStrings()
     {
         // Arrange
-        var expectedQuery = "SELECT * FROM books WHERE id=@fieldToSortBy ORDER BY id ASC;";
+        var expectedQuery = "SELECT * FROM books WHERE id=@fieldToSortBy ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -150,7 +150,7 @@ public class SqliteDatabaseQueryCreatorTests
         var query = _queryCreator.Read(readBooksRequest);
 
         // Assert
-        query.QueryString.Should().Be(expectedQuery);
+        query.QueryString.ToString().Should().Be(expectedQuery);
 
         query.Parameters.Count().Should().Be(1);
 

@@ -44,42 +44,31 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
         if (readBooksRequest == null)
             throw new ArgumentNullException($"{nameof(ReadBooksRequest)} cannot be null.");
 
-        if (!readBooksRequest.HasFilters && !readBooksRequest.SortResult)
-            return GetNoFiltersQuery();
+        var sqlQuery = new SqlQuery();
 
-        if (readBooksRequest.FilterByValue)
-            return GetFilterByValueQuery(readBooksRequest);
+        sqlQuery.QueryString.Append($"SELECT * FROM {_booksTableName}");
 
-        return GetSortedByFieldQuery(readBooksRequest);
+        AddFiltersToQuery(sqlQuery, readBooksRequest);
+
+        AddSortingToQuery(sqlQuery, readBooksRequest);
+
+        sqlQuery.QueryString.Append(';');
+
+        return sqlQuery;
     }
 
-    private SqlQuery GetSortedByFieldQuery(ReadBooksRequest readBooksRequest)
+    private static void AddFiltersToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
-        if (readBooksRequest.FieldToSortBy == nameof(Book.Id))
-            return GetByIdWithSortingQuery();
-
-        return new SqlQuery { QueryString = $"SELECT * FROM {_booksTableName} ORDER BY {readBooksRequest.FieldToSortBy.ToBookSqliteName()} ASC;" };
-    }
-
-    private SqlQuery GetByIdWithSortingQuery()
-        => new() { QueryString = $"SELECT * FROM books ORDER BY CAST(SUBSTRING(id,{_idNumbersStartPosition},{_databaseOptions.IdNumberMaxLength}) AS NUMERIC);" };
-
-    private SqlQuery GetNoFiltersQuery()
-        => new() { QueryString = $"SELECT * FROM {_booksTableName};" };
-
-    private SqlQuery GetFilterByValueQuery(ReadBooksRequest readBooksRequest)
-    {
-        var query = new SqlQuery();
+        if (!readBooksRequest.HasFilters)
+            return;
 
         var fieldToSortBy = readBooksRequest.FieldToSortBy.ToBookSqliteName();
 
         var fieldToSortByPlaceHolder = GetPlaceHolder(nameof(fieldToSortBy));
 
-        query.QueryString = $"SELECT * FROM {_booksTableName} WHERE {fieldToSortBy}={fieldToSortByPlaceHolder} ORDER BY {fieldToSortBy} ASC;";
+        sqlQuery.QueryString.Append($" WHERE {fieldToSortBy}={fieldToSortByPlaceHolder}");
 
-        query.Parameters.Add(fieldToSortByPlaceHolder, GetFormattedValueToFilterBy(readBooksRequest));
-
-        return query;
+        sqlQuery.Parameters.Add(fieldToSortByPlaceHolder, GetFormattedValueToFilterBy(readBooksRequest));
     }
 
     private static string GetPlaceHolder(string variableName)
@@ -94,6 +83,20 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
             ReadBooksRequest.FieldType.Date => throw new NotImplementedException($"Filtering by value when {nameof(readBooksRequest.FieldToSortBy)} is {readBooksRequest.Type} not supported."),
             _ => throw new NotImplementedException($"ValueToFilterBy conversion not implemented for type {readBooksRequest.Type}."),
         };
+    }
+
+    private void AddSortingToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
+    {
+        if (!readBooksRequest.SortResult)
+            return;
+
+        if (readBooksRequest.FieldToSortBy == nameof(Book.Id))
+        {
+            sqlQuery.QueryString.Append($" ORDER BY CAST(SUBSTRING(id,{_idNumbersStartPosition},{_databaseOptions.IdNumberMaxLength}) AS NUMERIC)");
+            return;
+        }
+
+        sqlQuery.QueryString.Append($" ORDER BY {readBooksRequest.FieldToSortBy.ToBookSqliteName()} ASC");
     }
 
     public string Update(Book book)
