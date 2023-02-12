@@ -138,7 +138,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_WithParameter_WithWhereId_When_ReadBooksRequest_WithStrings()
     {
         // Arrange
-        var expectedQuery = "SELECT * FROM books WHERE id=@fieldToSortBy ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
+        var expectedQuery = "SELECT * FROM books WHERE id=@ValueToFilterBy ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -156,7 +156,7 @@ public class SqliteDatabaseQueryCreatorTests
 
         var parameter = query.Parameters.First();
 
-        parameter.Key.Should().Be("@fieldToSortBy");
+        parameter.Key.Should().Be("@ValueToFilterBy");
         parameter.Value.Should().Be("'b'");
     }
 

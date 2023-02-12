@@ -64,11 +64,11 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         var fieldToSortBy = readBooksRequest.FieldToSortBy.ToBookSqliteName();
 
-        var fieldToSortByPlaceHolder = GetPlaceHolder(nameof(fieldToSortBy));
+        var valueToFilterByPlaceHolder = GetPlaceHolder(nameof(readBooksRequest.ValueToFilterBy));
 
-        sqlQuery.QueryString.Append($" WHERE {fieldToSortBy}={fieldToSortByPlaceHolder}");
+        sqlQuery.QueryString.Append($" WHERE {fieldToSortBy}={valueToFilterByPlaceHolder}");
 
-        sqlQuery.Parameters.Add(fieldToSortByPlaceHolder, GetFormattedValueToFilterBy(readBooksRequest));
+        sqlQuery.Parameters.Add(valueToFilterByPlaceHolder, GetFormattedValueToFilterBy(readBooksRequest));
     }
 
     private static string GetPlaceHolder(string variableName)
