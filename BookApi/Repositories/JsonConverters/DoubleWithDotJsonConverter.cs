@@ -5,8 +5,8 @@ using System.Text.Json;
 namespace BookApi.Repositories.JsonConverters;
 
 /// <summary>
-/// JsonSerializer has a problem converting the X.XX double values and they're working on being able to set culture,
-/// but right now it doesn't seem possible.
+/// System.Text.Json JsonSerializer has a problem converting the X.XX double values and they're working on being able to set culture,
+/// but right now it doesn't seem possible. (2023-02-12, see RefToMadeUpJiraTicket00001)
 /// </summary>
 public class DoubleWithDotJsonConverter : JsonConverter<double>
 {
