@@ -29,5 +29,102 @@ public class BookController : Controller
 
         return Json(_bookService.GetBooks(readBooksRequest));
     }
+
+    /// <summary>
+    /// Returns all books as a JSON collection sorted by ID.
+    /// </summary>
+    [HttpGet("id")]
+    public JsonResult GetAllBooks_ById()
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FieldToSortBy= nameof(Book.Id)
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
+    }
+
+    /// <summary>
+    /// Returns all books as a JSON collection sorted by author.
+    /// </summary>
+    [HttpGet("author")]
+    public JsonResult GetAllBooks_ByAuthor()
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FieldToSortBy = nameof(Book.Author),
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
+    }
+
+    /// <summary>
+    /// Returns all books as a JSON collection sorted by title.
+    /// </summary>
+    [HttpGet("title")]
+    public JsonResult GetAllBooks_ByTitle()
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FieldToSortBy = nameof(Book.Title),
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
+    }
+
+    /// <summary>
+    /// Returns all books as a JSON collection sorted by genre.
+    /// </summary>
+    [HttpGet("genre")]
+    public JsonResult GetAllBooks_ByGenre()
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FieldToSortBy = nameof(Book.Genre),
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
+    }
+
+    /// <summary>
+    /// Returns all books as a JSON collection sorted by price.
+    /// </summary>
+    [HttpGet("price")]
+    public JsonResult GetAllBooks_ByPrice()
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FieldToSortBy = nameof(Book.Price),
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
+    }
+
+    /// <summary>
+    /// Returns all books as a JSON collection sorted by published date.
+    /// </summary>
+    [HttpGet("published")]
+    public JsonResult GetAllBooks_ByPublishDate()
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FieldToSortBy = nameof(Book.PublishDate),
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
+    }
+
+    /// <summary>
+    /// Returns all books as a JSON collection sorted by description.
+    /// </summary>
+    [HttpGet("description")]
+    public JsonResult GetAllBooks_ByDescription()
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FieldToSortBy = nameof(Book.Description),
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
     }
 }
