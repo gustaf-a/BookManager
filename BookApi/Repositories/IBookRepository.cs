@@ -4,5 +4,5 @@ namespace BookApi.Repositories;
 
 public interface IBookRepository
 {
-    public IEnumerable<Book> GetBooks();
+    public IEnumerable<Book> GetBooks(ReadBooksRequest readBooksRequest);
 }

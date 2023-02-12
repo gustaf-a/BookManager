@@ -4,5 +4,5 @@ namespace BookApi.Services;
 
 public interface IBookService
 {
-    public IEnumerable<Book> GetBooks();
+    public IEnumerable<Book> GetBooks(ReadBooksRequest readBooksRequest);
 }
