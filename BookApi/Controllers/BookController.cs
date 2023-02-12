@@ -1,4 +1,5 @@
-﻿using BookApi.Services;
+﻿using BookApi.Data;
+using BookApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookApi.Controllers;
@@ -21,6 +22,12 @@ public class BookController : Controller
     [HttpGet]
     public JsonResult GetAllBooks()
     {
-        return Json(_bookService.GetBooks());
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResult = false
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
+    }
     }
 }
