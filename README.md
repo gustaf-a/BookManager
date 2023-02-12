@@ -134,8 +134,8 @@ När mappningen mellan Book och BookSqlite var klar fungerade allting bra förut
 
 ### Avslutade BM2  
 
-- Skapade git commits och gjorde en pull request.
-- Åkte och tränade + var ute i solen för att få en paus.
+- Skapade git commits och gjorde en pull request
+- Åkte och tränade + var ute i solen för att få en paus
 - Kolla på Pull Requesten och merga.
 
 ## BM5 - Get books filtered by text field values
@@ -146,16 +146,20 @@ När mappningen mellan Book och BookSqlite var klar fungerade allting bra förut
 - Refactored till att använda StringBuilder och gradvis bygga SQL queries
 - Använde DB Browser for SQLite (ett användbart litet program för att öppna SQLite-databaser) för att testa SQL Queries
 - Skapade unit tester
-- När unit testerna var gröna och service testerna gröna skapade jag resten av controller endpointsen för text fält
+- När unit testerna var gröna och service testerna gröna skapade jag resten av controller endpointsen för text fält.
 
 
-## BM6 - Get books filtered by price
+## BM8 - Get books filtered by price
+
+- Skapade service-test för use case med filtrering från price/pris
+- Skapade två endpoints för price för att kunna använda double variabler för att undvika att själv hantera input som string
+- Gick in i DB Browser för att skapa SQL Queryn, skapade sen unit tester mot query creator
+- Implementerade logiken i query creator
+
+## BM9 - Get books filtered by date
 
 
-## BM7 - Get books filtered by date
-
-
-## BM4 - Add exception handling to controller
+## BM10 - Add exception handling to controller
 
 
 
