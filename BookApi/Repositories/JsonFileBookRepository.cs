@@ -14,7 +14,7 @@ public class JsonFileBookRepository : IBookRepository
         allBooks = JsonSerializer.Deserialize<IEnumerable<Book>>(File.ReadAllText(DataFilePath)).ToList();
     }
 
-    public IEnumerable<Book> GetBooks()
+    public IEnumerable<Book> GetBooks(ReadBooksRequest readBooksRequest)
     {
         return allBooks;
     }
