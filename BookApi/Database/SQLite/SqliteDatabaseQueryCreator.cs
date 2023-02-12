@@ -60,29 +60,27 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
     private static void AddFiltersToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
-        if (!readBooksRequest.HasFilters)
-            return;
-
-        var fieldToSortBy = readBooksRequest.FieldToSortBy.ToBookSqliteName();
-
         if (readBooksRequest.FilterByText)
-        {
-            var valueToFilterByPlaceHolder = GetPlaceHolder(nameof(readBooksRequest.FilterByTextValue));
-
-            sqlQuery.QueryString.Append($" WHERE {fieldToSortBy} LIKE {valueToFilterByPlaceHolder}");
-
-            sqlQuery.Parameters.Add(valueToFilterByPlaceHolder, CreateStringParameter(readBooksRequest));
-        }
+            FilterByText(sqlQuery, readBooksRequest);
 
         if (readBooksRequest.FilterByDouble)
-        {
-            throw new NotImplementedException();
-        }
+            FilterByDouble(sqlQuery, readBooksRequest);
 
         if (readBooksRequest.FilterByDate)
-        {
-            throw new NotImplementedException();
-        }
+            FilterByDate(sqlQuery, readBooksRequest);
+
+        return;
+    }
+
+    private static void FilterByText(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
+    {
+        var sortResultByField = readBooksRequest.SortResultByField.ToBookSqliteName();
+
+        var filterByTextValuePlaceholder = GetPlaceHolder(nameof(readBooksRequest.FilterByTextValue));
+
+        sqlQuery.QueryString.Append($" WHERE {sortResultByField} LIKE {filterByTextValuePlaceholder}");
+
+        sqlQuery.Parameters.Add(filterByTextValuePlaceholder, CreateStringParameter(readBooksRequest));
     }
 
     private static string GetPlaceHolder(string variableName)
@@ -91,18 +89,46 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     private static object CreateStringParameter(ReadBooksRequest readBooksRequest)
         => $"%{readBooksRequest.FilterByTextValue}%";
 
+    private static void FilterByDouble(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
+    {
+        var sortResultByField = readBooksRequest.SortResultByField.ToBookSqliteName();
+
+        var filterByDoubleValuePlaceholder = GetPlaceHolder(nameof(readBooksRequest.FilterByDoubleValue));
+
+        sqlQuery.Parameters.Add(filterByDoubleValuePlaceholder, readBooksRequest.FilterByDoubleValue);
+
+        if (readBooksRequest.FilterByDoubleRange)
+        {
+            var filterByDoubleValue2Placeholder = GetPlaceHolder(nameof(readBooksRequest.FilterByDoubleValue2));
+
+            sqlQuery.Parameters.Add(filterByDoubleValue2Placeholder, readBooksRequest.FilterByDoubleValue2);
+
+            sqlQuery.QueryString.Append($" WHERE {sortResultByField} BETWEEN {filterByDoubleValuePlaceholder} AND {filterByDoubleValue2Placeholder}");
+        }
+        else
+            sqlQuery.QueryString.Append($" WHERE {sortResultByField} = {filterByDoubleValuePlaceholder}");
+    }
+
+    private static void FilterByDate(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
+    {
+        var fieldToSortBy = readBooksRequest.SortResultByField.ToBookSqliteName();
+
+        throw new NotImplementedException();
+    }
+
+
     private void AddSortingToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
         if (!readBooksRequest.SortResult)
             return;
 
-        if (readBooksRequest.FieldToSortBy == nameof(Book.Id))
+        if (readBooksRequest.SortResultByField == nameof(Book.Id))
         {
             sqlQuery.QueryString.Append($" ORDER BY CAST(SUBSTRING(id,{_idNumbersStartPosition},{_databaseOptions.IdNumberMaxLength}) AS NUMERIC)");
             return;
         }
 
-        sqlQuery.QueryString.Append($" ORDER BY {readBooksRequest.FieldToSortBy.ToBookSqliteName()} ASC");
+        sqlQuery.QueryString.Append($" ORDER BY {readBooksRequest.SortResultByField.ToBookSqliteName()} ASC");
     }
 
     public string Update(Book book)

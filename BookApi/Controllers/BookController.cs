@@ -39,9 +39,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Id),
+            SortResultByField = nameof(Book.Id),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
@@ -57,9 +57,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Author),
+            SortResultByField = nameof(Book.Author),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
@@ -75,9 +75,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Title),
+            SortResultByField = nameof(Book.Title),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
@@ -93,9 +93,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Genre),
+            SortResultByField = nameof(Book.Genre),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
@@ -103,15 +103,43 @@ public class BookController : Controller
     }
 
     /// <summary>
-    /// Returns all books as a JSON collection sorted by price.
+    /// Returns all books with a certain price as a JSON collection.
     /// </summary>
-    [HttpGet("price")]
-    public JsonResult GetAllBooks_ByPrice()
+    /// <param name="filterValue">Optional text value that genre of the books must contain.</param>
+    [HttpGet("price/{filterValue?}")]
+    public JsonResult GetAllBooks_ByPrice(double filterValue = double.MinValue)
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Price),
-            Type = ReadBooksRequest.FieldType.Numeric
+            SortResultByField = nameof(Book.Price),
+            FilterByDouble = ShouldFilterByDouble(filterValue),
+            FilterByDoubleValue = filterValue,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Numeric,
+            SortResult = !ShouldFilterByDouble(filterValue)
+        };
+
+        return Json(_bookService.GetBooks(readBooksRequest));
+    }
+
+    private static bool ShouldFilterByDouble(double filterValue)
+        => filterValue > double.MinValue;
+
+    /// <summary>
+    /// Returns all books between two double values as a JSON collection sorted by price.
+    /// Example: price/5.95&10
+    /// </summary>
+    /// <param name="lowerPrice"></param>
+    /// <param name="higherPrice"></param>
+    [HttpGet("price/{lowerPrice}&{higherPrice}")]
+    public JsonResult GetAllBooks_ByPrice(double lowerPrice, double higherPrice)
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResultByField = nameof(Book.Price),
+            FilterByDouble = true,
+            FilterByDoubleValue = lowerPrice < higherPrice ? lowerPrice : higherPrice,
+            FilterByDoubleValue2 = lowerPrice < higherPrice ? higherPrice : lowerPrice,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Numeric
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -125,8 +153,8 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.PublishDate),
-            Type = ReadBooksRequest.FieldType.Text
+            SortResultByField = nameof(Book.PublishDate),
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -141,9 +169,9 @@ public class BookController : Controller
     {
         var readBooksRequest = new ReadBooksRequest
         {
-            FieldToSortBy = nameof(Book.Description),
+            SortResultByField = nameof(Book.Description),
             FilterByText = ShouldFilterByText(filterValue),
-            Type = ReadBooksRequest.FieldType.Text,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
