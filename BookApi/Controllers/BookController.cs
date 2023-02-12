@@ -40,9 +40,9 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             FieldToSortBy = nameof(Book.Id),
-            FilterByValue = ShouldFilterByValue(filterValue),
+            FilterByText = ShouldFilterByText(filterValue),
             Type = ReadBooksRequest.FieldType.Text,
-            ValueToFilterBy = filterValue
+            FilterByTextValue = filterValue
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -58,9 +58,9 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             FieldToSortBy = nameof(Book.Author),
-            FilterByValue = ShouldFilterByValue(filterValue),
+            FilterByText = ShouldFilterByText(filterValue),
             Type = ReadBooksRequest.FieldType.Text,
-            ValueToFilterBy = filterValue
+            FilterByTextValue = filterValue
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -76,9 +76,9 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             FieldToSortBy = nameof(Book.Title),
-            FilterByValue = ShouldFilterByValue(filterValue),
+            FilterByText = ShouldFilterByText(filterValue),
             Type = ReadBooksRequest.FieldType.Text,
-            ValueToFilterBy = filterValue
+            FilterByTextValue = filterValue
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -94,9 +94,9 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             FieldToSortBy = nameof(Book.Genre),
-            FilterByValue = ShouldFilterByValue(filterValue),
+            FilterByText = ShouldFilterByText(filterValue),
             Type = ReadBooksRequest.FieldType.Text,
-            ValueToFilterBy = filterValue
+            FilterByTextValue = filterValue
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -142,15 +142,15 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             FieldToSortBy = nameof(Book.Description),
-            FilterByValue = ShouldFilterByValue(filterValue),
+            FilterByText = ShouldFilterByText(filterValue),
             Type = ReadBooksRequest.FieldType.Text,
-            ValueToFilterBy = filterValue
+            FilterByTextValue = filterValue
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
     }
 
-    private static bool ShouldFilterByValue(string filterValue)
+    private static bool ShouldFilterByText(string filterValue)
     {
         return !string.IsNullOrWhiteSpace(filterValue);
     }

@@ -138,12 +138,12 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_WhereLike_ValueToFilterBy_WhenSortBy_Id()
     {
         // Arrange
-        var expectedQuery = "SELECT * FROM books WHERE id LIKE @ValueToFilterBy ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
+        var expectedQuery = "SELECT * FROM books WHERE id LIKE @FilterByTextValue ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
 
         var readBooksRequest = new ReadBooksRequest
         {
-            FilterByValue = true,
-            ValueToFilterBy = "b"
+            FilterByText = true,
+            FilterByTextValue = "b"
         };
 
         // Act
@@ -156,7 +156,7 @@ public class SqliteDatabaseQueryCreatorTests
 
         var parameter = query.Parameters.First();
 
-        parameter.Key.Should().Be("@ValueToFilterBy");
+        parameter.Key.Should().Be("@FilterByTextValue");
         parameter.Value.Should().Be("%b%");
     }
 
@@ -168,13 +168,13 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_WhereLike_ValueToFilterBy_WhenSortBy_TextValue(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.FieldType fieldType, string valueToFilterBy)
     {
         // Arrange
-        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} LIKE @ValueToFilterBy ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} LIKE @FilterByTextValue ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
 
         var readBooksRequest = new ReadBooksRequest
         {
             FieldToSortBy = fieldToSortBy,
-            FilterByValue = true,
-            ValueToFilterBy = valueToFilterBy,
+            FilterByText = true,
+            FilterByTextValue = valueToFilterBy,
             Type = fieldType
         };
 
@@ -186,7 +186,7 @@ public class SqliteDatabaseQueryCreatorTests
 
         var parameter = query.Parameters.First();
 
-        parameter.Key.Should().Be("@ValueToFilterBy");
+        parameter.Key.Should().Be("@FilterByTextValue");
         parameter.Value.Should().Be($"%{valueToFilterBy}%");
     }
 

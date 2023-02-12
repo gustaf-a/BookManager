@@ -24,14 +24,17 @@ public class ReadBooksRequest
     public string FieldToSortBy { get; set; } = nameof(Book.Id);
     public FieldType Type { get; set; } = FieldType.Text;
 
-    public bool HasFilters => FilterByValue || FilterByDate || FilterByPrice;
+    public bool HasFilters => FilterByText || FilterByDouble || FilterByDate || FilterByPrice;
 
-    public bool FilterByValue { get; set; } = false;
-    public string ValueToFilterBy { get; set; } = string.Empty;
+    public bool FilterByText { get; set; } = false;
+    public string FilterByTextValue { get; set; } = string.Empty;
+
+    public bool FilterByDouble { get; set; } = false;
+    public string FilterByDoubleValue { get; set; } = string.Empty;
 
     public bool FilterByDate { get; set; } = false;
     public DatePrecision DatePrecisionToFilterOn { get; set; } = DatePrecision.None;
-    public DateOnly DateToFilterOn { get; set; } = DateOnly.MinValue;
+    public DateOnly FilterByDateValue { get; set; } = DateOnly.MinValue;
 
     public bool FilterByPrice { get; set; } = false;
     public double PriceExact { get; set; } = double.MinValue;

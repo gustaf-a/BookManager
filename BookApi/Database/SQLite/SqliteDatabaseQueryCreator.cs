@@ -65,26 +65,31 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         var fieldToSortBy = readBooksRequest.FieldToSortBy.ToBookSqliteName();
 
-        var valueToFilterByPlaceHolder = GetPlaceHolder(nameof(readBooksRequest.ValueToFilterBy));
+        if (readBooksRequest.FilterByText)
+        {
+            var valueToFilterByPlaceHolder = GetPlaceHolder(nameof(readBooksRequest.FilterByTextValue));
 
-        sqlQuery.QueryString.Append($" WHERE {fieldToSortBy} LIKE {valueToFilterByPlaceHolder}");
+            sqlQuery.QueryString.Append($" WHERE {fieldToSortBy} LIKE {valueToFilterByPlaceHolder}");
 
-        sqlQuery.Parameters.Add(valueToFilterByPlaceHolder, GetFormattedValueToFilterBy(readBooksRequest));
+            sqlQuery.Parameters.Add(valueToFilterByPlaceHolder, CreateStringParameter(readBooksRequest));
+        }
+
+        if (readBooksRequest.FilterByDouble)
+        {
+            throw new NotImplementedException();
+        }
+
+        if (readBooksRequest.FilterByDate)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private static string GetPlaceHolder(string variableName)
         => $"@{variableName}";
 
-    private static string GetFormattedValueToFilterBy(ReadBooksRequest readBooksRequest)
-    {
-        return readBooksRequest.Type switch
-        {
-            ReadBooksRequest.FieldType.Numeric => readBooksRequest.ValueToFilterBy,
-            ReadBooksRequest.FieldType.Text => $"%{readBooksRequest.ValueToFilterBy}%",
-            ReadBooksRequest.FieldType.Date => throw new NotImplementedException($"Filtering by value when {nameof(readBooksRequest.FieldToSortBy)} is {readBooksRequest.Type} not supported."),
-            _ => throw new NotImplementedException($"ValueToFilterBy conversion not implemented for type {readBooksRequest.Type}."),
-        };
-    }
+    private static object CreateStringParameter(ReadBooksRequest readBooksRequest)
+        => $"%{readBooksRequest.FilterByTextValue}%";
 
     private void AddSortingToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {

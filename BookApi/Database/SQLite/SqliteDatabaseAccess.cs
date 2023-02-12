@@ -50,7 +50,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         throw new NotImplementedException();
     }
 
-    //using Dapper for Query
+    //using Dapper for queries helps preventing SQL Injection
     private IEnumerable<Book> ExecuteReaderQuery(SqlQuery sqlQuery)
     {
         using var connection = new SqliteConnection(_connectionString);
