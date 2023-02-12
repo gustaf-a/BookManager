@@ -110,4 +110,54 @@ public class BookController_should : IClassFixture<WebApplicationFactory<Startup
         booksCollection.Should().NotBeEmpty()
             .And.BeEquivalentTo(expectedResult);
     }
+
+    [Theory]
+    [InlineData("B1", "price", "33.0")]
+    [InlineData("B2 B3 B4", "price", "5.95")]
+    [InlineData("B1", "price", "33")]
+    [InlineData("B1", "price", "0033,")]
+    [InlineData("B1", "price", "33&33.05")]
+    [InlineData("B1", "price", "00033&33.05")]
+    [InlineData("B2 B3 B4", "price", "5.95&5.95")]
+    [InlineData("B6 B7 B8 B2 B3 B4", "price", "4&6")]
+    [InlineData("B6 B7 B8 B2 B3 B4", "price", "5.95&4.95")]
+    public async Task GetBooks_FilteredBy_DoubleValues_SortedByField_WhenFieldIsAddedToRoute(string bookIdsToGet, string field, string filterValue)
+    {
+        // Arrange
+        var expectedResult = TestDataHelper.GetBooks(bookIdsToGet);
+
+        // Act
+        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
+
+        // Assert
+        responseStart.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var content = await responseStart.Content.ReadAsStringAsync();
+
+        var booksCollection = JsonSerializer.Deserialize<List<TestBook>>(content);
+
+        //Asserting only by ID first to assert sorting and to improve readability of test failure message (hard to compare sorting order otherwise)
+        booksCollection.Select(b => b.Id).Should().NotBeEmpty()
+            .And.BeEquivalentTo(expectedResult.Select(e => e.Id), config => config.WithStrictOrdering());
+
+        booksCollection.Should().NotBeEmpty()
+            .And.BeEquivalentTo(expectedResult);
+    }
+
+    [Theory]
+    [InlineData("price", "G5.95")]
+    [InlineData("price", "33.0%33.05")]
+    [InlineData("price", "5.95&")]
+    [InlineData("price", "&5")]
+    [InlineData("price", "5.95&'5'")]
+    public async Task GetBooks_FilteredBy_DoubleValues_Returns_BadRequest_WhenNotDouble(string field, string filterValue)
+    {
+        // Arrange
+
+        // Act
+        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
+
+        // Assert
+        responseStart.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }
