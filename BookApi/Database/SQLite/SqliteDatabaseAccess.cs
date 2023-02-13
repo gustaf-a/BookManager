@@ -31,12 +31,17 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
     // --------------------- COMMON ------------------------------------
 
-    private Book GetBookById(Book book)
+    private Book GetBook(string bookId)
     {
-        return ReadBooks(new ReadBooksRequest
+        var booksResult = ReadBooks(new ReadBooksRequest
         {
-            FilterByTextValue = book.Id
-        }).First();
+            FilterByTextValue = bookId
+        });
+
+        if (booksResult.Count() != 1)
+            throw new Exception($"Failed to get single book. Instead got {booksResult.Count()}.");
+
+        return booksResult.First();
     }
 
     private int ExecuteQuery(SqlQuery sqlQuery)
@@ -59,7 +64,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         if (affectedRows == 0)
             throw new Exception("Database failed to create new book.");
 
-        return GetBookById(book);
+        return GetBook(book.Id);
     }
 
     // --------------------- READ ------------------------------------
@@ -93,7 +98,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         if (affectedRows == 0)
             throw new Exception($"Database failed to update book with ID {bookId}.");
 
-        return GetBookById(book);
+        return GetBook(bookId);
     }
 
     // --------------------- DELETE ------------------------------------
