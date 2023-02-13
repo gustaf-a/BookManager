@@ -31,9 +31,12 @@ internal static class Extensions
             Description = book.Description,
             Genre = book.Genre,
             Price = book.Price,
-            Publish_date = book.PublishDate.ToString(DateFormat, CultureInfo.InvariantCulture),
+            Publish_date = GetConvertedDateOnlyValue(book.PublishDate),
             Title = book.Title
         };
+
+    private static string GetConvertedDateOnlyValue(DateOnly publishDate)
+        => publishDate == DateOnly.MinValue ? null : publishDate.ToString(DateFormat, CultureInfo.InvariantCulture);
 
     public static string ToBookSqliteName(this string bookName)
         => bookName switch
@@ -57,4 +60,16 @@ internal static class Extensions
             ReadBooksRequest.DatePrecision.Day => 10,
             _ => throw new NotImplementedException($"Substring length not found for DatePrecision {datePrecision}.")
         };
+
+    public static void AddIfNotDefault(this Dictionary<string, object> dictionary, string stringValue, string key)
+    {
+        if (stringValue is not null)
+            dictionary.Add(key, stringValue);
+    }
+
+    public static void AddIfNotDefault(this Dictionary<string, object> dictionary, double doubleValue, string key)
+    {
+        if (doubleValue > double.MinValue)
+            dictionary.Add(key, doubleValue);
+    }
 }

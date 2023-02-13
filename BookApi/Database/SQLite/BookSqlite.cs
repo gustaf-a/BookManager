@@ -15,7 +15,7 @@ public class BookSqlite
     public double Price { get; set; } = double.MinValue;
 
     public string Publish_date { get; set; }
-    
+
     public string Description { get; set; }
 
     public static IEnumerable<string> GetPropertyNames()
@@ -29,4 +29,21 @@ public class BookSqlite
             nameof(Publish_date),
             nameof(Description)
         };
+
+    public Dictionary<string, object> GetProperties(bool includeDefaultValues = true, bool includeId = false)
+    {
+        var properties = new Dictionary<string, object>();
+
+        if (includeId)
+            properties.AddIfNotDefault(Id, nameof(Id));
+
+        properties.AddIfNotDefault(Author, nameof(Author));
+        properties.AddIfNotDefault(Title, nameof(Title));
+        properties.AddIfNotDefault(Genre, nameof(Genre));
+        properties.AddIfNotDefault(Price, nameof(Price));
+        properties.AddIfNotDefault(Publish_date, nameof(Publish_date));
+        properties.AddIfNotDefault(Description, nameof(Description));
+
+        return properties;
+    }
 }
