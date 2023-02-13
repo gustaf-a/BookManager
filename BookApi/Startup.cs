@@ -1,5 +1,6 @@
 ﻿using BookApi.Database;
 using BookApi.Database.SQLite;
+using BookApi.Middleware;
 using BookApi.Repositories;
 using BookApi.Services;
 
@@ -22,6 +23,7 @@ public class Startup
         services.AddSingleton<IBookRepository, DatabaseBookRepository>();
         services.AddSingleton<IDatabaseAccess, SqliteDatabaseAccess>();
         services.AddSingleton<IDatabaseQueryCreator, SqliteDatabaseQueryCreator>();
+        services.AddSingleton<IDatabaseIdGenerator, SqliteDatabaseIdGenerator>();
 
         services.AddSingleton<IBookService, BookService>();
     }
@@ -34,6 +36,8 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseMiddleware<JsonToBookMiddleware>();
 
         app.UseHttpsRedirection();
 

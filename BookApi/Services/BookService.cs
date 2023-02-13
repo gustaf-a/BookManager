@@ -12,8 +12,24 @@ public class BookService : IBookService
         _bookRepository = bookRepository;
     }
 
-    public IEnumerable<Book> GetBooks(ReadBooksRequest readBooksRequest)
+    public Book CreateBook(Book book)
     {
-        return _bookRepository.GetBooks(readBooksRequest);
+        return _bookRepository.CreateBook(book);
     }
+
+    public IEnumerable<Book> ReadBooks(ReadBooksRequest readBooksRequest)
+    {
+        return _bookRepository.ReadBooks(readBooksRequest);
+    }
+
+    public Book UpdateBook(Book book, string bookId)
+    {
+        return _bookRepository.UpdateBook(book, bookId);
+    }
+
+    public bool DeleteBook(string bookId)
+    {
+        return _bookRepository.DeleteBook(bookId);
+    }
+
 }

@@ -2,11 +2,10 @@
 using BookApi.Database;
 using BookApi.Database.SQLite;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
 using System.Globalization;
 using System.Text;
 
-namespace BookApiUnitTests.Database;
+namespace BookApiUnitTests.Database.SQLite;
 
 public class SqliteDatabaseQueryCreatorTests
 {
@@ -17,7 +16,7 @@ public class SqliteDatabaseQueryCreatorTests
     ""Database"": {
         ""BooksTableName"":  ""books"",
         ""IdNumberMaxLength"": 9,
-        ""IdCharacterPrefixLength"": 2
+        ""IdCharacterPrefix"": ""B""
     }
 }";
 
@@ -32,15 +31,21 @@ public class SqliteDatabaseQueryCreatorTests
 
     // --------------------- CREATE ------------------------------------
 
-    //[Fact]
-    public void Create_ReturnsCreateBookQuery()
+    [Fact]
+    public void Create_ThrowsException_When_Book_Null()
+    {
+        _queryCreator.Invoking(y => y.Create(null))
+            .Should().Throw<ArgumentNullException>()
+            .WithMessage("Value cannot be null. (Parameter 'Book cannot be null.')");
+    }
+
+    [Fact]
+    public void Create_ThrowsException_When_BookId_Null()
     {
         // Arrange
-        var expectedQuery = "nope";
-
         var book = new Book
         {
-            // Id Should be auto created
+            //Id = null,
             Author = "Testson, Tester",
             Title = "How to test",
             Genre = "Testing",
@@ -49,11 +54,46 @@ public class SqliteDatabaseQueryCreatorTests
             PublishDate = new DateOnly(2023, 02, 11)
         };
 
+        _queryCreator.Invoking(y => y.Create(book))
+            .Should().Throw<ArgumentNullException>()
+            .WithMessage("Value cannot be null. (Parameter 'Book Id cannot be null.')");
+    }
+
+    [Fact]
+    public void Create_ReturnsCreateBookQuery()
+    {
+        // Arrange
+        var book = new Book
+        {
+            Id = "B2020",
+            Author = "Testson, Tester",
+            Title = "How to test",
+            Genre = "Testing",
+            Price = 4.99,
+            Description = "The most testing book you'll ever read.",
+            PublishDate = new DateOnly(2023, 02, 11)
+        };
+
+        var expectedQuery = $"INSERT INTO books(id,author,title,genre,price,publish_date,description) " +
+            $"VALUES (@Id,@Author,@Title,@Genre,@Price,@Publish_date,@Description);";
+
         // Act
-        var query = _queryCreator.Create(book);
+        var sqlQuery = _queryCreator.Create(book);
 
         // Assert
-        query.Should().Be(expectedQuery);
+        sqlQuery.QueryString.ToString().Should().Be(expectedQuery);
+
+        var parameters = sqlQuery.Parameters;
+
+        parameters.Count.Should().Be(7);
+
+        parameters["@Id"].Should().Be(book.Id);
+        parameters["@Author"].Should().Be(book.Author);
+        parameters["@Title"].Should().Be(book.Title);
+        parameters["@Genre"].Should().Be(book.Genre);
+        parameters["@Price"].Should().Be(book.Price);
+        parameters["@Description"].Should().Be(book.Description);
+        parameters["@Publish_date"].Should().Be("2023-02-11");
     }
 
     // --------------------- READ ------------------------------------
@@ -91,8 +131,8 @@ public class SqliteDatabaseQueryCreatorTests
     {
         // Arrange
         //9 is for IdNumberMaxLength set in appsettings
-        //3 is for starting point when IdCharacterPrefixLength is set to 2 in appsettings
-        var expectedQuery = "SELECT * FROM books ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
+        //2 is for starting point when IdCharacterPrefixLength is Length 1 in appsettings
+        var expectedQuery = "SELECT * FROM books ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC);";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -140,7 +180,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_WhereLike_ValueToFilterBy_WhenSortBy_Id()
     {
         // Arrange
-        var expectedQuery = "SELECT * FROM books WHERE id LIKE @FilterByTextValue ORDER BY CAST(SUBSTRING(id,3,9) AS NUMERIC);";
+        var expectedQuery = "SELECT * FROM books WHERE id LIKE @FilterByTextValue ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC);";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -287,50 +327,64 @@ public class SqliteDatabaseQueryCreatorTests
     //[Fact]
     public void Update_ReturnsUpdateBookQuery()
     {
-        // Arrange
-        var expectedQuery = "nope";
-
-        var book = new Book
-        {
-            // Id Should be auto created
-            Author = "Testson, Tester",
-            Title = "How to test",
-            Genre = "Testing",
-            Price = 4.99,
-            Description = "The most testing book you'll ever read.",
-            PublishDate = new DateOnly(2023, 02, 11)
-        };
-
-        // Act
-        var query = _queryCreator.Update(book);
-
-        // Assert
-        query.Should().Be(expectedQuery);
+        //TODO
     }
 
-    // --------------------- DELETE ------------------------------------
+    //TODO where new book has updated ID
 
-    //[Fact]
+
+    // --------------------- DELETE ------------------------------------
+   
+    [Fact]
+    public void Delete_ThrowsException_When_BookId_Null()
+    {
+        _queryCreator.Invoking(y => y.Delete(null))
+            .Should().Throw<ArgumentNullException>()
+            .WithMessage("Value cannot be null. (Parameter 'bookId cannot be null.')");
+    }
+
+    [Fact]
     public void Delete_ReturnsDeleteBookQuery()
     {
         // Arrange
-        var expectedQuery = "nope";
+        var bookId = "B16";
 
-        var book = new Book
+        var expectedQuery = "DELETE FROM books WHERE id=@Id;";
+
+        // Act
+        var sqlQuery = _queryCreator.Delete(bookId);
+
+        // Assert
+        sqlQuery.QueryString.ToString().Should().Be(expectedQuery);
+
+        var parameters = sqlQuery.Parameters;
+
+        parameters.Count.Should().Be(1);
+
+        parameters["@Id"].Should().Be(bookId);
+    }
+
+    // --------------------- GET VALUE ------------------------------------
+
+    [Fact]
+    public void GetValueQuery_ReturnsSelectMaxQuery_WithCast()
+    {
+        // Arrange
+        var expectedQuery = "SELECT id FROM books WHERE CAST(SUBSTRING(id, 2) AS UNSIGNED) = (SELECT MAX(CAST(SUBSTRING(id, 2) AS UNSIGNED)) FROM books);";
+
+        var getValuesRequest = new GetValueRequest
         {
-            // Id Should be auto created
-            Author = "Testson, Tester",
-            Title = "How to test",
-            Genre = "Testing",
-            Price = 4.99,
-            Description = "The most testing book you'll ever read.",
-            PublishDate = new DateOnly(2023, 02, 11)
+            ColumnName = "Id",
+            IgnoreFirstCharacters = 2,
+            GetMaxValue = true
         };
 
         // Act
-        var query = _queryCreator.Delete(book);
+        var query = _queryCreator.GetValueQuery(getValuesRequest);
 
         // Assert
-        query.Should().Be(expectedQuery);
+        query.QueryString.ToString().Should().Be(expectedQuery);
+
+        query.Parameters.Count().Should().Be(0);
     }
 }
