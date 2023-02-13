@@ -1,5 +1,6 @@
 ﻿using BookApi.Database;
 using BookApi.Database.SQLite;
+using BookApi.Middleware;
 using BookApi.Repositories;
 using BookApi.Services;
 
@@ -34,6 +35,8 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseMiddleware<JsonToBookMiddleware>();
 
         app.UseHttpsRedirection();
 
