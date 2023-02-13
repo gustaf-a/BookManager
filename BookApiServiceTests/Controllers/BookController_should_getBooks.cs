@@ -6,13 +6,16 @@ using System.Text.Json;
 
 namespace BookApiServiceTests.Controllers;
 
-public class BookController_should : IClassFixture<WebApplicationFactory<Startup>>
+/// <summary>
+/// Service tests for BookController testing Read function.
+/// </summary>
+public class BookController_should_getBooks : IClassFixture<WebApplicationFactory<Startup>>
 {
     private readonly HttpClient _client;
 
     private const string ControllerBaseRoute = "api/books";
 
-    public BookController_should(WebApplicationFactory<Startup> factory)
+    public BookController_should_getBooks(WebApplicationFactory<Startup> factory)
     {
         _client = factory
                 .WithWebHostBuilder(builder =>
@@ -33,12 +36,12 @@ public class BookController_should : IClassFixture<WebApplicationFactory<Startup
         var expectedResult = TestDataHelper.GetBooks();
 
         // Act
-        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}");
+        var response = await _client.GetAsync($"{ControllerBaseRoute}");
 
         // Assert
-        responseStart.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var content = await responseStart.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync();
 
         var booksCollection = JsonSerializer.Deserialize<List<TestBook>>(content);
 
@@ -60,12 +63,12 @@ public class BookController_should : IClassFixture<WebApplicationFactory<Startup
         var expectedResult = TestDataHelper.GetBooks(bookIdsToGet);
 
         // Act
-        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}/{field}");
+        var response = await _client.GetAsync($"{ControllerBaseRoute}/{field}");
 
         // Assert
-        responseStart.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var content = await responseStart.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync();
 
         var booksCollection = JsonSerializer.Deserialize<List<TestBook>>(content);
 
@@ -94,12 +97,12 @@ public class BookController_should : IClassFixture<WebApplicationFactory<Startup
         var expectedResult = TestDataHelper.GetBooks(bookIdsToGet);
 
         // Act
-        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
+        var response = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
 
         // Assert
-        responseStart.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var content = await responseStart.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync();
 
         var booksCollection = JsonSerializer.Deserialize<List<TestBook>>(content);
 
@@ -127,12 +130,12 @@ public class BookController_should : IClassFixture<WebApplicationFactory<Startup
         var expectedResult = TestDataHelper.GetBooks(bookIdsToGet);
 
         // Act
-        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
+        var response = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
 
         // Assert
-        responseStart.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var content = await responseStart.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync();
 
         var booksCollection = JsonSerializer.Deserialize<List<TestBook>>(content);
 
@@ -155,10 +158,10 @@ public class BookController_should : IClassFixture<WebApplicationFactory<Startup
         // Arrange
 
         // Act
-        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
+        var response = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
 
         // Assert
-        responseStart.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Theory]
@@ -171,12 +174,12 @@ public class BookController_should : IClassFixture<WebApplicationFactory<Startup
         var expectedResult = TestDataHelper.GetBooks(bookIdsToGet);
 
         // Act
-        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
+        var response = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
 
         // Assert
-        responseStart.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var content = await responseStart.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync();
 
         var booksCollection = JsonSerializer.Deserialize<List<TestBook>>(content);
 
