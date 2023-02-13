@@ -72,4 +72,16 @@ internal static class Extensions
         if (doubleValue > double.MinValue)
             dictionary.Add(key, doubleValue);
     }
+
+    public static void AddPlaceholderParameters(this SqlQuery sqlQuery, Dictionary<string, object> properties)
+    {
+        foreach (var property in properties)
+            sqlQuery.Parameters.Add(GetPlaceHolder(property.Key), property.Value);
+    }
+
+    public static string GetPlaceHolderList(this IEnumerable<string> variableNames)
+        => string.Join(',', variableNames.Select(vn => vn.GetPlaceHolder()));
+
+    public static string GetPlaceHolder(this string variableName)
+        => $"@{variableName}";
 }

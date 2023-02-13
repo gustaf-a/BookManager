@@ -33,12 +33,6 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
         _idNumbersStartPosition = _databaseOptions.IdCharacterPrefixLength + 1;
     }
 
-    private static string GetPlaceHolderList(IEnumerable<string> variableNames)
-        => string.Join(',', variableNames.Select(vn => GetPlaceHolder(vn)));
-
-    private static string GetPlaceHolder(string variableName)
-        => $"@{variableName}";
-
     // --------------------- CREATE ------------------------------------
 
     public SqlQuery Create(Book book)
@@ -58,24 +52,12 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
         sqlQuery.QueryString.Append($"INSERT INTO {_booksTableName}");
         sqlQuery.QueryString.Append("(id,author,title,genre,price,publish_date,description)");
         sqlQuery.QueryString.Append(" VALUES (");
-        sqlQuery.QueryString.Append(GetPlaceHolderList(propertyNames));
-        sqlQuery.QueryString.Append(')');
-        sqlQuery.QueryString.Append(';');
+        sqlQuery.QueryString.Append(propertyNames.GetPlaceHolderList());
+        sqlQuery.QueryString.Append(");");
 
-        AddPropertiesAsParameters(bookSqlite, sqlQuery);
+        sqlQuery.AddPlaceholderParameters(bookSqlite.GetProperties(includeDefaultValues: true, includeId: true));
 
         return sqlQuery;
-    }
-
-    private static void AddPropertiesAsParameters(BookSqlite bookSqlite, SqlQuery sqlQuery)
-    {
-        sqlQuery.Parameters.Add(GetPlaceHolder(nameof(bookSqlite.Id)), bookSqlite.Id);
-        sqlQuery.Parameters.Add(GetPlaceHolder(nameof(bookSqlite.Author)), bookSqlite.Author);
-        sqlQuery.Parameters.Add(GetPlaceHolder(nameof(bookSqlite.Title)), bookSqlite.Title);
-        sqlQuery.Parameters.Add(GetPlaceHolder(nameof(bookSqlite.Genre)), bookSqlite.Genre);
-        sqlQuery.Parameters.Add(GetPlaceHolder(nameof(bookSqlite.Price)), bookSqlite.Price);
-        sqlQuery.Parameters.Add(GetPlaceHolder(nameof(bookSqlite.Publish_date)), bookSqlite.Publish_date);
-        sqlQuery.Parameters.Add(GetPlaceHolder(nameof(bookSqlite.Description)), bookSqlite.Description);
     }
 
     // --------------------- READ ------------------------------------
@@ -116,7 +98,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     {
         var sortResultByField = readBooksRequest.SortResultByField.ToBookSqliteName();
 
-        var filterByTextValuePlaceholder = GetPlaceHolder(nameof(readBooksRequest.FilterByTextValue));
+        var filterByTextValuePlaceholder = nameof(readBooksRequest.FilterByTextValue).GetPlaceHolder();
 
         sqlQuery.QueryString.Append($" WHERE {sortResultByField} LIKE {filterByTextValuePlaceholder}");
 
@@ -130,13 +112,13 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     {
         var sortResultByField = readBooksRequest.SortResultByField.ToBookSqliteName();
 
-        var filterByDoubleValuePlaceholder = GetPlaceHolder(nameof(readBooksRequest.FilterByDoubleValue));
+        var filterByDoubleValuePlaceholder = nameof(readBooksRequest.FilterByDoubleValue).GetPlaceHolder();
 
         sqlQuery.Parameters.Add(filterByDoubleValuePlaceholder, readBooksRequest.FilterByDoubleValue);
 
         if (readBooksRequest.FilterByDoubleRange)
         {
-            var filterByDoubleValue2Placeholder = GetPlaceHolder(nameof(readBooksRequest.FilterByDoubleValue2));
+            var filterByDoubleValue2Placeholder = nameof(readBooksRequest.FilterByDoubleValue2).GetPlaceHolder();
 
             sqlQuery.Parameters.Add(filterByDoubleValue2Placeholder, readBooksRequest.FilterByDoubleValue2);
 
@@ -200,9 +182,9 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         sqlQuery.QueryString.Append($" {string.Join(", ", updatePropertyStrings)}");
 
-        AddPlaceholderParameters(sqlQuery, propertiesToUpdate);
+        sqlQuery.AddPlaceholderParameters(propertiesToUpdate);
 
-        var idPlaceHolder = GetPlaceHolder(nameof(BookSqlite.Id));
+        var idPlaceHolder = nameof(BookSqlite.Id).GetPlaceHolder();
 
         sqlQuery.QueryString.Append($" WHERE {nameof(BookSqlite.Id).ToLower()} = {idPlaceHolder};");
 
@@ -212,7 +194,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     }
 
     private static List<string> CreateUpdatePropertyStrings(Dictionary<string, object> propertiesToUpdate)
-        => propertiesToUpdate.Select(p => $"{p.Key.ToLower()} = {GetPlaceHolder(p.Key)}").ToList();
+        => propertiesToUpdate.Select(p => $"{p.Key.ToLower()} = {p.Key.GetPlaceHolder()}").ToList();
 
     // --------------------- DELETE ------------------------------------
 
@@ -221,7 +203,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
         if (string.IsNullOrWhiteSpace(bookId))
             throw new ArgumentNullException($"{nameof(bookId)} cannot be null.");
 
-        var idPlaceHolder = GetPlaceHolder(nameof(BookSqlite.Id));
+        var idPlaceHolder = nameof(BookSqlite.Id).GetPlaceHolder();
 
         var sqlQuery = new SqlQuery();
 
@@ -259,18 +241,12 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         sqlQuery.QueryString.Append($" WHERE {GetCastSubstringQuery(getValueRequest)}");
 
-        sqlQuery.QueryString.Append(" = ");
-        sqlQuery.QueryString.Append('(');
-
-        sqlQuery.QueryString.Append($"SELECT MAX");
-        sqlQuery.QueryString.Append('(');
+        sqlQuery.QueryString.Append(" = (SELECT MAX(");
         sqlQuery.QueryString.Append(GetCastSubstringQuery(getValueRequest));
         sqlQuery.QueryString.Append(')');
 
         sqlQuery.QueryString.Append($" FROM {_booksTableName}");
-        sqlQuery.QueryString.Append(')');
-
-        sqlQuery.QueryString.Append(';');
+        sqlQuery.QueryString.Append(");");
 
         return sqlQuery;
     }
