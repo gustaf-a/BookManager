@@ -176,12 +176,15 @@ ID generering kan ske olika för olika typer av databaser, därför valde jag at
 - Skapade Middleware för att ta emot requests som blev deserialized korrekt från JSON till Book-objekt
 - Lade till DELETE query för att köra testerna. Kämpade med lite för mycket saker på en gång, men det var kul.
 
+## BM16 - Update books
 
-
+- Stort service test som först uppdaterar endast ett fält och sen hela objektet
+- Unit tests för query
+- Fixar tre små buggar som syntes nu med updates och snyggar till query creator med fler extension methods
 
 ## Extra
 
 ### Fel i test instruktionerna
 
-- Instruktionerna verkar blanda ihop POST(som används för att skapa) och PUT(som används för att uppdatera)
+- Instruktionerna verkar blanda ihop POST(som används för att skapa) och PUT(som används för att uppdatera). Jag valde att gå med best practices och avvek från instruktionerna
 - I use case för publish_date så skrivs det felaktigt som "published_date".
