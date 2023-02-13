@@ -128,8 +128,8 @@ public class BookController : Controller
     /// Returns all books between two double values as a JSON collection sorted by price.
     /// Example: price/5.95&10
     /// </summary>
-    /// <param name="lowerPrice"></param>
-    /// <param name="higherPrice"></param>
+    /// <param name="lowerPrice">Lower value when searching a range of prices.</param>
+    /// <param name="higherPrice">Higher value when searching a range of prices.</param>
     [HttpGet("price/{lowerPrice}&{higherPrice}")]
     public JsonResult GetAllBooks_ByPrice(double lowerPrice, double higherPrice)
     {
@@ -147,14 +147,23 @@ public class BookController : Controller
 
     /// <summary>
     /// Returns all books as a JSON collection sorted by published date.
+    /// Use parameters to filter specific dates.
+    /// Example: "published/2012", "published/2012/8" or "published/2012/8/15"
     /// </summary>
-    [HttpGet("published")]
-    public JsonResult GetAllBooks_ByPublishDate()
+    /// <param name="year">If provided only shows books from this year.</param>
+    /// <param name="month">If provided with year only shows books from this month.</param>
+    /// <param name="day">If provided with year and month only shows books from this date.</param>
+    [HttpGet("published/{year:int?}/{month:int?}/{day:int?}")]
+    public JsonResult GetAllBooks_ByPublishDate(int year = int.MinValue, int month = int.MinValue, int day = int.MinValue)
     {
+        var filterByDatePrecision = ReadBooksRequest.FindDatePrecision(year, month, day);
+
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.PublishDate),
-            SortResultByFieldType = ReadBooksRequest.FieldType.Text
+            SortResultByFieldType = ReadBooksRequest.FieldType.Date,
+            FilterByDateValue = filterByDatePrecision.GetDateOnly(year, month, day),
+            FilterByDatePrecision = filterByDatePrecision
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));

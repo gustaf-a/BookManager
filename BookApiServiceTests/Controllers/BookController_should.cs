@@ -160,4 +160,30 @@ public class BookController_should : IClassFixture<WebApplicationFactory<Startup
         // Assert
         responseStart.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+
+    [Theory]
+    [InlineData("B13 B1", "published", "2012")]
+    [InlineData("B1", "published", "2012/8")]
+    [InlineData("B1", "published", "2012/8/15")]
+    public async Task GetBooks_FilteredBy_DateValues_SortedByField_WhenFieldIsAddedToRoute(string bookIdsToGet, string field, string filterValue)
+    {
+        // Arrange
+        var expectedResult = TestDataHelper.GetBooks(bookIdsToGet);
+
+        // Act
+        var responseStart = await _client.GetAsync($"{ControllerBaseRoute}/{field}/{filterValue}");
+
+        // Assert
+        responseStart.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var content = await responseStart.Content.ReadAsStringAsync();
+
+        var booksCollection = JsonSerializer.Deserialize<List<TestBook>>(content);
+
+        //Asserting only by ID first to assert sorting and to improve readability of test failure message (hard to compare sorting order otherwise)
+        booksCollection.Select(b => b.Id).Should().BeEquivalentTo(expectedResult.Select(e => e.Id), config => config.WithStrictOrdering());
+
+        booksCollection.Should().NotBeEmpty()
+            .And.BeEquivalentTo(expectedResult);
+    }
 }
