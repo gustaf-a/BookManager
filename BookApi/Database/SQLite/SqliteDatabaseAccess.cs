@@ -59,4 +59,19 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
         return result.ToBooks();
     }
+    // --------------------- GET VALUE ------------------------------------
+
+    public string GetValue(GetValueRequest getValueRequest)
+    {
+        var sqlQuery = _queryCreator.GetValueQuery(getValueRequest);
+
+        return ExecuteScalarQuery<string>(sqlQuery);
+    }
+
+    private T ExecuteScalarQuery<T>(SqlQuery sqlQuery)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+
+        return connection.ExecuteScalar<T>(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
+    }
 }

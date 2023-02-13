@@ -9,4 +9,5 @@ public interface IDatabaseQueryCreator
     public SqlQuery Read(ReadBooksRequest readBooksRequest);
     public string Update(Book book);
     public string Delete(Book book);
+    public SqlQuery GetValueQuery(GetValueRequest getValueRequest);
 }

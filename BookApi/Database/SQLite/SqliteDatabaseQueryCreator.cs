@@ -142,4 +142,53 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     {
         throw new NotImplementedException();
     }
+
+    // --------------------- GET VAlUE ------------------------------------
+
+    public SqlQuery GetValueQuery(GetValueRequest getValueRequest)
+    {
+        if (getValueRequest == null)
+            throw new ArgumentNullException($"{nameof(ReadBooksRequest)} cannot be null.");
+
+        if (getValueRequest.GetMaxValue)
+            return GetMaxValueQuery(getValueRequest);
+
+        throw new NotImplementedException("Currently only GetMaxValue-queries supported.");
+    }
+
+    /// <summary>
+    /// Returns the whole value, for example "B13" if 13 is highest value without prefix in column
+    /// </summary>
+    private SqlQuery GetMaxValueQuery(GetValueRequest getValueRequest)
+    {
+        var sqlQuery = new SqlQuery();
+
+        if (!nameof(BookSqlite.Id).Equals(getValueRequest.ColumnName))
+            throw new NotImplementedException($"Currently only GetMaxValue for {nameof(BookSqlite.Id)} supported.");
+
+        sqlQuery.QueryString.Append($"SELECT {getValueRequest.ColumnName.ToLower()} FROM {_booksTableName}");
+
+        sqlQuery.QueryString.Append($" WHERE {GetCastSubstringQuery(getValueRequest)}");
+
+        sqlQuery.QueryString.Append(" = ");
+        sqlQuery.QueryString.Append('(');
+
+        sqlQuery.QueryString.Append($"SELECT MAX");
+        sqlQuery.QueryString.Append('(');
+        sqlQuery.QueryString.Append(GetCastSubstringQuery(getValueRequest));
+        sqlQuery.QueryString.Append(')');
+
+        sqlQuery.QueryString.Append($" FROM {_booksTableName}");
+        sqlQuery.QueryString.Append(')');
+
+        sqlQuery.QueryString.Append(';');
+
+        return sqlQuery;
+    }
+
+    // Variable source is internal, so no need for parameters for SQL Injection protection
+    private static string GetCastSubstringQuery(GetValueRequest getValueRequest)
+    {
+        return $"CAST(SUBSTRING({getValueRequest.ColumnName.ToLower()}, {getValueRequest.IgnoreFirstCharacters}) AS UNSIGNED)";
+    }
 }

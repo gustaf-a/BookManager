@@ -23,6 +23,7 @@ public class Startup
         services.AddSingleton<IBookRepository, DatabaseBookRepository>();
         services.AddSingleton<IDatabaseAccess, SqliteDatabaseAccess>();
         services.AddSingleton<IDatabaseQueryCreator, SqliteDatabaseQueryCreator>();
+        services.AddSingleton<IDatabaseIdGenerator, SqliteDatabaseIdGenerator>();
 
         services.AddSingleton<IBookService, BookService>();
     }

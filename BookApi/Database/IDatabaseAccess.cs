@@ -8,4 +8,6 @@ public interface IDatabaseAccess
     public IEnumerable<Book> ReadBooks(ReadBooksRequest readBooksRequest);
     public Book UpdateBook(Book book);
     public bool DeleteBook(Book book);
+
+    public string GetValue(GetValueRequest getValueRequest);
 }

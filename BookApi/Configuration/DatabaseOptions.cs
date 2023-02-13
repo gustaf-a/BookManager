@@ -7,5 +7,7 @@ public class DatabaseOptions
     public string SqliteConnectionStringName { get; set; } = string.Empty;
     public string BooksTableName { get; set; } = string.Empty;
     public int IdNumberMaxLength { get; set; } = 10;
-    public int IdCharacterPrefixLength { get; set; } = 1;
+    public string IdCharacterPrefix { get; set; } = "B";
+    public int IdCharacterPrefixLength => IdCharacterPrefix.Length;
+    public int IdSequenceStartNumber { get; set; } = 1;
 }
