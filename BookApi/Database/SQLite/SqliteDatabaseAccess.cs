@@ -2,7 +2,6 @@
 using BookApi.Data;
 using Dapper;
 using Microsoft.Data.Sqlite;
-using System.Net;
 
 namespace BookApi.Database.SQLite;
 
