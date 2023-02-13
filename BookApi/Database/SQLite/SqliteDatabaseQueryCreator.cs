@@ -179,8 +179,40 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
     public SqlQuery Update(Book book, string bookId)
     {
-        throw new NotImplementedException();
+        if (book is null)
+            throw new ArgumentNullException($"{nameof(book)} cannot be null.");
+
+        if (string.IsNullOrWhiteSpace(bookId))
+            throw new ArgumentNullException($"{nameof(bookId)} cannot be null.");
+
+        var bookSqlite = book.ToBookSqlite();
+
+        var propertiesToUpdate = bookSqlite.GetProperties();
+
+        if (!propertiesToUpdate.Any())
+            throw new Exception("Failed to find properties to update");
+
+        var updatePropertyStrings = CreateUpdatePropertyStrings(propertiesToUpdate);
+
+        var sqlQuery = new SqlQuery();
+
+        sqlQuery.QueryString.Append($"UPDATE {_booksTableName} SET");
+
+        sqlQuery.QueryString.Append($" {string.Join(", ", updatePropertyStrings)}");
+
+        AddPlaceholderParameters(sqlQuery, propertiesToUpdate);
+
+        var idPlaceHolder = GetPlaceHolder(nameof(BookSqlite.Id));
+
+        sqlQuery.QueryString.Append($" WHERE {nameof(BookSqlite.Id).ToLower()} = {idPlaceHolder};");
+
+        sqlQuery.Parameters.Add(idPlaceHolder, bookId);
+
+        return sqlQuery;
     }
+
+    private static List<string> CreateUpdatePropertyStrings(Dictionary<string, object> propertiesToUpdate)
+        => propertiesToUpdate.Select(p => $"{p.Key.ToLower()} = {GetPlaceHolder(p.Key)}").ToList();
 
     // --------------------- DELETE ------------------------------------
 

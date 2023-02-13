@@ -324,17 +324,93 @@ public class SqliteDatabaseQueryCreatorTests
 
     // --------------------- UPDATE ------------------------------------
 
-    //[Fact]
-    public void Update_ReturnsUpdateBookQuery()
+    [Fact]
+    public void Update_ThrowsException_When_Book_Null()
     {
-        //TODO
+        _queryCreator.Invoking(y => y.Update(null, "test"))
+            .Should().Throw<ArgumentNullException>()
+            .WithMessage("Value cannot be null. (Parameter 'book cannot be null.')");
     }
 
-    //TODO where new book has updated ID
+    [Fact]
+    public void Update_ThrowsException_When_BookId_Null()
+    {
+        _queryCreator.Invoking(y => y.Update(new Book(), null))
+            .Should().Throw<ArgumentNullException>()
+            .WithMessage("Value cannot be null. (Parameter 'bookId cannot be null.')");
+    }
 
+    [Fact]
+    public void Update_ReturnsUpdateBookQuery_AndIgnoresNullValues_AndIgnoresId()
+    {
+        // Arrange
+        var bookId = "B16";
+
+        var updateToThisBook = new Book()
+        {
+            Author = "Updated Author",
+            Title = "New cooler title",
+            Description = null,
+            Id = "B2000",
+            Genre = null,
+            Price = 10,
+            PublishDate = new DateOnly(1999, 12, 31)
+        };
+
+        var expectedQuery = "UPDATE books SET author = @Author, title = @Title, price = @Price, publish_date = @Publish_date WHERE id = @Id;";
+
+        // Act
+        var sqlQuery = _queryCreator.Update(updateToThisBook, bookId);
+
+        // Assert
+        sqlQuery.QueryString.ToString().Should().Be(expectedQuery);
+
+        var parameters = sqlQuery.Parameters;
+
+        parameters.Count.Should().Be(5);
+
+        parameters["@Id"].Should().Be(bookId);
+        parameters["@Author"].Should().Be(updateToThisBook.Author);
+        parameters["@Title"].Should().Be(updateToThisBook.Title);
+        parameters["@Price"].Should().Be(updateToThisBook.Price);
+        parameters["@Publish_date"].Should().Be("1999-12-31");
+    }
+
+    [Fact]
+    public void Update_ReturnsUpdateBookQuery_AndIgnoresNullValues_PriceAndDate()
+    {
+        // Arrange
+        var bookId = "B16";
+
+        var updateToThisBook = new Book()
+        {
+            Author = null,
+            Title = "Only change this one",
+            Description = null,
+            Id = null,
+            Genre = null,
+            Price = double.MinValue,
+            PublishDate = DateOnly.MinValue
+        };
+
+        var expectedQuery = "UPDATE books SET title = @Title WHERE id = @Id;";
+
+        // Act
+        var sqlQuery = _queryCreator.Update(updateToThisBook, bookId);
+
+        // Assert
+        sqlQuery.QueryString.ToString().Should().Be(expectedQuery);
+
+        var parameters = sqlQuery.Parameters;
+
+        parameters.Count.Should().Be(2);
+
+        parameters["@Id"].Should().Be(bookId);
+        parameters["@Title"].Should().Be(updateToThisBook.Title);
+    }
 
     // --------------------- DELETE ------------------------------------
-   
+
     [Fact]
     public void Delete_ThrowsException_When_BookId_Null()
     {
