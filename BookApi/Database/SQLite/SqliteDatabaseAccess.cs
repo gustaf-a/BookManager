@@ -69,11 +69,6 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         return result;
     }
 
-    public Book UpdateBook(Book book)
-    {
-        throw new NotImplementedException();
-    }
-
     //using Dapper for queries helps preventing SQL Injection
     private IEnumerable<Book> ExecuteReaderQuery(SqlQuery sqlQuery)
     {
@@ -83,6 +78,21 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
         return result.ToBooks();
     }
+
+    // --------------------- UPDATE ------------------------------------
+
+    public Book UpdateBook(Book book, string bookId)
+    {
+        var sqlQuery = _queryCreator.Update(book, bookId);
+
+        var affectedRows = ExecuteQuery(sqlQuery);
+
+        if (affectedRows == 0)
+            throw new Exception($"Database failed to update book with ID {bookId}.");
+
+        return GetBookById(book);
+    }
+
     // --------------------- DELETE ------------------------------------
 
     public bool DeleteBook(string bookId)
