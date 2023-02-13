@@ -2,6 +2,7 @@
 using BookApi.Data;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using System.Net;
 
 namespace BookApi.Database.SQLite;
 
@@ -26,15 +27,38 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         _queryCreator = queryCreator;
     }
 
+    // --------------------- CREATE ------------------------------------
+
     public Book CreateBook(Book book)
     {
-        throw new NotImplementedException();
+        var sqlQuery = _queryCreator.Create(book);
+
+        var affectedRows = ExecuteQuery(sqlQuery);
+
+        if (affectedRows == 0)
+            throw new Exception("Database failed to create new book.");
+
+        return GetBookById(book);
     }
 
-    public bool DeleteBook(Book book)
+    private Book GetBookById(Book book)
     {
-        throw new NotImplementedException();
+        return ReadBooks(new ReadBooksRequest
+        {
+            FilterByTextValue = book.Id
+        }).First();
     }
+
+    private int ExecuteQuery(SqlQuery sqlQuery)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+
+        var affectedRows = connection.Execute(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
+
+        return affectedRows;
+    }
+
+    // --------------------- READ ------------------------------------
 
     public IEnumerable<Book> ReadBooks(ReadBooksRequest readBooksRequest)
     {
@@ -59,6 +83,33 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
         return result.ToBooks();
     }
+    // --------------------- DELETE ------------------------------------
+
+    public bool DeleteBook(string bookId)
+    {
+        var sqlQuery = _queryCreator.Delete(bookId);
+
+        var affectedRows = ExecuteQuery(sqlQuery);
+
+        //If book doesn't exist, consider delete success.
+        if (affectedRows == 0 && CheckIfBookExists(bookId))
+            throw new Exception($"Database failed to delete book with ID {bookId}");
+
+        return true;
+    }
+
+    private bool CheckIfBookExists(string bookId)
+    {
+        var readBooksRequest = new ReadBooksRequest
+        {
+            FilterByTextValue = bookId
+        };
+
+        var result = ReadBooks(readBooksRequest);
+
+        return result.Any();
+    }
+
     // --------------------- GET VALUE ------------------------------------
 
     public string GetValue(GetValueRequest getValueRequest)

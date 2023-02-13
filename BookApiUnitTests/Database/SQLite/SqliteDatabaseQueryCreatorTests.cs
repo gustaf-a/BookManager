@@ -334,11 +334,34 @@ public class SqliteDatabaseQueryCreatorTests
 
 
     // --------------------- DELETE ------------------------------------
+   
+    [Fact]
+    public void Delete_ThrowsException_When_BookId_Null()
+    {
+        _queryCreator.Invoking(y => y.Delete(null))
+            .Should().Throw<ArgumentNullException>()
+            .WithMessage("Value cannot be null. (Parameter 'bookId cannot be null.')");
+    }
 
-    ////[Fact]
+    [Fact]
     public void Delete_ReturnsDeleteBookQuery()
     {
-        //TODO
+        // Arrange
+        var bookId = "B16";
+
+        var expectedQuery = "DELETE FROM books WHERE id=@Id;";
+
+        // Act
+        var sqlQuery = _queryCreator.Delete(bookId);
+
+        // Assert
+        sqlQuery.QueryString.ToString().Should().Be(expectedQuery);
+
+        var parameters = sqlQuery.Parameters;
+
+        parameters.Count.Should().Be(1);
+
+        parameters["@Id"].Should().Be(bookId);
     }
 
     // --------------------- GET VALUE ------------------------------------

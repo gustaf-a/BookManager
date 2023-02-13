@@ -5,9 +5,9 @@ namespace BookApi.Database;
 
 public interface IDatabaseQueryCreator
 {
-    public string Create(Book book);
+    public SqlQuery Create(Book book);
     public SqlQuery Read(ReadBooksRequest readBooksRequest);
-    public string Update(Book book);
-    public string Delete(Book book);
+    public SqlQuery Update(Book book, string bookId);
+    public SqlQuery Delete(string bookId);
     public SqlQuery GetValueQuery(GetValueRequest getValueRequest);
 }
