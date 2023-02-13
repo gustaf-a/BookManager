@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookApi.Controllers;
 
 [ApiController]
-[Produces("application/json")] // Ensures JSON is returned
+[Produces("application/json")]
 [Route("api/books")]
 public class BookController : Controller
 {

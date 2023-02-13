@@ -16,7 +16,7 @@ public class Book
 
     [JsonPropertyName("price")]
     [JsonConverter(typeof(DoubleWithDotJsonConverter))]
-    public double Price { get; set; }
+    public double Price { get; set; } = double.MinValue;
 
     [JsonPropertyName("description")]
     public string Description { get; set; }

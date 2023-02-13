@@ -5,11 +5,14 @@ using Microsoft.Data.Sqlite;
 
 namespace BookApi.Database.SQLite;
 
+/// <summary>
+/// SQLite database access class using Dapper with parameters for protection against SQL injection
+/// </summary>
 public class SqliteDatabaseAccess : IDatabaseAccess
 {
     private readonly string _connectionString;
 
-    private IDatabaseQueryCreator _queryCreator;
+    private readonly IDatabaseQueryCreator _queryCreator;
 
     public SqliteDatabaseAccess(IConfiguration configuration, IDatabaseQueryCreator queryCreator)
     {
@@ -26,6 +29,30 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         _queryCreator = queryCreator;
     }
 
+    // --------------------- COMMON ------------------------------------
+
+    private Book GetBook(string bookId)
+    {
+        var booksResult = ReadBooks(new ReadBooksRequest
+        {
+            FilterByTextValue = bookId
+        });
+
+        if (booksResult.Count() != 1)
+            throw new Exception($"Failed to get single book. Instead got {booksResult.Count()}.");
+
+        return booksResult.First();
+    }
+
+    private int ExecuteQuery(SqlQuery sqlQuery)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+
+        var affectedRows = connection.Execute(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
+
+        return affectedRows;
+    }
+
     // --------------------- CREATE ------------------------------------
 
     public Book CreateBook(Book book)
@@ -37,24 +64,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         if (affectedRows == 0)
             throw new Exception("Database failed to create new book.");
 
-        return GetBookById(book);
-    }
-
-    private Book GetBookById(Book book)
-    {
-        return ReadBooks(new ReadBooksRequest
-        {
-            FilterByTextValue = book.Id
-        }).First();
-    }
-
-    private int ExecuteQuery(SqlQuery sqlQuery)
-    {
-        using var connection = new SqliteConnection(_connectionString);
-
-        var affectedRows = connection.Execute(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
-
-        return affectedRows;
+        return GetBook(book.Id);
     }
 
     // --------------------- READ ------------------------------------
@@ -68,7 +78,6 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         return result;
     }
 
-    //using Dapper for queries helps preventing SQL Injection
     private IEnumerable<Book> ExecuteReaderQuery(SqlQuery sqlQuery)
     {
         using var connection = new SqliteConnection(_connectionString);
@@ -89,7 +98,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         if (affectedRows == 0)
             throw new Exception($"Database failed to update book with ID {bookId}.");
 
-        return GetBookById(book);
+        return GetBook(bookId);
     }
 
     // --------------------- DELETE ------------------------------------
