@@ -2,6 +2,8 @@
 using BookApi.Database;
 using BookApi.Database.SQLite;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
+using System.Globalization;
 using System.Text;
 
 namespace BookApiUnitTests.Database;
@@ -142,7 +144,6 @@ public class SqliteDatabaseQueryCreatorTests
 
         var readBooksRequest = new ReadBooksRequest
         {
-            FilterByText = true,
             FilterByTextValue = "b"
         };
 
@@ -173,7 +174,6 @@ public class SqliteDatabaseQueryCreatorTests
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = fieldToSortBy,
-            FilterByText = true,
             FilterByTextValue = valueToFilterBy,
             SortResultByFieldType = fieldType
         };
@@ -201,7 +201,6 @@ public class SqliteDatabaseQueryCreatorTests
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = fieldToSortBy,
-            FilterByDouble = true,
             FilterByDoubleValue = valueToFilterBy,
             SortResultByFieldType = fieldType
         };
@@ -229,7 +228,6 @@ public class SqliteDatabaseQueryCreatorTests
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = fieldToSortBy,
-            FilterByDouble = true,
             FilterByDoubleValue = valueToFilterBy,
             FilterByDoubleValue2 = valueToFilterBy2,
             SortResultByFieldType = fieldType
@@ -248,6 +246,40 @@ public class SqliteDatabaseQueryCreatorTests
         var parameter2 = query.Parameters.Last();
         parameter2.Key.Should().Be("@FilterByDoubleValue2");
         parameter2.Value.Should().Be(valueToFilterBy2);
+    }
+
+    [Theory]
+    [InlineData(nameof(Book.PublishDate), nameof(BookSqlite.Publish_date), ReadBooksRequest.DatePrecision.Day, 2015, 8, 15)]
+    [InlineData(nameof(Book.PublishDate), nameof(BookSqlite.Publish_date), ReadBooksRequest.DatePrecision.Month, 2015, 8, 15)]
+    [InlineData(nameof(Book.PublishDate), nameof(BookSqlite.Publish_date), ReadBooksRequest.DatePrecision.Year, 2015, 8, 15)]
+    public void Read_ReturnsSelectAllBooksQuery_Where_FilterByDateValue(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.DatePrecision datePrecision, int year, int month, int day)
+    {
+        // Arrange
+        var datePrecisionLength = datePrecision switch
+        {
+            ReadBooksRequest.DatePrecision.None => 0,
+            ReadBooksRequest.DatePrecision.Year => 4,
+            ReadBooksRequest.DatePrecision.Month => 7,
+            ReadBooksRequest.DatePrecision.Day => 10
+        };
+
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResultByField = fieldToSortBy,
+            SortResultByFieldType = ReadBooksRequest.FieldType.Date,
+            FilterByDateValue = new DateOnly(year, month, day),
+            FilterByDatePrecision = datePrecision
+        };
+
+        var dateOnlyString = readBooksRequest.FilterByDateValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+        var expectedQuery = $"SELECT * FROM books WHERE substring({sqliteFieldToSortBy.ToLower()},1,{datePrecisionLength}) = substring('{dateOnlyString}',1,{datePrecisionLength}) ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+
+        // Act
+        var query = _queryCreator.Read(readBooksRequest);
+
+        // Assert
+        query.QueryString.ToString().Should().Be(expectedQuery);
     }
 
     // --------------------- UPDATE ------------------------------------
