@@ -11,8 +11,7 @@ Det första steget var att gå igenom uppgiften.
 - Skriva ner idéer löpande och börja skapa en informell backlog
 - Hitta eventuella dolda problem med kraven
 - Försöka förstå vilka krav som kan komma att ändras ofta och vilka som kanske kommer ändras mindre ofta
-- Hitta inspiration och läs på 5 minuter online om böcker (Google Books API om deras objekt och data samt kolla på goodreads.com hur deras böcker presenteras).
-
+- Hitta inspiration och läsa på några minuter online om böcker (Google Books API om deras objekt och data samt kolla på goodreads.com hur deras böcker presenteras).
 
 ### Book-objektet  
 
@@ -161,7 +160,22 @@ När mappningen mellan Book och BookSqlite var klar fungerade allting bra förut
 - Arbetade lika som med BM8
 - Städade upp i controllern genom att lägga till några extension methods
 
-## BM4 - Add exception handling to controller
+## BM13 - Create new books through the API
+
+- Skapade service-test som först skapade en bok och sen försökte hämta den via ID som kom tillbaka
+- Skapare INSERT SQL query i DB Browser manuellt
+- Skapade unit test för att skapa Create/Insert query utifrån Book-objektet
+- Skapade SqliteDatabaseIdGenerator och lade till det i DatabaseBookRepository innan det skickas till database access-klassen.
+
+ID generering kan ske olika för olika typer av databaser, därför valde jag att göra det på bland de andra Sqlite-klasserna.
+
+- Skapade unit tester för id generatorn
+- Skapade SQL queryn manuellt för att få ut objektet med största nuvarande ID och sen unit tester för query creator
+- Skapade ett nytt GetValueRequest-objekt för att hålla values separat från böckerna. Implementerade bara minsta möjliga för att få ut max ID
+
+- Skapade Middleware för att ta emot requests som blev deserialized korrekt från JSON till Book-objekt
+- Lade till DELETE query för att köra testerna. Kämpade med lite för mycket saker på en gång, men det var kul.
+
 
 
 
@@ -169,4 +183,5 @@ När mappningen mellan Book och BookSqlite var klar fungerade allting bra förut
 
 ### Fel i test instruktionerna
 
+- Instruktionerna verkar blanda ihop POST(som används för att skapa) och PUT(som används för att uppdatera)
 - I use case för publish_date så skrivs det felaktigt som "published_date".
