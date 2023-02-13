@@ -14,11 +14,11 @@ internal static class Extensions
     public static Book ToBook(this BookSqlite value)
         => new()
         {
-            Id= value.Id,
-            Author= value.Author,
-            Description= value.Description,
-            Genre= value.Genre,
-            Price= value.Price,
+            Id = value.Id,
+            Author = value.Author,
+            Description = value.Description,
+            Genre = value.Genre,
+            Price = value.Price,
             PublishDate = DateOnly.ParseExact(value.Publish_date, DateFormat, CultureInfo.InvariantCulture),
             Title = value.Title
         };
@@ -36,8 +36,7 @@ internal static class Extensions
         };
 
     public static string ToBookSqliteName(this string bookName)
-    {
-        return bookName switch
+        => bookName switch
         {
             nameof(Book.Id) => nameof(BookSqlite.Id).ToLower(),
             nameof(Book.Author) => nameof(BookSqlite.Author).ToLower(),
@@ -47,6 +46,15 @@ internal static class Extensions
             nameof(Book.PublishDate) => nameof(BookSqlite.Publish_date).ToLower(),
             nameof(Book.Title) => nameof(BookSqlite.Title).ToLower(),
             _ => throw new NotImplementedException($"Property name conversion not implemented for {bookName}")
-        } ;
-    }
+        };
+
+    public static int ToSubstringLength(this ReadBooksRequest.DatePrecision datePrecision)
+        => datePrecision switch
+        {
+            ReadBooksRequest.DatePrecision.None => 0,
+            ReadBooksRequest.DatePrecision.Year => 4,
+            ReadBooksRequest.DatePrecision.Month => 7,
+            ReadBooksRequest.DatePrecision.Day => 10,
+            _ => throw new NotImplementedException($"Substring length not found for DatePrecision {datePrecision}.")
+        };
 }

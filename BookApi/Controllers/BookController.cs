@@ -9,7 +9,7 @@ namespace BookApi.Controllers;
 [Route("api/books")]
 public class BookController : Controller
 {
-    private IBookService _bookService;
+    private readonly IBookService _bookService;
 
     public BookController(IBookService bookService)
     {
@@ -40,7 +40,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Id),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
@@ -58,7 +57,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Author),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
@@ -76,7 +74,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Title),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
@@ -94,7 +91,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Genre),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
@@ -112,31 +108,25 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Price),
-            FilterByDouble = ShouldFilterByDouble(filterValue),
             FilterByDoubleValue = filterValue,
             SortResultByFieldType = ReadBooksRequest.FieldType.Numeric,
-            SortResult = !ShouldFilterByDouble(filterValue)
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
     }
 
-    private static bool ShouldFilterByDouble(double filterValue)
-        => filterValue > double.MinValue;
-
     /// <summary>
     /// Returns all books between two double values as a JSON collection sorted by price.
-    /// Example: price/5.95&10
+    /// Example: "price/5.95&10"
     /// </summary>
-    /// <param name="lowerPrice"></param>
-    /// <param name="higherPrice"></param>
+    /// <param name="lowerPrice">Lower value when searching a range of prices.</param>
+    /// <param name="higherPrice">Higher value when searching a range of prices.</param>
     [HttpGet("price/{lowerPrice}&{higherPrice}")]
     public JsonResult GetAllBooks_ByPrice(double lowerPrice, double higherPrice)
     {
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Price),
-            FilterByDouble = true,
             FilterByDoubleValue = lowerPrice < higherPrice ? lowerPrice : higherPrice,
             FilterByDoubleValue2 = lowerPrice < higherPrice ? higherPrice : lowerPrice,
             SortResultByFieldType = ReadBooksRequest.FieldType.Numeric
@@ -147,14 +137,23 @@ public class BookController : Controller
 
     /// <summary>
     /// Returns all books as a JSON collection sorted by published date.
+    /// Use parameters to filter specific dates.
+    /// Example: "published/2012", "published/2012/8" or "published/2012/8/15"
     /// </summary>
-    [HttpGet("published")]
-    public JsonResult GetAllBooks_ByPublishDate()
+    /// <param name="year">If provided only shows books from this year.</param>
+    /// <param name="month">If provided with year only shows books from this month.</param>
+    /// <param name="day">If provided with year and month only shows books from this date.</param>
+    [HttpGet("published/{year:int?}/{month:int?}/{day:int?}")]
+    public JsonResult GetAllBooks_ByPublishDate(int year = int.MinValue, int month = int.MinValue, int day = int.MinValue)
     {
+        var filterByDatePrecision = ReadBooksRequest.FindDatePrecision(year, month, day);
+
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.PublishDate),
-            SortResultByFieldType = ReadBooksRequest.FieldType.Text
+            SortResultByFieldType = ReadBooksRequest.FieldType.Date,
+            FilterByDateValue = filterByDatePrecision.GetDateOnly(year, month, day),
+            FilterByDatePrecision = filterByDatePrecision
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
@@ -170,16 +169,10 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Description),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
-    }
-
-    private static bool ShouldFilterByText(string filterValue)
-    {
-        return !string.IsNullOrWhiteSpace(filterValue);
     }
 }

@@ -148,7 +148,6 @@ När mappningen mellan Book och BookSqlite var klar fungerade allting bra förut
 - Skapade unit tester
 - När unit testerna var gröna och service testerna gröna skapade jag resten av controller endpointsen för text fält.
 
-
 ## BM8 - Get books filtered by price
 
 - Skapade service-test för use case med filtrering från price/pris
@@ -156,10 +155,13 @@ När mappningen mellan Book och BookSqlite var klar fungerade allting bra förut
 - Gick in i DB Browser för att skapa SQL Queryn, skapade sen unit tester mot query creator
 - Implementerade logiken i query creator
 
-## BM9 - Get books filtered by date
+## BM11 - Get books filtered by date
 
+- Skapade service-test för use case med filtrering från date/datum
+- Arbetade lika som med BM8
+- Städade upp i controllern genom att lägga till några extension methods
 
-## BM10 - Add exception handling to controller
+## BM4 - Add exception handling to controller
 
 
 

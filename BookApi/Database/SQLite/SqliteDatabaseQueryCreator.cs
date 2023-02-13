@@ -1,6 +1,6 @@
 ﻿using BookApi.Configuration;
 using BookApi.Data;
-using Dapper;
+using System.Globalization;
 
 namespace BookApi.Database.SQLite;
 
@@ -109,13 +109,20 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
             sqlQuery.QueryString.Append($" WHERE {sortResultByField} = {filterByDoubleValuePlaceholder}");
     }
 
+    // Possible values coming from DateOnly are very limited so no need for parameters
     private static void FilterByDate(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
+        if (readBooksRequest.FilterByDatePrecision == ReadBooksRequest.DatePrecision.None)
+            return;
+
         var fieldToSortBy = readBooksRequest.SortResultByField.ToBookSqliteName();
 
-        throw new NotImplementedException();
-    }
+        var datePrecisionLength = readBooksRequest.FilterByDatePrecision.ToSubstringLength();
 
+        var dateOnlyString = readBooksRequest.FilterByDateValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+        sqlQuery.QueryString.Append($" WHERE substring({fieldToSortBy.ToLower()},1,{datePrecisionLength}) = substring('{dateOnlyString}',1,{datePrecisionLength})");
+    }
 
     private void AddSortingToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
