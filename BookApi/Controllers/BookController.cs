@@ -9,7 +9,7 @@ namespace BookApi.Controllers;
 [Route("api/books")]
 public class BookController : Controller
 {
-    private IBookService _bookService;
+    private readonly IBookService _bookService;
 
     public BookController(IBookService bookService)
     {
@@ -40,7 +40,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Id),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
@@ -58,7 +57,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Author),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
@@ -76,7 +74,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Title),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
@@ -94,7 +91,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Genre),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
@@ -112,21 +108,16 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Price),
-            FilterByDouble = ShouldFilterByDouble(filterValue),
             FilterByDoubleValue = filterValue,
             SortResultByFieldType = ReadBooksRequest.FieldType.Numeric,
-            SortResult = !ShouldFilterByDouble(filterValue)
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
     }
 
-    private static bool ShouldFilterByDouble(double filterValue)
-        => filterValue > double.MinValue;
-
     /// <summary>
     /// Returns all books between two double values as a JSON collection sorted by price.
-    /// Example: price/5.95&10
+    /// Example: "price/5.95&10"
     /// </summary>
     /// <param name="lowerPrice">Lower value when searching a range of prices.</param>
     /// <param name="higherPrice">Higher value when searching a range of prices.</param>
@@ -136,7 +127,6 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Price),
-            FilterByDouble = true,
             FilterByDoubleValue = lowerPrice < higherPrice ? lowerPrice : higherPrice,
             FilterByDoubleValue2 = lowerPrice < higherPrice ? higherPrice : lowerPrice,
             SortResultByFieldType = ReadBooksRequest.FieldType.Numeric
@@ -179,16 +169,10 @@ public class BookController : Controller
         var readBooksRequest = new ReadBooksRequest
         {
             SortResultByField = nameof(Book.Description),
-            FilterByText = ShouldFilterByText(filterValue),
             SortResultByFieldType = ReadBooksRequest.FieldType.Text,
             FilterByTextValue = filterValue
         };
 
         return Json(_bookService.GetBooks(readBooksRequest));
-    }
-
-    private static bool ShouldFilterByText(string filterValue)
-    {
-        return !string.IsNullOrWhiteSpace(filterValue);
     }
 }
