@@ -17,6 +17,66 @@ public class BookController : Controller
     }
 
     /// <summary>
+    /// Creates a book from JSON in request body with a generated ID.
+    /// Example payload: 
+    /// { 
+    ///     "author": "TestLastname, TestFirstName", 
+    ///     "title": "Test Book", 
+    ///     "genre": "Test genre", 
+    ///     "price": "38.95",
+    ///     "publish_date": "2008-06-01",
+    ///     "description": "Test description" 
+    /// }
+    /// </summary>
+    /// <returns>Returns created book</returns>
+    [HttpPost]
+    public JsonResult CreateBook([FromServices] IWebHostEnvironment env)
+    {
+        var book = (Book)HttpContext.Items["book"];
+
+        if (book is null)
+            throw new Exception("Failed to convert payload to Book");
+
+        return Json(_bookService.CreateBook(book));
+    }
+
+    /// <summary>
+    /// Updates a book from JSON in request body with a generated ID.
+    /// Example payload: 
+    /// { 
+    ///     "author": "TestLastname, TestFirstName", 
+    ///     "title": "Test Book", 
+    ///     "genre": "Test genre", 
+    ///     "price": "38.95",
+    ///     "publish_date": "2008-06-01",
+    ///     "description": "Test description" 
+    /// }
+    /// </summary>
+    /// <returns>Returns updated book</returns>
+    [HttpPut("{id}")]
+    public JsonResult UpdateBook(string id, [FromServices] IWebHostEnvironment env)
+    {
+        var book = (Book)HttpContext.Items["book"];
+
+        if (book is null)
+            throw new Exception("Failed to convert payload to Book");
+
+        return Json(_bookService.UpdateBook(book, id));
+    }
+
+    /// <summary>
+    /// Deletes a book by ID.
+    /// </summary>
+    /// <returns>Returns null object if successful.</returns>
+    [HttpDelete("{id}")]
+    public HttpResponseMessage DeleteBook(string id)
+    {
+        _bookService.DeleteBook(id);
+
+        return new HttpResponseMessage(System.Net.HttpStatusCode.NoContent);
+    }
+
+    /// <summary>
     /// Returns all books as an unsorted JSON collection.
     /// </summary>
     [HttpGet]
@@ -27,7 +87,7 @@ public class BookController : Controller
             SortResult = false
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 
     /// <summary>
@@ -44,7 +104,7 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 
     /// <summary>
@@ -61,7 +121,7 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 
     /// <summary>
@@ -78,7 +138,7 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 
     /// <summary>
@@ -95,7 +155,7 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 
     /// <summary>
@@ -112,7 +172,7 @@ public class BookController : Controller
             SortResultByFieldType = ReadBooksRequest.FieldType.Numeric,
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 
     /// <summary>
@@ -132,7 +192,7 @@ public class BookController : Controller
             SortResultByFieldType = ReadBooksRequest.FieldType.Numeric
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 
     /// <summary>
@@ -156,7 +216,7 @@ public class BookController : Controller
             FilterByDatePrecision = filterByDatePrecision
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 
     /// <summary>
@@ -173,6 +233,6 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.GetBooks(readBooksRequest));
+        return Json(_bookService.ReadBooks(readBooksRequest));
     }
 }
