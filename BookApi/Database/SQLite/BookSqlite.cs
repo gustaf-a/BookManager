@@ -12,7 +12,7 @@ public class BookSqlite
 
     public string Genre { get; set; }
 
-    public double Price { get; set; }
+    public double Price { get; set; } = double.MinValue;
 
     public string Publish_date { get; set; }
     
