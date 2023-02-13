@@ -5,11 +5,14 @@ using Microsoft.Data.Sqlite;
 
 namespace BookApi.Database.SQLite;
 
+/// <summary>
+/// SQLite database access class using Dapper with parameters for protection against SQL injection
+/// </summary>
 public class SqliteDatabaseAccess : IDatabaseAccess
 {
     private readonly string _connectionString;
 
-    private IDatabaseQueryCreator _queryCreator;
+    private readonly IDatabaseQueryCreator _queryCreator;
 
     public SqliteDatabaseAccess(IConfiguration configuration, IDatabaseQueryCreator queryCreator)
     {
@@ -26,19 +29,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         _queryCreator = queryCreator;
     }
 
-    // --------------------- CREATE ------------------------------------
-
-    public Book CreateBook(Book book)
-    {
-        var sqlQuery = _queryCreator.Create(book);
-
-        var affectedRows = ExecuteQuery(sqlQuery);
-
-        if (affectedRows == 0)
-            throw new Exception("Database failed to create new book.");
-
-        return GetBookById(book);
-    }
+    // --------------------- COMMON ------------------------------------
 
     private Book GetBookById(Book book)
     {
@@ -57,6 +48,20 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         return affectedRows;
     }
 
+    // --------------------- CREATE ------------------------------------
+
+    public Book CreateBook(Book book)
+    {
+        var sqlQuery = _queryCreator.Create(book);
+
+        var affectedRows = ExecuteQuery(sqlQuery);
+
+        if (affectedRows == 0)
+            throw new Exception("Database failed to create new book.");
+
+        return GetBookById(book);
+    }
+
     // --------------------- READ ------------------------------------
 
     public IEnumerable<Book> ReadBooks(ReadBooksRequest readBooksRequest)
@@ -68,7 +73,6 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         return result;
     }
 
-    //using Dapper for queries helps preventing SQL Injection
     private IEnumerable<Book> ExecuteReaderQuery(SqlQuery sqlQuery)
     {
         using var connection = new SqliteConnection(_connectionString);
