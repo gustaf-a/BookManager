@@ -207,7 +207,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         var sqlQuery = new SqlQuery();
 
-        sqlQuery.QueryString.Append($"DELETE FROM books WHERE id={idPlaceHolder};");
+        sqlQuery.QueryString.Append($"DELETE FROM {_booksTableName} WHERE id={idPlaceHolder};");
 
         sqlQuery.Parameters.Add(idPlaceHolder, bookId);
 
