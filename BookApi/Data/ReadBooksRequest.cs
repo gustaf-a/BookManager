@@ -35,4 +35,18 @@ public class ReadBooksRequest
     public bool FilterByDate { get; set; } = false;
     public DatePrecision FilterByDatePrecision { get; set; } = DatePrecision.None;
     public DateOnly FilterByDateValue { get; set; } = DateOnly.MinValue;
+
+    public static ReadBooksRequest.DatePrecision FindDatePrecision(int year, int month, int day)
+    {
+        if (day > int.MinValue)
+            return ReadBooksRequest.DatePrecision.Day;
+
+        if (month > int.MinValue)
+            return ReadBooksRequest.DatePrecision.Month;
+
+        if (year > int.MinValue)
+            return ReadBooksRequest.DatePrecision.Year;
+
+        return ReadBooksRequest.DatePrecision.None;
+    }
 }
