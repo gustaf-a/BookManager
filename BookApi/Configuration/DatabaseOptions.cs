@@ -4,7 +4,7 @@ public class DatabaseOptions
 {
     public const string Database = "Database";
 
-    public string SqliteConnectionStringName { get; set; } = string.Empty;
+    public string SqliteConnectionStringName { get; set; } = "Default";
     public string BooksTableName { get; set; } = string.Empty;
     public int IdNumberMaxLength { get; set; } = 10;
     public string IdCharacterPrefix { get; set; } = "B";
