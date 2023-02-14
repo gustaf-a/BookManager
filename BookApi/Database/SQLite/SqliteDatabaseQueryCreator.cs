@@ -35,6 +35,13 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
     // --------------------- CREATE ------------------------------------
 
+    /// <summary>
+    /// Creates SQL Query using parameters to create new object in database.
+    /// 
+    /// Example sql query:
+    /// INSERT INTO books(id,author,title,genre,price,publish_date,description)
+    /// VALUES (@Id,@Author,@Title,@Genre,@Price,@Publish_date,@Description);
+    /// </summary>
     public SqlQuery Create(Book book)
     {
         if (book == null)
@@ -62,6 +69,12 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
     // --------------------- READ ------------------------------------
 
+    /// <summary>
+    /// Creates SQL Query using parameters to read objects from database.
+    /// 
+    /// Example sql query:
+    /// SELECT * FROM books ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC);
+    /// </summary>
     public SqlQuery Read(ReadBooksRequest readBooksRequest)
     {
         if (readBooksRequest == null)
@@ -94,6 +107,12 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
         return;
     }
 
+    /// <summary>
+    /// Appends SQL query for filtering different columns by text-value to SqlQuery object.
+    /// 
+    /// Example:
+    ///  WHERE id LIKE @FilterByTextValue
+    /// </summary>
     private static void FilterByText(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
         var sortResultByField = readBooksRequest.SortResultByField.ToBookSqliteName();
@@ -102,12 +121,26 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         sqlQuery.QueryString.Append($" WHERE {sortResultByField} LIKE {filterByTextValuePlaceholder}");
 
-        sqlQuery.Parameters.Add(filterByTextValuePlaceholder, CreateStringParameter(readBooksRequest));
+        sqlQuery.Parameters.Add(filterByTextValuePlaceholder, SurroundStringWith(readBooksRequest.FilterByTextValue, "%"));
     }
 
-    private static object CreateStringParameter(ReadBooksRequest readBooksRequest)
-        => $"%{readBooksRequest.FilterByTextValue}%";
+    /// <summary>
+    /// Returns value surrounded by another value.
+    /// 
+    /// Example with surroundValue "%": "SearchTerm" -> "%SearchTerm%" 
+    /// </summary>
+    private static object SurroundStringWith(string value, string surroundWithValue)
+        => $"{surroundWithValue}{value}{surroundWithValue}";
 
+    /// <summary>
+    /// Appends SQL query for filtering different columns by double-value to SqlQuery object.
+    /// 
+    /// Example:
+    ///  WHERE price = @FilterByDoubleValue
+    /// 
+    /// Example2:
+    ///  WHERE price BETWEEN @FilterByDoubleValue AND @FilterByDoubleValue2
+    /// </summary>
     private static void FilterByDouble(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
         var sortResultByField = readBooksRequest.SortResultByField.ToBookSqliteName();
@@ -128,7 +161,12 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
             sqlQuery.QueryString.Append($" WHERE {sortResultByField} = {filterByDoubleValuePlaceholder}");
     }
 
-    // Possible values coming from DateOnly are limited so no need for parameters
+    /// <summary>
+    /// Appends SQL query for filtering different columns by date-value to SqlQuery object.
+    /// 
+    /// Example:
+    ///  WHERE substring(publish_date,1,7) = substring('2012-04-01',1,7)
+    /// </summary>
     private static void FilterByDate(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
         if (readBooksRequest.FilterByDatePrecision == ReadBooksRequest.DatePrecision.None)
@@ -140,9 +178,19 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         var dateOnlyString = readBooksRequest.FilterByDateValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
+        // Possible values coming from DateOnly are limited so no need for parameters
         sqlQuery.QueryString.Append($" WHERE substring({fieldToSortBy.ToLower()},1,{datePrecisionLength}) = substring('{dateOnlyString}',1,{datePrecisionLength})");
     }
 
+    /// <summary>
+    /// Appends SQL query for sorting by different columns.
+    /// 
+    /// Example:
+    ///  ORDER BY description ASC
+    ///  
+    /// Example2:
+    ///   ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC)
+    /// </summary>
     private void AddSortingToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
     {
         if (!readBooksRequest.SortResult)
@@ -159,6 +207,12 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
     // --------------------- UPDATE ------------------------------------
 
+    /// <summary>
+    /// Creates SQL query for updating a book. Ignores fields with default values.
+    /// 
+    /// Example:
+    ///  UPDATE books SET author = @Author, title = @Title, price = @Price, publish_date = @Publish_date WHERE id = @Id;
+    /// </summary>
     public SqlQuery Update(Book book, string bookId)
     {
         if (book is null)
@@ -193,11 +247,23 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
         return sqlQuery;
     }
 
+    /// <summary>
+    /// Creates update parameter strings for different properties and joins into one string.
+    /// 
+    /// Example:
+    /// author = @Author, title = @Title, price = @Price, publish_date = @Publish_date
+    /// </summary>
     private static List<string> CreateUpdatePropertyStrings(Dictionary<string, object> propertiesToUpdate)
         => propertiesToUpdate.Select(p => $"{p.Key.ToLower()} = {p.Key.GetPlaceHolder()}").ToList();
 
     // --------------------- DELETE ------------------------------------
 
+    /// <summary>
+    /// Creates SQL query for deleting a book from a table by id
+    /// 
+    /// Example:
+    ///  DELETE FROM books WHERE id=@Id;
+    /// </summary>
     public SqlQuery Delete(string bookId)
     {
         if (string.IsNullOrWhiteSpace(bookId))
@@ -216,6 +282,12 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
     // --------------------- GET VAlUE ------------------------------------
 
+    /// <summary>
+    /// Creates SQL query for getting values from tables.
+    /// 
+    /// Example:
+    ///  SELECT id FROM books WHERE CAST(SUBSTRING(id, 2) AS UNSIGNED) = (SELECT MAX(CAST(SUBSTRING(id, 2) AS UNSIGNED)) FROM books);
+    /// </summary>
     public SqlQuery GetValueQuery(GetValueRequest getValueRequest)
     {
         if (getValueRequest == null)
