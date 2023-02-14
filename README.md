@@ -11,6 +11,8 @@ Ett API skrivet i C# för böcker med en SQLite databas skapat med Test Driven D
 - Extension methods
 - Middleware med custom JsonConverter
 
+![Solution Flowchart](BookManager_diagram.png)
+
 ## Run guide
 
 Ingen setup ska behövas. Det enklaste är att öppna i Visual Studio och köra i debug för att komma åt Swagger.
