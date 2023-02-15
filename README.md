@@ -28,7 +28,6 @@ Se Book Manager projektet i Github Projects.
 - Logging
 - Bryt ut SQL texten från SqliteDatabaseQueryCreator till helper class
 - Implementera Builder pattern för att bygga queries i SqliteDatabaseQueryCreator
-- Gör om till async 
 
 ## Saker jag inte gjort förut
  
