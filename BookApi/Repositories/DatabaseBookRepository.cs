@@ -14,31 +14,31 @@ public class DatabaseBookRepository : IBookRepository
         _databaseIdGenerator = databaseIdGenerator;
     }
 
-    public Book CreateBook(Book book)
+    public async Task<Book> CreateBook(Book book)
     {
-        book.Id = _databaseIdGenerator.GenerateId();
+        book.Id = await _databaseIdGenerator.GenerateId();
 
-        var createdBook = _databaseAccess.CreateBook(book);
+        var createdBook = await _databaseAccess.CreateBook(book);
 
         return createdBook;
     }
 
-    public bool DeleteBook(string bookId)
+    public async Task<IEnumerable<Book>> ReadBooks(ReadBooksRequest readBooksRequest)
     {
-        return _databaseAccess.DeleteBook(bookId);
-    }
-
-    public IEnumerable<Book> ReadBooks(ReadBooksRequest readBooksRequest)
-    {
-        var books = _databaseAccess.ReadBooks(readBooksRequest);
+        var books = await _databaseAccess.ReadBooks(readBooksRequest);
 
         return books;
     }
 
-    public Book UpdateBook(Book book, string bookId)
+    public async Task<Book> UpdateBook(Book book, string bookId)
     {
-        var updatedBook = _databaseAccess.UpdateBook(book, bookId);
+        var updatedBook = await _databaseAccess.UpdateBook(book, bookId);
 
         return updatedBook;
+    }
+
+    public async Task<bool> DeleteBook(string bookId)
+    {
+        return await _databaseAccess.DeleteBook(bookId);
     }
 }

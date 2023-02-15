@@ -23,7 +23,7 @@ public class SqliteDatabaseIdGenerator : IDatabaseIdGenerator
         _prefixLength = databaseOptions.IdCharacterPrefixLength;
     }
 
-    public string GenerateId()
+    public async Task<string> GenerateId()
     {
         var getValuesRequest = new GetValueRequest
         {
@@ -32,7 +32,7 @@ public class SqliteDatabaseIdGenerator : IDatabaseIdGenerator
             GetMaxValue = true
         };
 
-        var currentMaxId = _databaseAccess.GetValue(getValuesRequest);
+        var currentMaxId = await _databaseAccess.GetValue(getValuesRequest);
 
         if (string.IsNullOrWhiteSpace(currentMaxId))
             return GetStartOfNewSequence();
