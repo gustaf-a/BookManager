@@ -1,6 +1,5 @@
 ﻿using BookApi.Database;
 using BookApi.Database.SQLite;
-using BookApi.Middleware;
 using BookApi.Repositories;
 using BookApi.Services;
 
@@ -11,6 +10,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
+
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
@@ -36,8 +36,6 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
-        app.UseMiddleware<JsonToBookMiddleware>();
 
         app.UseHttpsRedirection();
 
