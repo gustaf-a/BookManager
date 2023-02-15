@@ -24,7 +24,6 @@ Testerna kan köras via Test Explorer.
 
 Se Book Manager projektet i Github Projects.
 
-- Logging
 - Implementera Builder pattern för att bygga queries i SqliteDatabaseQueryCreator
 - Skapa smartare endpoints i controllern för Read-operationerna
 - Bryt ut databaslogik till ett class library.

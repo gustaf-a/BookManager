@@ -49,7 +49,7 @@ public class BookController : Controller
     ///     "author": "TestLastname, TestFirstName", 
     ///     "title": "Test Book", 
     ///     "genre": "Test genre", 
-    ///     "price": "38.95",
+    ///     "price": 38.95,
     ///     "publish_date": "2008-06-01",
     ///     "description": "Test description" 
     /// }
