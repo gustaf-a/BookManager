@@ -2,7 +2,6 @@
 using BookApiServiceTests.TestData;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -47,7 +46,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         };
 
         // Arrange
-        var payload = new
+        var payloadCreate = new
         {
             author = expectedBook.Author,
             title = expectedBook.Title,
@@ -56,16 +55,16 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
             publish_date = "2008-06-01", // As string directly to improve test readability
             description = expectedBook.Description
         };
+        
+        var createdBookResponse = await _client.PostAsync($"{ControllerBaseRoute}", GetJsonStringContent(payloadCreate));
 
-        // Act
-        var createdBookResponse = await _client.PostAsync($"{ControllerBaseRoute}", new StringContent(JsonSerializer.Serialize(payload)));
+        //// Assert
 
-        // Assert
         createdBookResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var content = await createdBookResponse.Content.ReadAsStringAsync();
+        var createContent = await createdBookResponse.Content.ReadAsStringAsync();
 
-        var createdBook = JsonSerializer.Deserialize<TestBook>(content);
+        var createdBook = System.Text.Json.JsonSerializer.Deserialize<TestBook>(createContent);
 
         createdBook.Should().NotBeNull()
             .And.BeEquivalentTo(expectedBook, options =>
@@ -94,7 +93,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         var deleteResponse = await _client.DeleteAsync($"{ControllerBaseRoute}/{createdBook.Id}");
 
         // Assert
-        deleteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
 
         // -------------- Attempt to get deleted book --------------
@@ -141,7 +140,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         };
 
         // Act
-        var createdBookResponse = await _client.PostAsync($"{ControllerBaseRoute}", new StringContent(JsonSerializer.Serialize(payloadCreate)));
+        var createdBookResponse = await _client.PostAsync($"{ControllerBaseRoute}", GetJsonStringContent(payloadCreate));
 
         // Assert
         createdBookResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -173,7 +172,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         };
 
         // Act
-        var partialupdateResponse = await _client.PutAsync($"{ControllerBaseRoute}/{createdBook.Id}", new StringContent(JsonSerializer.Serialize(payloadPartialUpdate)));
+        var partialupdateResponse = await _client.PutAsync($"{ControllerBaseRoute}/{createdBook.Id}", GetJsonStringContent(payloadPartialUpdate));
 
         // Assert
         partialupdateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -209,7 +208,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         };
 
         // Act
-        var updateResponse = await _client.PutAsync($"{ControllerBaseRoute}/{createdBook.Id}", new StringContent(JsonSerializer.Serialize(payloadUpdate)));
+        var updateResponse = await _client.PutAsync($"{ControllerBaseRoute}/{createdBook.Id}", GetJsonStringContent(payloadUpdate));
 
         // Assert
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -242,6 +241,9 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         var deleteResponse = await _client.DeleteAsync($"{ControllerBaseRoute}/{getByIdBook.Id}");
 
         // Assert
-        deleteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
+
+    private static HttpContent GetJsonStringContent(object payload)
+        => new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 }

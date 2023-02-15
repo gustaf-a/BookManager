@@ -23,19 +23,19 @@ public class BookController : Controller
     ///     "author": "TestLastname, TestFirstName", 
     ///     "title": "Test Book", 
     ///     "genre": "Test genre", 
-    ///     "price": "38.95",
+    ///     "price": 38.95,
     ///     "publish_date": "2008-06-01",
     ///     "description": "Test description" 
     /// }
     /// </summary>
     /// <returns>Returns created book</returns>
-    [HttpPost]
-    public JsonResult CreateBook([FromServices] IWebHostEnvironment env)
+    [HttpPost()]
+    public async Task<IActionResult> CreateBook([FromBody] BookDto bookDto)
     {
-        var book = (Book)HttpContext.Items["book"];
+        var book = bookDto.ToBook();
 
         if (book is null)
-            throw new Exception("Failed to convert payload to Book");
+            return BadRequest();
 
         return Json(_bookService.CreateBook(book));
     }
@@ -54,12 +54,12 @@ public class BookController : Controller
     /// </summary>
     /// <returns>Returns updated book</returns>
     [HttpPut("{id}")]
-    public JsonResult UpdateBook(string id, [FromServices] IWebHostEnvironment env)
+    public async Task<IActionResult> UpdateBook(string id, [FromBody] BookDto bookDto)
     {
-        var book = (Book)HttpContext.Items["book"];
+        var book = bookDto.ToBook();
 
         if (book is null)
-            throw new Exception("Failed to convert payload to Book");
+            return BadRequest();
 
         return Json(_bookService.UpdateBook(book, id));
     }
@@ -69,18 +69,21 @@ public class BookController : Controller
     /// </summary>
     /// <returns>Returns null object if successful.</returns>
     [HttpDelete("{id}")]
-    public HttpResponseMessage DeleteBook(string id)
+    public async Task<IActionResult> DeleteBook(string id)
     {
-        _bookService.DeleteBook(id);
+        var result = _bookService.DeleteBook(id);
 
-        return new HttpResponseMessage(System.Net.HttpStatusCode.NoContent);
+        if (!result)
+            return new StatusCodeResult(500);
+
+        return NoContent();
     }
 
     /// <summary>
     /// Returns all books as an unsorted JSON collection.
     /// </summary>
     [HttpGet]
-    public JsonResult GetAllBooks()
+    public async Task<IActionResult> GetAllBooks()
     {
         var readBooksRequest = new ReadBooksRequest
         {
@@ -95,7 +98,7 @@ public class BookController : Controller
     /// </summary>
     /// <param name="filterValue">Optional text value that ID of the books must contain.</param>
     [HttpGet("id/{filterValue?}")]
-    public JsonResult GetAllBooks_ById(string filterValue = "")
+    public async Task<IActionResult> GetAllBooks_ById(string filterValue = "")
     {
         var readBooksRequest = new ReadBooksRequest
         {
@@ -112,7 +115,7 @@ public class BookController : Controller
     /// </summary>
     /// <param name="filterValue">Optional text value that author of the books must contain.</param>
     [HttpGet("author/{filterValue?}")]
-    public JsonResult GetAllBooks_ByAuthor(string filterValue = "")
+    public async Task<IActionResult> GetAllBooks_ByAuthor(string filterValue = "")
     {
         var readBooksRequest = new ReadBooksRequest
         {
@@ -129,7 +132,7 @@ public class BookController : Controller
     /// </summary>
     /// <param name="filterValue">Optional text value that title of the books must contain.</param>
     [HttpGet("title/{filterValue?}")]
-    public JsonResult GetAllBooks_ByTitle(string filterValue = "")
+    public async Task<IActionResult> GetAllBooks_ByTitle(string filterValue = "")
     {
         var readBooksRequest = new ReadBooksRequest
         {
@@ -146,7 +149,7 @@ public class BookController : Controller
     /// </summary>
     /// <param name="filterValue">Optional text value that genre of the books must contain.</param>
     [HttpGet("genre/{filterValue?}")]
-    public JsonResult GetAllBooks_ByGenre(string filterValue = "")
+    public async Task<IActionResult> GetAllBooks_ByGenre(string filterValue = "")
     {
         var readBooksRequest = new ReadBooksRequest
         {
@@ -163,7 +166,7 @@ public class BookController : Controller
     /// </summary>
     /// <param name="filterValue">Optional text value that genre of the books must contain.</param>
     [HttpGet("price/{filterValue?}")]
-    public JsonResult GetAllBooks_ByPrice(double filterValue = double.MinValue)
+    public async Task<IActionResult> GetAllBooks_ByPrice(double filterValue = double.MinValue)
     {
         var readBooksRequest = new ReadBooksRequest
         {
@@ -182,7 +185,7 @@ public class BookController : Controller
     /// <param name="lowerPrice">Lower value when searching a range of prices.</param>
     /// <param name="higherPrice">Higher value when searching a range of prices.</param>
     [HttpGet("price/{lowerPrice}&{higherPrice}")]
-    public JsonResult GetAllBooks_ByPrice(double lowerPrice, double higherPrice)
+    public async Task<IActionResult> GetAllBooks_ByPrice(double lowerPrice, double higherPrice)
     {
         var readBooksRequest = new ReadBooksRequest
         {
@@ -204,7 +207,7 @@ public class BookController : Controller
     /// <param name="month">If provided with year only shows books from this month.</param>
     /// <param name="day">If provided with year and month only shows books from this date.</param>
     [HttpGet("published/{year:int?}/{month:int?}/{day:int?}")]
-    public JsonResult GetAllBooks_ByPublishDate(int year = int.MinValue, int month = int.MinValue, int day = int.MinValue)
+    public async Task<IActionResult> GetAllBooks_ByPublishDate(int year = int.MinValue, int month = int.MinValue, int day = int.MinValue)
     {
         var filterByDatePrecision = ReadBooksRequest.FindDatePrecision(year, month, day);
 
@@ -224,7 +227,7 @@ public class BookController : Controller
     /// </summary>
     /// <param name="filterValue">Optional text value that description of the books must contain.</param>
     [HttpGet("description/{filterValue?}")]
-    public JsonResult GetAllBooks_ByDescription(string filterValue = "")
+    public async Task<IActionResult> GetAllBooks_ByDescription(string filterValue = "")
     {
         var readBooksRequest = new ReadBooksRequest
         {

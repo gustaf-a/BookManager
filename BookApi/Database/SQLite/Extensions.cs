@@ -63,7 +63,7 @@ internal static class Extensions
 
     public static void AddIfNotDefault(this Dictionary<string, object> dictionary, string stringValue, string key)
     {
-        if (stringValue is not null)
+        if (!string.IsNullOrEmpty(stringValue))
             dictionary.Add(key, stringValue);
     }
 

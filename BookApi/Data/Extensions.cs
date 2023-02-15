@@ -1,4 +1,6 @@
-﻿namespace BookApi.Data;
+﻿using System.Globalization;
+
+namespace BookApi.Data;
 
 internal static class Extensions
 {
@@ -14,5 +16,29 @@ internal static class Extensions
             return new DateOnly(year, 1, 1);
 
         return DateOnly.MinValue;
+    }
+
+    public static Book ToBook(this BookDto bookDto)
+    {
+        if (bookDto is null)
+            return null;
+
+        try
+        {
+            return new Book
+            {
+                Id = bookDto.Id,
+                Author = bookDto.Author,
+                Description = bookDto.Description,
+                Genre = bookDto.Genre,
+                Price = bookDto.Price,
+                PublishDate = string.IsNullOrWhiteSpace(bookDto.Publish_date) ? DateOnly.MinValue : DateOnly.ParseExact(bookDto.Publish_date, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+                Title = bookDto.Title
+            };
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 }
