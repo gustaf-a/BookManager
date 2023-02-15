@@ -1,5 +1,6 @@
 ﻿using BookApi.Data;
 using Microsoft.AspNetCore.Diagnostics;
+using Serilog;
 using System.Net;
 
 namespace BookApi;
@@ -29,7 +30,7 @@ public static class ServiceExtensions
                 var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                 if (contextFeature != null)
                 {
-                    //TODO Log message
+                    Log.Error(contextFeature.Error, $"Exception thrown by request sent to endpoint: {contextFeature.Endpoint}.");
 
                     await context.Response.WriteAsync(new ErrorDetails
                     {
