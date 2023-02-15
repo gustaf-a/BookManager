@@ -38,6 +38,9 @@ public class Startup
             app.UseSwaggerUI();
         }
 
+        //Adds global exception handling
+        app.ConfigureExceptionHandler();
+
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
