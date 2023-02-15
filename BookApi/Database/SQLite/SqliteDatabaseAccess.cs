@@ -31,9 +31,9 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
     // --------------------- COMMON ------------------------------------
 
-    private Book GetBook(string bookId)
+    private async Task<Book> GetBook(string bookId)
     {
-        var booksResult = ReadBooks(new ReadBooksRequest
+        var booksResult = await ReadBooks(new ReadBooksRequest
         {
             FilterByTextValue = bookId
         });
@@ -44,103 +44,103 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         return booksResult.First();
     }
 
-    private int ExecuteQuery(SqlQuery sqlQuery)
+    private async Task<int> ExecuteQueryAsync(SqlQuery sqlQuery)
     {
         using var connection = new SqliteConnection(_connectionString);
 
-        var affectedRows = connection.Execute(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
+        var affectedRows = await connection.ExecuteAsync(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
 
         return affectedRows;
     }
 
     // --------------------- CREATE ------------------------------------
 
-    public Book CreateBook(Book book)
+    public async Task<Book> CreateBook(Book book)
     {
         var sqlQuery = _queryCreator.Create(book);
 
-        var affectedRows = ExecuteQuery(sqlQuery);
+        var affectedRows = await ExecuteQueryAsync(sqlQuery);
 
         if (affectedRows == 0)
             throw new Exception("Database failed to create new book.");
 
-        return GetBook(book.Id);
+        return await GetBook(book.Id);
     }
 
     // --------------------- READ ------------------------------------
 
-    public IEnumerable<Book> ReadBooks(ReadBooksRequest readBooksRequest)
+    public async Task<IEnumerable<Book>> ReadBooks(ReadBooksRequest readBooksRequest)
     {
         var query = _queryCreator.Read(readBooksRequest);
 
-        var result = ExecuteReaderQuery(query);
+        var result = await ExecuteReaderQuery(query);
 
         return result;
     }
 
-    private IEnumerable<Book> ExecuteReaderQuery(SqlQuery sqlQuery)
+    private async Task<IEnumerable<Book>> ExecuteReaderQuery(SqlQuery sqlQuery)
     {
         using var connection = new SqliteConnection(_connectionString);
 
-        var result = connection.Query<BookSqlite>(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
+        var result = await connection.QueryAsync<BookSqlite>(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
 
         return result.ToBooks();
     }
 
     // --------------------- UPDATE ------------------------------------
 
-    public Book UpdateBook(Book book, string bookId)
+    public async Task<Book> UpdateBook(Book book, string bookId)
     {
         var sqlQuery = _queryCreator.Update(book, bookId);
 
-        var affectedRows = ExecuteQuery(sqlQuery);
+        var affectedRows = await ExecuteQueryAsync(sqlQuery);
 
         if (affectedRows == 0)
             throw new Exception($"Database failed to update book with ID {bookId}.");
 
-        return GetBook(bookId);
+        return await GetBook(bookId);
     }
 
     // --------------------- DELETE ------------------------------------
 
-    public bool DeleteBook(string bookId)
+    public async Task<bool> DeleteBook(string bookId)
     {
         var sqlQuery = _queryCreator.Delete(bookId);
 
-        var affectedRows = ExecuteQuery(sqlQuery);
+        var affectedRows = await ExecuteQueryAsync(sqlQuery);
 
         //If book doesn't exist, consider delete success.
-        if (affectedRows == 0 && CheckIfBookExists(bookId))
+        if (affectedRows == 0 && await CheckIfBookExists(bookId))
             throw new Exception($"Database failed to delete book with ID {bookId}");
 
         return true;
     }
 
-    private bool CheckIfBookExists(string bookId)
+    private async Task<bool> CheckIfBookExists(string bookId)
     {
         var readBooksRequest = new ReadBooksRequest
         {
             FilterByTextValue = bookId
         };
 
-        var result = ReadBooks(readBooksRequest);
+        var result = await ReadBooks(readBooksRequest);
 
         return result.Any();
     }
 
     // --------------------- GET VALUE ------------------------------------
 
-    public string GetValue(GetValueRequest getValueRequest)
+    public async Task<string> GetValue(GetValueRequest getValueRequest)
     {
         var sqlQuery = _queryCreator.GetValueQuery(getValueRequest);
 
-        return ExecuteScalarQuery<string>(sqlQuery);
+        return await ExecuteScalarQuery<string>(sqlQuery);
     }
 
-    private T ExecuteScalarQuery<T>(SqlQuery sqlQuery)
+    private async Task<T> ExecuteScalarQuery<T>(SqlQuery sqlQuery)
     {
         using var connection = new SqliteConnection(_connectionString);
 
-        return connection.ExecuteScalar<T>(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
+        return await connection.ExecuteScalarAsync<T>(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
     }
 }

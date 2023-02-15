@@ -37,7 +37,9 @@ public class BookController : Controller
         if (book is null)
             return BadRequest();
 
-        return Json(_bookService.CreateBook(book));
+        var result = await _bookService.CreateBook(book);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -61,7 +63,9 @@ public class BookController : Controller
         if (book is null)
             return BadRequest();
 
-        return Json(_bookService.UpdateBook(book, id));
+        var result = await _bookService.UpdateBook(book, id);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -71,7 +75,7 @@ public class BookController : Controller
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBook(string id)
     {
-        var result = _bookService.DeleteBook(id);
+        var result = await _bookService.DeleteBook(id);
 
         if (!result)
             return new StatusCodeResult(500);
@@ -90,7 +94,9 @@ public class BookController : Controller
             SortResult = false
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -107,7 +113,9 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -124,7 +132,9 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -141,7 +151,9 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -158,7 +170,9 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -175,7 +189,9 @@ public class BookController : Controller
             SortResultByFieldType = ReadBooksRequest.FieldType.Numeric,
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -195,7 +211,9 @@ public class BookController : Controller
             SortResultByFieldType = ReadBooksRequest.FieldType.Numeric
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -219,7 +237,9 @@ public class BookController : Controller
             FilterByDatePrecision = filterByDatePrecision
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 
     /// <summary>
@@ -236,6 +256,8 @@ public class BookController : Controller
             FilterByTextValue = filterValue
         };
 
-        return Json(_bookService.ReadBooks(readBooksRequest));
+        var result = await _bookService.ReadBooks(readBooksRequest);
+
+        return Json(result);
     }
 }

@@ -12,24 +12,24 @@ public class BookService : IBookService
         _bookRepository = bookRepository;
     }
 
-    public Book CreateBook(Book book)
+    public async Task<Book> CreateBook(Book book)
     {
-        return _bookRepository.CreateBook(book);
+        return await _bookRepository.CreateBook(book);
     }
 
-    public IEnumerable<Book> ReadBooks(ReadBooksRequest readBooksRequest)
+    public async Task<IEnumerable<Book>> ReadBooks(ReadBooksRequest readBooksRequest)
     {
-        return _bookRepository.ReadBooks(readBooksRequest);
+        return await _bookRepository.ReadBooks(readBooksRequest);
     }
 
-    public Book UpdateBook(Book book, string bookId)
+    public async Task<Book> UpdateBook(Book book, string bookId)
     {
-        return _bookRepository.UpdateBook(book, bookId);
+        return await _bookRepository.UpdateBook(book, bookId);
     }
 
-    public bool DeleteBook(string bookId)
+    public async Task<bool> DeleteBook(string bookId)
     {
-        return _bookRepository.DeleteBook(bookId);
+        return await _bookRepository.DeleteBook(bookId);
     }
 
 }
