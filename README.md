@@ -9,14 +9,14 @@ Ett API skrivet i C# för böcker med en SQLite databas skapat med Test Driven D
 - Full beskrivning av processen (se nedan)
 - Repository pattern, Options pattern
 - Extension methods
-- Middleware med custom JsonConverter
+- Global exception handling
 
 ![Solution Flowchart](BookManager_diagram.png)
 
 ## Run guide
 
-Ingen setup ska behövas. Det enklaste är att öppna i Visual Studio och köra i debug för att komma åt Swagger.
-Obs: Create går inte att testa via Swagger
+Ingen setup ska behövas. 
+Det enklaste är att öppna i Visual Studio och köra i debug för att komma åt Swagger.
 
 Testerna kan köras via Test Explorer.
 
@@ -24,10 +24,10 @@ Testerna kan köras via Test Explorer.
 
 Se Book Manager projektet i Github Projects.
 
-- Global exception handling för controllern
 - Logging
-- Bryt ut SQL texten från SqliteDatabaseQueryCreator till helper class
 - Implementera Builder pattern för att bygga queries i SqliteDatabaseQueryCreator
+- Skapa smartare endpoints i controllern för Read-operationerna
+- Bryt ut databaslogik till ett class library.
 
 ## Saker jag inte gjort förut
  
@@ -35,7 +35,8 @@ Se Book Manager projektet i Github Projects.
 - Använt Fluent Assertions för testerna
 - Skrivit Middleware för ASP.NET Core (togs bort sen)
 - Använt Github Projects med Pull Request och kanban
-- Testat att bygga en query creator (SqliteDatabaseQueryCreator). Kul, men jag hade nog använt builder pattern från början om jag gjort det igen.
+- Testat att bygga en query creator (SqliteDatabaseQueryCreator). Kul, men jag hade nog använt builder pattern från början om jag gjort det igen
+- Använt global exception handling
 
 ## Lessons learned
 
@@ -237,3 +238,8 @@ ID generering kan ske olika för olika typer av databaser, därför valde jag at
 ## Release 1.0 färdigt
 
 - Pull request från develop till master
+
+## Efter Release 1.0
+
+- Läser på om API best practices och börjar implementera förbättringar
+- Mer kommentarer för att förenkla för den som är ny till koden.

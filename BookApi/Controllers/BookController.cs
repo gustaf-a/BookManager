@@ -29,7 +29,7 @@ public class BookController : Controller
     /// }
     /// </summary>
     /// <returns>Returns created book</returns>
-    [HttpPost()]
+    [HttpPost]
     public async Task<IActionResult> CreateBook([FromBody] BookDto bookDto)
     {
         var book = bookDto.ToBook();
