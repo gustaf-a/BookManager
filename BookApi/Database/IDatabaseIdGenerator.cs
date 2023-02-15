@@ -2,5 +2,5 @@
 
 public interface IDatabaseIdGenerator
 {
-    public string GenerateId();
+    public Task<string> GenerateId();
 }
