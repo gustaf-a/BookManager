@@ -28,15 +28,13 @@ Se Book Manager projektet i Github Projects.
 - Logging
 - Bryt ut SQL texten från SqliteDatabaseQueryCreator till helper class
 - Implementera Builder pattern för att bygga queries i SqliteDatabaseQueryCreator
-- Bygga om controllern utifrån best practices
 - Gör om till async 
-- Lägga till Create med body i OpenApi defintion för Swagger
 
 ## Saker jag inte gjort förut
  
 - Använt Dapper för att hantera SQL connection
 - Använt Fluent Assertions för testerna
-- Skrivit Middleware för ASP.NET Core
+- Skrivit Middleware för ASP.NET Core (togs bort sen)
 - Använt Github Projects med Pull Request och kanban
 - Testat att bygga en query creator (SqliteDatabaseQueryCreator). Kul, men jag hade nog använt builder pattern från början om jag gjort det igen.
 
@@ -45,7 +43,8 @@ Se Book Manager projektet i Github Projects.
 - Att sätta upp service testen direkt var väl spenderad tid och TestDataHelper-klassen gjorde skapandet av testerna enkelt
 - JsonFileBookRepository var onödigt: Jag visste att jag behövde en databas till slut, så även om det inte tog lång tid att skapa var det onödigt
 - Jsonkonverteringen tog tid då jag inte var strikt när jag valde mellan NewtonSoft och den inbyggda JsonSerializern (skapade en extra JsonConverterare för DateOnly i onödan)
-- Jag vill bli duktigare på att skapa API:er.
+- Jag vill bli duktigare på att skapa API:er
+- Prioritera att koden fungerar via allmänt använda verktyg som Swagger och PostMan snarare än att få testen att fungera (skapade först workaround för testen istället för att hitta riktiga problemet)
 
 # Processen
 
