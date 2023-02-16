@@ -40,9 +40,11 @@ public class BookService : IBookService
     {
         _loggerManager.LogInfo($"Update book request received for book: {bookId}.");
 
-        var updatedBook = await _bookRepository.UpdateBook(book, bookId);
+        book.Id = bookId;
 
-        _loggerManager.LogInfo($"Update book request successfully handled. Book {updatedBook} updated.");
+        var updatedBook = await _bookRepository.UpdateBook(book);
+
+        _loggerManager.LogInfo($"Update book request successfully handled. Book {updatedBook.Id} updated.");
 
         return updatedBook;
     }
