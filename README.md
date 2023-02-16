@@ -11,6 +11,7 @@ Uppbyggt i tre lager: presentation, service och databasen (domain).
 - Extension methods
 - Global exception handling
 - Dynamiskt byggda SQL queries med parametrar som skyddar mot SQL Injection
+- Abstraktion för log service i separat LoggerService-projekt
 
 ![Solution Flowchart](BookManager_diagram.png)
 
@@ -39,7 +40,6 @@ Se Book Manager projektet i Github Projects.
 - Att sätta upp service testen direkt var väl spenderad tid och TestDataHelper-klassen gjorde skapandet av testerna enkelt
 - JsonFileBookRepository var onödigt: Jag visste att jag behövde en databas till slut, så även om det inte tog lång tid att skapa var det onödigt
 - Jsonkonverteringen tog tid då jag inte var strikt när jag valde mellan NewtonSoft och den inbyggda JsonSerializern (skapade en extra JsonConverterare för DateOnly i onödan)
-- Jag vill bli duktigare på att skapa API:er
 - Prioritera att koden fungerar via allmänt använda verktyg som Swagger och PostMan snarare än att få testen att fungera (skapade först workaround för testen istället för att hitta riktiga problemet)
 
 # Processen
