@@ -1,7 +1,7 @@
-﻿using BookApi.Repositories.JsonConverters;
+﻿using Entities.JsonConverters;
 using System.Text.Json.Serialization;
 
-namespace BookApi.Data;
+namespace Entities.Data;
 
 public class Book
 {

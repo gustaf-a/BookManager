@@ -1,4 +1,4 @@
-﻿using BookApi.Data;
+﻿using Entities.Data;
 
 namespace BookApi.Services;
 

@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookApi\BookApi.csproj" />
+    <ProjectReference Include="..\RepositorySql\RepositorySql.csproj" />
   </ItemGroup>
 
 </Project>

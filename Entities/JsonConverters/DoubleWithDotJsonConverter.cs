@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace BookApi.Repositories.JsonConverters;
+namespace Entities.JsonConverters;
 
 /// <summary>
 /// System.Text.Json JsonSerializer has a problem converting the X.XX double values and they're working on being able to set culture,

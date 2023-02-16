@@ -1,5 +1,5 @@
-﻿using BookApi.Data;
-using BookApi.Repositories;
+﻿using Contracts;
+using Entities.Data;
 using Serilog;
 
 namespace BookApi.Services;

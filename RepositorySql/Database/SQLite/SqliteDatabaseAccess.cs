@@ -1,9 +1,12 @@
-﻿using BookApi.Configuration;
-using BookApi.Data;
-using Dapper;
+﻿using Dapper;
+using Entities.Data;
+using Entities.ModelsSql;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Options;
+using RepositorySql.Configuration;
+using RepositorySql.Database.SQLite;
 
-namespace BookApi.Database.SQLite;
+namespace RepositorySql.Database.SQLite;
 
 /// <summary>
 /// SQLite database access class using Dapper with parameters for protection against SQL injection
@@ -14,14 +17,17 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
     private readonly IDatabaseQueryCreator _queryCreator;
 
-    public SqliteDatabaseAccess(IConfiguration configuration, IDatabaseQueryCreator queryCreator)
+    public SqliteDatabaseAccess(IOptions<DatabaseOptions> optionsDatabase, IOptions<ConnectionStringsOptions> connectionStringsOptions, IDatabaseQueryCreator queryCreator)
     {
-        var databaseOptions = configuration.GetSection(DatabaseOptions.Database).Get<DatabaseOptions>();
+        var databaseOptions = optionsDatabase.Value;
 
         if (string.IsNullOrWhiteSpace(databaseOptions?.SqliteConnectionStringName))
             throw new Exception($"Failed to find ConnectionString name for {nameof(databaseOptions.SqliteConnectionStringName)}");
 
-        _connectionString = configuration.GetConnectionString(databaseOptions.SqliteConnectionStringName);
+        if (!"Default".Equals(databaseOptions?.SqliteConnectionStringName))
+            throw new NotImplementedException("Currently only 'Default' value for connectionstring supported. Sorry.");
+
+        _connectionString = connectionStringsOptions.Value.Default;
 
         if (string.IsNullOrWhiteSpace(_connectionString))
             throw new Exception($"Invalid ConnectionString: {databaseOptions.SqliteConnectionStringName}");

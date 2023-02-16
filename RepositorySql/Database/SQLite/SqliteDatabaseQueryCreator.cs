@@ -1,8 +1,10 @@
-﻿using BookApi.Configuration;
-using BookApi.Data;
+﻿using Entities.Data;
+using Entities.ModelsSql;
+using Microsoft.Extensions.Options;
+using RepositorySql.Configuration;
 using System.Globalization;
 
-namespace BookApi.Database.SQLite;
+namespace RepositorySql.Database.SQLite;
 
 /// <summary>
 /// Used to build parametrized SQL query strings to adhere to best security practices.
@@ -15,9 +17,9 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
     private readonly int _idNumbersStartPosition;
 
-    public SqliteDatabaseQueryCreator(IConfiguration configuration)
+    public SqliteDatabaseQueryCreator(IOptions<DatabaseOptions> options)
     {
-        _databaseOptions = configuration.GetSection(DatabaseOptions.Database).Get<DatabaseOptions>();
+        _databaseOptions = options.Value;
 
         if (_databaseOptions == null)
             throw new Exception("Unable to find DatabaseOptions");

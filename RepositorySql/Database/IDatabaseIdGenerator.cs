@@ -1,4 +1,4 @@
-﻿namespace BookApi.Database;
+﻿namespace RepositorySql.Database;
 
 public interface IDatabaseIdGenerator
 {
