@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Contracts;
+namespace Contracts.EF;
 
 public interface IRepositoryBase<T>
 {
@@ -16,7 +16,7 @@ public interface IRepositoryBase<T>
     /// <param name="trackChanges">Greatly improves read speeds if set to false</param>
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression,
     bool trackChanges);
-    
+
     void Create(T entity);
     void Update(T entity);
     void Delete(T entity);

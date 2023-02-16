@@ -1,4 +1,4 @@
-﻿namespace Contracts;
+﻿namespace Contracts.EF;
 
 /// <summary>
 /// Creates instances of repositories to facilitate handling multiple classes and controls when to save.
@@ -6,7 +6,7 @@
 /// </summary>
 public interface IRepositoryManager
 {
-    public IBookRepository Book { get; }
+    public IBookEfRepository Book { get; }
 
     public void Save();
 }
