@@ -1,7 +1,9 @@
-﻿using BookApi.Configuration;
-using BookApi.Data;
+﻿using Entities.Data;
+using Entities.ModelsSql;
+using Microsoft.Extensions.Options;
+using RepositorySql.Configuration;
 
-namespace BookApi.Database.SQLite;
+namespace RepositorySql.Database.SQLite;
 
 public class SqliteDatabaseIdGenerator : IDatabaseIdGenerator
 {
@@ -11,12 +13,11 @@ public class SqliteDatabaseIdGenerator : IDatabaseIdGenerator
 
     private readonly IDatabaseAccess _databaseAccess;
 
-    public SqliteDatabaseIdGenerator(IDatabaseAccess databaseAccess, IConfiguration configuration)
+    public SqliteDatabaseIdGenerator(IDatabaseAccess databaseAccess, IOptions<DatabaseOptions> options)
     {
         _databaseAccess = databaseAccess ?? throw new ArgumentNullException(nameof(IDatabaseAccess)); ;
 
-        var databaseOptions = configuration.GetSection(DatabaseOptions.Database).Get<DatabaseOptions>()
-                                ?? throw new ArgumentNullException(nameof(DatabaseOptions));
+        var databaseOptions = options.Value;
 
         _idCharacterPrefix = databaseOptions.IdCharacterPrefix;
         _idSequenceStartNumber = databaseOptions.IdSequenceStartNumber;

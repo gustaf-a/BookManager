@@ -1,32 +1,30 @@
-﻿using BookApi.Data;
-using BookApi.Database;
-using BookApi.Database.SQLite;
-using Microsoft.Extensions.Configuration;
+﻿using Entities.Data;
+using Entities.ModelsSql;
+using Microsoft.Extensions.Options;
+using RepositorySql.Configuration;
+using RepositorySql.Database;
+using RepositorySql.Database.SQLite;
 using System.Globalization;
-using System.Text;
 
 namespace BookApiUnitTests.Database.SQLite;
 
 public class SqliteDatabaseQueryCreatorTests
 {
     private readonly IDatabaseQueryCreator _queryCreator;
-
-    private const string AppSettingsJson =
-@"{
-    ""Database"": {
-        ""BooksTableName"":  ""books"",
-        ""IdNumberMaxLength"": 9,
-        ""IdCharacterPrefix"": ""B""
-    }
-}";
+    private readonly IOptions<DatabaseOptions> _databaseOptions;
 
     public SqliteDatabaseQueryCreatorTests()
     {
-        //It's not possible to mock the IConfiguration as Get<>() is an extension method, so this is a working method
-        var builder = new ConfigurationBuilder();
-        builder.AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(AppSettingsJson)));
+        var databaseOptions = new DatabaseOptions
+        {
+            BooksTableName = "books",
+            IdCharacterPrefix = "B",
+            IdNumberMaxLength = 9
+        };
 
-        _queryCreator = new SqliteDatabaseQueryCreator(builder.Build());
+        _databaseOptions = Options.Create(databaseOptions);
+
+        _queryCreator = new SqliteDatabaseQueryCreator(_databaseOptions);
     }
 
     // --------------------- CREATE ------------------------------------
@@ -300,7 +298,8 @@ public class SqliteDatabaseQueryCreatorTests
             ReadBooksRequest.DatePrecision.None => 0,
             ReadBooksRequest.DatePrecision.Year => 4,
             ReadBooksRequest.DatePrecision.Month => 7,
-            ReadBooksRequest.DatePrecision.Day => 10
+            ReadBooksRequest.DatePrecision.Day => 10,
+            _ => throw new NotImplementedException($"Date precision {datePrecision.ToString()} not implemented")
         };
 
         var readBooksRequest = new ReadBooksRequest

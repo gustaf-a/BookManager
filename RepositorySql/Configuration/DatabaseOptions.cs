@@ -1,4 +1,4 @@
-﻿namespace BookApi.Configuration;
+﻿namespace RepositorySql.Configuration;
 
 public class DatabaseOptions
 {

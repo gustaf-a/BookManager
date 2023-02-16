@@ -1,7 +1,7 @@
-﻿using BookApi.Data;
-using BookApi.Database.SQLite;
+﻿using Entities.Data;
+using RepositorySql.Database.SQLite;
 
-namespace BookApi.Database;
+namespace RepositorySql.Database;
 
 public interface IDatabaseQueryCreator
 {

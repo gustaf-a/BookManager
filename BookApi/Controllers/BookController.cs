@@ -1,5 +1,6 @@
 ﻿using BookApi.Data;
 using BookApi.Services;
+using Entities.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookApi.Controllers;

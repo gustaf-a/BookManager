@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace BookApi.Database.SQLite;
+namespace RepositorySql.Database.SQLite;
 
 public class SqlQuery
 {

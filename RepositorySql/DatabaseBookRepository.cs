@@ -1,7 +1,8 @@
-﻿using BookApi.Data;
-using BookApi.Database;
+﻿using Contracts;
+using Entities.Data;
+using RepositorySql.Database;
 
-namespace BookApi.Repositories;
+namespace RepositorySql;
 
 public class DatabaseBookRepository : IBookRepository
 {

@@ -1,8 +1,9 @@
-﻿using System.Globalization;
+﻿using Entities.Data;
+using System.Globalization;
 
 namespace BookApi.Data;
 
-internal static class Extensions
+public static class Extensions
 {
     public static DateOnly GetDateOnly(this ReadBooksRequest.DatePrecision datePrecision, int year, int month, int day)
     {

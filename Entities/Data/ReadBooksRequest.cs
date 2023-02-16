@@ -1,4 +1,4 @@
-﻿namespace BookApi.Data;
+﻿namespace Entities.Data;
 
 /// <summary>
 /// Contains parameters parsed from API request to the rest of the application.
@@ -36,17 +36,17 @@ public class ReadBooksRequest
     public DatePrecision FilterByDatePrecision { get; set; } = DatePrecision.None;
     public DateOnly FilterByDateValue { get; set; } = DateOnly.MinValue;
 
-    public static ReadBooksRequest.DatePrecision FindDatePrecision(int year, int month, int day)
+    public static DatePrecision FindDatePrecision(int year, int month, int day)
     {
         if (day > int.MinValue)
-            return ReadBooksRequest.DatePrecision.Day;
+            return DatePrecision.Day;
 
         if (month > int.MinValue)
-            return ReadBooksRequest.DatePrecision.Month;
+            return DatePrecision.Month;
 
         if (year > int.MinValue)
-            return ReadBooksRequest.DatePrecision.Year;
+            return DatePrecision.Year;
 
-        return ReadBooksRequest.DatePrecision.None;
+        return DatePrecision.None;
     }
 }
