@@ -1,9 +1,10 @@
-﻿using BookApi.Data;
+﻿using Entities.Data;
+using Entities.ModelsSql;
 using System.Globalization;
 
-namespace BookApi.Database.SQLite;
+namespace RepositorySql.Database.SQLite;
 
-internal static class Extensions
+public static class Extensions
 {
     //This is unlikely to change and can be stored as a constant instead of in configurations.
     private const string DateFormat = "yyyy-MM-dd";
@@ -51,16 +52,6 @@ internal static class Extensions
             _ => throw new NotImplementedException($"Property name conversion not implemented for {bookName}")
         };
 
-    public static int ToSubstringLength(this ReadBooksRequest.DatePrecision datePrecision)
-        => datePrecision switch
-        {
-            ReadBooksRequest.DatePrecision.None => 0,
-            ReadBooksRequest.DatePrecision.Year => 4,
-            ReadBooksRequest.DatePrecision.Month => 7,
-            ReadBooksRequest.DatePrecision.Day => 10,
-            _ => throw new NotImplementedException($"Substring length not found for DatePrecision {datePrecision}.")
-        };
-
     public static void AddIfNotDefault(this Dictionary<string, object> dictionary, string stringValue, string key)
     {
         if (!string.IsNullOrEmpty(stringValue))
@@ -72,16 +63,4 @@ internal static class Extensions
         if (doubleValue > double.MinValue)
             dictionary.Add(key, doubleValue);
     }
-
-    public static void AddPlaceholderParameters(this SqlQuery sqlQuery, Dictionary<string, object> properties)
-    {
-        foreach (var property in properties)
-            sqlQuery.Parameters.Add(GetPlaceHolder(property.Key), property.Value);
-    }
-
-    public static string GetPlaceHolderList(this IEnumerable<string> variableNames)
-        => string.Join(',', variableNames.Select(vn => vn.GetPlaceHolder()));
-
-    public static string GetPlaceHolder(this string variableName)
-        => $"@{variableName}";
 }

@@ -1,4 +1,4 @@
-﻿using BookApi.Repositories.JsonConverters;
+﻿using Entities.JsonConverters;
 using System.Text.Json.Serialization;
 
 namespace BookApi.Data;

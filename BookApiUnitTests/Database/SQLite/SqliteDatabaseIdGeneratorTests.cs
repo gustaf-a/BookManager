@@ -1,30 +1,25 @@
-﻿using BookApi.Data;
-using BookApi.Database;
-using BookApi.Database.SQLite;
-using Microsoft.Extensions.Configuration;
+﻿using Entities.Data;
+using Microsoft.Extensions.Options;
 using Moq;
-using System.Text;
+using RepositorySql.Configuration;
+using RepositorySql.Database;
+using RepositorySql.Database.SQLite;
 
 namespace BookApiUnitTests.Database.SQLite;
 
 public class SqliteDatabaseIdGeneratorTests
 {
-
-    private const string AppSettingsJson =
-@"{
-    ""Database"": {
-        ""IdNumberMaxLength"": 9,
-        ""IdCharacterPrefix"": ""B""
-    }
-}";
-
-    private readonly ConfigurationBuilder _configurationBuilder;
+    private readonly IOptions<DatabaseOptions> _databaseOptions;
 
     public SqliteDatabaseIdGeneratorTests()
     {
-        //It's not possible to mock the IConfiguration as Get<>() is an extension method, so this is a working method
-        _configurationBuilder = new ConfigurationBuilder();
-        _configurationBuilder.AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(AppSettingsJson)));
+        var databaseOptions = new DatabaseOptions
+        {
+            IdCharacterPrefix= "B",
+            IdNumberMaxLength= 9
+        };
+
+        _databaseOptions = Options.Create(databaseOptions);
     }
 
     [Fact]
@@ -34,7 +29,7 @@ public class SqliteDatabaseIdGeneratorTests
         var databaseAccessMock = new Mock<IDatabaseAccess>();
         databaseAccessMock.Setup(d => d.GetValue(It.IsAny<GetValueRequest>())).ReturnsAsync("");
 
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _configurationBuilder.Build());
+        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _databaseOptions);
 
         // Act
         var newId = await databaseIdGenerator.GenerateId();
@@ -52,7 +47,7 @@ public class SqliteDatabaseIdGeneratorTests
         var databaseAccessMock = new Mock<IDatabaseAccess>();
         databaseAccessMock.Setup(d => d.GetValue(It.IsAny<GetValueRequest>())).ReturnsAsync(currentMaxId);
 
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _configurationBuilder.Build());
+        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _databaseOptions);
 
         // Act
         var newId = await databaseIdGenerator.GenerateId();
@@ -70,7 +65,7 @@ public class SqliteDatabaseIdGeneratorTests
         var databaseAccessMock = new Mock<IDatabaseAccess>();
         databaseAccessMock.Setup(d => d.GetValue(It.IsAny<GetValueRequest>())).ReturnsAsync(currentMaxId);
 
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _configurationBuilder.Build());
+        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _databaseOptions);
 
         // Act
         var newId = await databaseIdGenerator.GenerateId();

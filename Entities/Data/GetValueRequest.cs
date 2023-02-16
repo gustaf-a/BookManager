@@ -1,4 +1,4 @@
-﻿namespace BookApi.Data;
+﻿namespace Entities.Data;
 
 public class GetValueRequest
 {

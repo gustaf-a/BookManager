@@ -1,14 +1,26 @@
-﻿using BookApi.Database;
-using BookApi.Database.SQLite;
-using BookApi.Repositories;
-using BookApi.Services;
+﻿using BookApi.Services;
+using Contracts;
+using RepositorySql;
+using RepositorySql.Configuration;
+using RepositorySql.Database;
+using RepositorySql.Database.SQLite;
 
 namespace BookApi;
 
 public class Startup
 {
+    private readonly ConfigurationManager _configurationManager;
+
+    public Startup(ConfigurationManager configurationManager)
+    {
+        _configurationManager = configurationManager;
+    }
+
     public void ConfigureServices(IServiceCollection services)
     {
+        services.Configure<DatabaseOptions>(_configurationManager.GetSection(DatabaseOptions.Database));
+        services.Configure<ConnectionStringsOptions>(_configurationManager.GetSection(ConnectionStringsOptions.ConnectionString));
+
         services.AddControllers();
 
         services.ConfigureCors();
