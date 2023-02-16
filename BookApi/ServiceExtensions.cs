@@ -1,6 +1,6 @@
 ﻿using BookApi.Data;
+using Contracts;
 using Microsoft.AspNetCore.Diagnostics;
-using Serilog;
 using System.Net;
 
 namespace BookApi;
@@ -18,7 +18,10 @@ public static class ServiceExtensions
         });
     }
 
-    public static void ConfigureExceptionHandler(this WebApplication app)
+    /// <summary>
+    /// Adds Exception handling middleware
+    /// </summary>
+    public static void ConfigureExceptionHandler(this WebApplication app, ILoggerManager loggerManager)
     {
         app.UseExceptionHandler(appError =>
         {
@@ -30,7 +33,7 @@ public static class ServiceExtensions
                 var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                 if (contextFeature != null)
                 {
-                    Log.Error(contextFeature.Error, $"Exception thrown by request sent to endpoint: {contextFeature.Endpoint}.");
+                    loggerManager.LogError(contextFeature.Error, $"Exception thrown by request sent to endpoint: {contextFeature.Endpoint}.");
 
                     await context.Response.WriteAsync(new ErrorDetails
                     {
