@@ -95,16 +95,16 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
     // --------------------- UPDATE ------------------------------------
 
-    public async Task<Book> UpdateBook(Book book, string bookId)
+    public async Task<Book> UpdateBook(Book book)
     {
-        var sqlQuery = _queryCreator.Update(book, bookId);
+        var sqlQuery = _queryCreator.Update(book);
 
         var affectedRows = await ExecuteQueryAsync(sqlQuery);
 
         if (affectedRows == 0)
-            throw new Exception($"Database failed to update book with ID {bookId}.");
+            throw new Exception($"Database failed to update book with ID {book.Id}.");
 
-        return await GetBook(bookId);
+        return await GetBook(book.Id);
     }
 
     // --------------------- DELETE ------------------------------------

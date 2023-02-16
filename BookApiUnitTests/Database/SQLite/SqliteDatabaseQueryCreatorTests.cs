@@ -326,7 +326,7 @@ public class SqliteDatabaseQueryCreatorTests
     [Fact]
     public void Update_ThrowsException_When_Book_Null()
     {
-        _queryCreator.Invoking(y => y.Update(null, "test"))
+        _queryCreator.Invoking(y => y.Update(null))
             .Should().Throw<ArgumentNullException>()
             .WithMessage("Value cannot be null. (Parameter 'book cannot be null.')");
     }
@@ -334,23 +334,21 @@ public class SqliteDatabaseQueryCreatorTests
     [Fact]
     public void Update_ThrowsException_When_BookId_Null()
     {
-        _queryCreator.Invoking(y => y.Update(new Book(), null))
+        _queryCreator.Invoking(y => y.Update(new Book()))
             .Should().Throw<ArgumentNullException>()
-            .WithMessage("Value cannot be null. (Parameter 'bookId cannot be null.')");
+            .WithMessage("Value cannot be null. (Parameter 'Id cannot be null.')");
     }
 
     [Fact]
     public void Update_ReturnsUpdateBookQuery_AndIgnoresNullValues_AndIgnoresId()
     {
         // Arrange
-        var bookId = "B16";
-
         var updateToThisBook = new Book()
         {
             Author = "Updated Author",
             Title = "New cooler title",
             Description = null,
-            Id = "B2000",
+            Id = "B16",
             Genre = null,
             Price = 10,
             PublishDate = new DateOnly(1999, 12, 31)
@@ -359,7 +357,7 @@ public class SqliteDatabaseQueryCreatorTests
         var expectedQuery = "UPDATE books SET author = @Author, title = @Title, price = @Price, publish_date = @Publish_date WHERE id = @Id;";
 
         // Act
-        var sqlQuery = _queryCreator.Update(updateToThisBook, bookId);
+        var sqlQuery = _queryCreator.Update(updateToThisBook);
 
         // Assert
         sqlQuery.QueryString.ToString().Should().Be(expectedQuery);
@@ -368,7 +366,7 @@ public class SqliteDatabaseQueryCreatorTests
 
         parameters.Count.Should().Be(5);
 
-        parameters["@Id"].Should().Be(bookId);
+        parameters["@Id"].Should().Be("B16");
         parameters["@Author"].Should().Be(updateToThisBook.Author);
         parameters["@Title"].Should().Be(updateToThisBook.Title);
         parameters["@Price"].Should().Be(updateToThisBook.Price);
@@ -386,7 +384,7 @@ public class SqliteDatabaseQueryCreatorTests
             Author = null,
             Title = "Only change this one",
             Description = null,
-            Id = null,
+            Id = bookId,
             Genre = null,
             Price = double.MinValue,
             PublishDate = DateOnly.MinValue
@@ -395,7 +393,7 @@ public class SqliteDatabaseQueryCreatorTests
         var expectedQuery = "UPDATE books SET title = @Title WHERE id = @Id;";
 
         // Act
-        var sqlQuery = _queryCreator.Update(updateToThisBook, bookId);
+        var sqlQuery = _queryCreator.Update(updateToThisBook);
 
         // Assert
         sqlQuery.QueryString.ToString().Should().Be(expectedQuery);
