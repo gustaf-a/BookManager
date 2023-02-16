@@ -1,8 +1,8 @@
 # BookManager API
 
-Ett API skrivet i C# för böcker med en SQLite databas skapat med Test Driven Development (TDD). 
+Ett API skrivet i C# för böcker med en SQLite databas skapat med Test Driven Development (TDD).
+Uppbyggt i tre lager: presentation, service och databasen (domain).
 
-- Dynamiskt byggda SQL queries med parametrar som skyddar mot SQL Injection.
 - Service test som täcker CRUD
 - Unit test
 - Github Projects använt vid utvecklingen
@@ -10,6 +10,7 @@ Ett API skrivet i C# för böcker med en SQLite databas skapat med Test Driven D
 - Repository pattern, Options pattern
 - Extension methods
 - Global exception handling
+- Dynamiskt byggda SQL queries med parametrar som skyddar mot SQL Injection
 
 ![Solution Flowchart](BookManager_diagram.png)
 
@@ -24,21 +25,17 @@ Testerna kan köras via Test Explorer.
 
 Se Book Manager projektet i Github Projects.
 
-- Implementera Builder pattern för att bygga queries i SqliteDatabaseQueryCreator
-- Skapa smartare endpoints i controllern för Read-operationerna
-- Bryt ut databaslogik till ett class library.
-
-## Saker jag inte gjort förut
+## Saker jag inte gjort förut utan fått lära mig under byggandet
  
-- Använt Dapper för att hantera SQL connection
-- Använt Fluent Assertions för testerna
-- Skrivit Middleware för ASP.NET Core (togs bort sen)
-- Använt Github Projects med Pull Request och kanban
-- Testat att bygga en query creator (SqliteDatabaseQueryCreator). Kul, men jag hade nog använt builder pattern från början om jag gjort det igen
-- Använt global exception handling
+- Dapper för att hantera SQL connection
+- Fluent Assertions för testerna
+- Middleware för ASP.NET Core (global exception handling)
+- Github Projects med Pull Request och kanban
+- Testat att bygga en query creator (SqliteDatabaseQueryCreator). Kul, men jag hade nog använt Entity Framework Core från början om jag gjort det igen
 
 ## Lessons learned
 
+- Mitt största misstag var att tänka att jag behövde namnge databasen på något speciellt sätt. Om jag hade hållit mig till ett DTO, data transfer object, och sen låtit databasens kolumner formas av mina interna datamodeller så hade jag sluppit mycket jobb.
 - Att sätta upp service testen direkt var väl spenderad tid och TestDataHelper-klassen gjorde skapandet av testerna enkelt
 - JsonFileBookRepository var onödigt: Jag visste att jag behövde en databas till slut, så även om det inte tog lång tid att skapa var det onödigt
 - Jsonkonverteringen tog tid då jag inte var strikt när jag valde mellan NewtonSoft och den inbyggda JsonSerializern (skapade en extra JsonConverterare för DateOnly i onödan)
@@ -242,3 +239,6 @@ ID generering kan ske olika för olika typer av databaser, därför valde jag at
 
 - Läser på om API best practices och börjar implementera förbättringar
 - Mer kommentarer för att förenkla för den som är ny till koden.
+- Förbättrad hantering av options
+- Global exception handling
+- Fler projekt för hantering av olika ansvarsområden, t.ex. repository, entities, contracts
