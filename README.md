@@ -35,6 +35,7 @@ Se Book Manager projektet i Github Projects.
 
 ## Lessons learned
 
+- Mitt största misstag var att tänka att jag behövde namnge databasen på något speciellt sätt. Om jag hade hållit mig till ett DTO, data transfer object, och sen låtit databasens kolumner formas av mina interna datamodeller så hade jag sluppit mycket jobb.
 - Att sätta upp service testen direkt var väl spenderad tid och TestDataHelper-klassen gjorde skapandet av testerna enkelt
 - JsonFileBookRepository var onödigt: Jag visste att jag behövde en databas till slut, så även om det inte tog lång tid att skapa var det onödigt
 - Jsonkonverteringen tog tid då jag inte var strikt när jag valde mellan NewtonSoft och den inbyggda JsonSerializern (skapade en extra JsonConverterare för DateOnly i onödan)
