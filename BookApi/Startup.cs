@@ -1,5 +1,7 @@
 ﻿using BookApi.Services;
 using Contracts;
+using LoggerService;
+using NLog;
 using RepositorySql;
 using RepositorySql.Configuration;
 using RepositorySql.Database;
@@ -18,6 +20,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        LogManager.LoadConfiguration(Path.Combine(Directory.GetCurrentDirectory(), "nlog.config"));
+
         services.Configure<DatabaseOptions>(_configurationManager.GetSection(DatabaseOptions.Database));
         services.Configure<ConnectionStringsOptions>(_configurationManager.GetSection(ConnectionStringsOptions.ConnectionString));
 
@@ -32,6 +36,8 @@ public class Startup
             s.SwaggerDoc("v1",
                 new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BookApi", Version = "v1" });
         });
+
+        services.AddSingleton<ILoggerManager, LoggerManager>();
 
         services.AddSingleton<IBookRepository, DatabaseBookRepository>();
         services.AddSingleton<IDatabaseAccess, SqliteDatabaseAccess>();
@@ -50,8 +56,7 @@ public class Startup
             app.UseSwaggerUI();
         }
 
-        //Adds global exception handling
-        app.ConfigureExceptionHandler();
+        app.ConfigureExceptionHandler(app.Services.GetService<ILoggerManager>());
 
         app.UseHttpsRedirection();
 
