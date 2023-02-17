@@ -1,6 +1,7 @@
 ﻿using BookApi.Services;
 using Contracts;
 using LoggerService;
+using Microsoft.FeatureManagement;
 using NLog;
 using RepositorySql;
 using RepositorySql.Configuration;
@@ -41,12 +42,23 @@ public class Startup
 
         services.AddSingleton<ILoggerManager, LoggerManager>();
 
+        services.AddFeatureManagement();
+
+        //TODO Add ServiceManagerFactory
+
+        //------------ SQL Services ------------------
         services.AddSingleton<IBookRepository, DatabaseBookRepository>();
         services.AddSingleton<IDatabaseAccess, SqliteDatabaseAccess>();
         services.AddSingleton<IDatabaseQueryCreator, SqliteDatabaseQueryCreator>();
         services.AddSingleton<IDatabaseIdGenerator, SqliteDatabaseIdGenerator>();
 
         services.AddSingleton<IBookService, BookService>();
+
+        //------------ EF Core Services ---------------
+
+        //services.ConfigureRespositoryManager();
+        //services.ConfigureServiceManager();
+        //services.ConfigureSqlServerContext(_configurationManager);
     }
 
     public void Configure(WebApplication app)
