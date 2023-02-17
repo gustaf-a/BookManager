@@ -1,7 +1,7 @@
-﻿using Entities.Data;
-using Entities.ModelsSql;
+﻿using Entities.ModelsSql;
 using Microsoft.Extensions.Options;
 using RepositorySql.Configuration;
+using Shared;
 using System.Globalization;
 
 namespace RepositorySql.Database.SQLite;

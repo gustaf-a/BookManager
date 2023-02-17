@@ -1,7 +1,6 @@
-﻿using BookApi.Data;
-using Entities.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Shared;
 
 namespace BookApi.Controllers;
 

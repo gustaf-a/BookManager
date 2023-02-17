@@ -1,4 +1,4 @@
-﻿using Entities.Data;
+﻿using Shared;
 
 namespace Service.Contracts;
 

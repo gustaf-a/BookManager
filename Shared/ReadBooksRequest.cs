@@ -1,4 +1,4 @@
-﻿namespace Entities.Data;
+﻿namespace Shared;
 
 /// <summary>
 /// Contains parameters parsed from API request to the rest of the application.

@@ -1,4 +1,4 @@
-﻿namespace BookApi.Configuration;
+﻿namespace Shared;
 
 public static class FeatureFlags
 {

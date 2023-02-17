@@ -1,7 +1,6 @@
-﻿using Entities.Data;
-using System.Globalization;
+﻿using System.Globalization;
 
-namespace BookApi.Data;
+namespace Shared;
 
 public static class Extensions
 {
@@ -24,17 +23,45 @@ public static class Extensions
         if (bookDto is null)
             return null;
 
+        return new Book
+        {
+            Id = bookDto.Id,
+            Author = bookDto.Author,
+            Description = bookDto.Description,
+            Genre = bookDto.Genre,
+            Price = bookDto.Price,
+            PublishDate = string.IsNullOrWhiteSpace(bookDto.Publish_date) ? DateOnly.MinValue : DateOnly.ParseExact(bookDto.Publish_date, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+            Title = bookDto.Title
+        };
+    }
+
+    public static IEnumerable<BookDto> ToBooksDto(this IEnumerable<Book> books)
+    {
+        if (books is null)
+            return null;
+
+        if (!books.Any())
+            return new List<BookDto>();
+
+        return books.Select(b => b.ToBookDto());
+    }
+
+    public static BookDto ToBookDto(this Book book)
+    {
+        if (book is null)
+            return null;
+
         try
         {
-            return new Book
+            return new BookDto
             {
-                Id = bookDto.Id,
-                Author = bookDto.Author,
-                Description = bookDto.Description,
-                Genre = bookDto.Genre,
-                Price = bookDto.Price,
-                PublishDate = string.IsNullOrWhiteSpace(bookDto.Publish_date) ? DateOnly.MinValue : DateOnly.ParseExact(bookDto.Publish_date, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                Title = bookDto.Title
+                Id = book.Id,
+                Author = book.Author,
+                Description = book.Description,
+                Genre = book.Genre,
+                Price = book.Price,
+                Publish_date = book.PublishDate.GetConvertedDateOnlyValue(),
+                Title = book.Title
             };
         }
         catch (Exception)
@@ -42,4 +69,9 @@ public static class Extensions
             return null;
         }
     }
+
+    public static string? GetConvertedDateOnlyValue(this DateOnly publishDate)
+        => DateOnly.MinValue.Equals(publishDate)
+            ? null
+            : publishDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 }

@@ -6,6 +6,7 @@ using RepositorySql;
 using RepositorySql.Configuration;
 using RepositorySql.Database;
 using RepositorySql.Database.SQLite;
+using Service.Contracts;
 
 namespace BookApi;
 
