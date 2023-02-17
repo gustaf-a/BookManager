@@ -2,7 +2,7 @@
 using Service.Contracts;
 using Shared;
 
-namespace BookApi.Services;
+namespace Service.SQL;
 
 public class BookService : IBookService
 {

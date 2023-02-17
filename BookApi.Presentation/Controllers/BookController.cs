@@ -9,11 +9,13 @@ namespace BookApi.Controllers;
 [Route("api/books")]
 public class BookController : ControllerBase
 {
-    private readonly IBookService _bookService;
+    private readonly IServiceManager _serviceManager;
 
-    public BookController(IBookService bookService)
+    private IBookService _bookService => _serviceManager.BookService;
+
+    public BookController(IServiceManagerFactory serviceManagerFactory)
     {
-        _bookService = bookService;
+        _serviceManager = serviceManagerFactory.GetService();
     }
 
     /// <summary>
