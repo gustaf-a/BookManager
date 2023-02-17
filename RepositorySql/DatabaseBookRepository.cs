@@ -1,6 +1,6 @@
 ﻿using Contracts;
-using Entities.Data;
 using RepositorySql.Database;
+using Shared;
 
 namespace RepositorySql;
 

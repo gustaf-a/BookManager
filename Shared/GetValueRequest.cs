@@ -1,4 +1,4 @@
-﻿namespace Entities.Data;
+﻿namespace Shared;
 
 public class GetValueRequest
 {

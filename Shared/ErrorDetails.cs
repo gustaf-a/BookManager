@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace BookApi.Data;
+namespace Shared;
 
 public class ErrorDetails
 {

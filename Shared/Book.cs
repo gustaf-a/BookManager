@@ -1,7 +1,7 @@
 ﻿using Entities.JsonConverters;
 using System.Text.Json.Serialization;
 
-namespace Entities.Data;
+namespace Shared;
 
 public class Book
 {

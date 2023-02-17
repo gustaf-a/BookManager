@@ -24,5 +24,5 @@ internal class TestBook
     public string Genre { get; set; }
 
     [JsonPropertyName("publish_date")]
-    public DateOnly PublishDate { get; set; }
+    public string PublishDate { get; set; }
 }

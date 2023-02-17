@@ -1,4 +1,4 @@
-﻿using Entities.Data;
+﻿using Shared;
 
 namespace RepositorySql.Database.SQLite;
 

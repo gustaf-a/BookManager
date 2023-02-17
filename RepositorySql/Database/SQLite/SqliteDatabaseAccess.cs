@@ -1,10 +1,10 @@
 ﻿using Dapper;
-using Entities.Data;
 using Entities.ModelsSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
 using RepositorySql.Configuration;
 using RepositorySql.Database.SQLite;
+using Shared;
 
 namespace RepositorySql.Database.SQLite;
 
