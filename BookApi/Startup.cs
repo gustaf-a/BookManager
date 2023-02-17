@@ -25,7 +25,8 @@ public class Startup
         services.Configure<DatabaseOptions>(_configurationManager.GetSection(DatabaseOptions.Database));
         services.Configure<ConnectionStringsOptions>(_configurationManager.GetSection(ConnectionStringsOptions.ConnectionString));
 
-        services.AddControllers();
+        services.AddControllers()
+            .AddApplicationPart(typeof(BookApi.Presentation.AssemblyReference).Assembly);
 
         services.ConfigureCors();
 

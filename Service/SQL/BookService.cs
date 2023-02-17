@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.Data;
+using Service.Contracts;
 
 namespace BookApi.Services;
 
@@ -8,7 +9,7 @@ public class BookService : IBookService
     private readonly ILoggerManager _loggerManager;
     private readonly IBookRepository _bookRepository;
 
-    public BookService(ILoggerManager loggerManager,IBookRepository bookRepository)
+    public BookService(ILoggerManager loggerManager, IBookRepository bookRepository)
     {
         _loggerManager = loggerManager;
         _bookRepository = bookRepository;

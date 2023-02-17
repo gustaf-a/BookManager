@@ -1,14 +1,14 @@
 ﻿using BookApi.Data;
-using BookApi.Services;
 using Entities.Data;
 using Microsoft.AspNetCore.Mvc;
+using Service.Contracts;
 
 namespace BookApi.Controllers;
 
 [ApiController]
 [Produces("application/json")]
 [Route("api/books")]
-public class BookController : Controller
+public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;
 
