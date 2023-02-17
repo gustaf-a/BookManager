@@ -1,7 +1,8 @@
 # BookManager API
 
 Ett API skrivet i C# för böcker med en SQLite databas skapat med Test Driven Development (TDD).
-Uppbyggt i tre lager: presentation, service och databasen (domain).
+Uppbyggt i tre lager: presentation, service och repository.
+
 
 - Service test som täcker CRUD
 - Unit test
