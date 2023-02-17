@@ -1,5 +1,5 @@
-﻿using Entities.Data;
-using Entities.ModelsSql;
+﻿using Entities.ModelsSql;
+using Shared;
 using System.Globalization;
 
 namespace RepositorySql.Database.SQLite;
@@ -32,12 +32,9 @@ public static class Extensions
             Description = book.Description,
             Genre = book.Genre,
             Price = book.Price,
-            Publish_date = GetConvertedDateOnlyValue(book.PublishDate),
+            Publish_date = book.PublishDate.GetConvertedDateOnlyValue(),
             Title = book.Title
         };
-
-    private static string GetConvertedDateOnlyValue(DateOnly publishDate)
-        => publishDate == DateOnly.MinValue ? null : publishDate.ToString(DateFormat, CultureInfo.InvariantCulture);
 
     public static string ToBookSqliteName(this string bookName)
         => bookName switch

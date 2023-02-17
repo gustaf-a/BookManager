@@ -15,18 +15,23 @@ public class BookService : IBookService
         _bookRepository = bookRepository;
     }
 
-    public async Task<Book> CreateBook(Book book)
+    public async Task<BookDto> CreateBook(BookDto bookDto)
     {
         _loggerManager.LogInfo($"Create book request received.");
+
+        var book = bookDto.ToBook();
+
+        if (book == null)
+            throw new Exception("Failed to parse input data. Please review data sent.");
 
         var createdBook = await _bookRepository.CreateBook(book);
 
         _loggerManager.LogInfo($"Create book request successfully handled. Created: {createdBook.Id}.");
 
-        return createdBook;
+        return createdBook.ToBookDto();
     }
 
-    public async Task<IEnumerable<Book>> ReadBooks(ReadBooksRequest readBooksRequest)
+    public async Task<IEnumerable<BookDto>> ReadBooks(ReadBooksRequest readBooksRequest)
     {
         _loggerManager.LogInfo($"Read book request received.");
 
@@ -34,12 +39,17 @@ public class BookService : IBookService
 
         _loggerManager.LogInfo($"Read book request successfully handled. Returning {books.Count()} book(s).");
 
-        return books;
+        return books.ToBooksDto();
     }
 
-    public async Task<Book> UpdateBook(Book book, string bookId)
+    public async Task<bool> UpdateBook(BookDto bookDto, string bookId)
     {
         _loggerManager.LogInfo($"Update book request received for book: {bookId}.");
+
+        var book = bookDto.ToBook();
+
+        if (book == null)
+            throw new Exception("Failed to parse input data. Please review data sent.");
 
         book.Id = bookId;
 
@@ -47,7 +57,7 @@ public class BookService : IBookService
 
         _loggerManager.LogInfo($"Update book request successfully handled. Book {updatedBook.Id} updated.");
 
-        return updatedBook;
+        return true;
     }
 
     public async Task<bool> DeleteBook(string bookId)
