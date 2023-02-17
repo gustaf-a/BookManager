@@ -1,6 +1,6 @@
-﻿using BookApi.Data;
-using Contracts;
+﻿using Contracts;
 using Microsoft.AspNetCore.Diagnostics;
+using Shared;
 using System.Net;
 
 namespace BookApi;

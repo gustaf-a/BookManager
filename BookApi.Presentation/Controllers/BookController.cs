@@ -1,14 +1,13 @@
-﻿using BookApi.Data;
-using BookApi.Services;
-using Entities.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Service.Contracts;
+using Shared;
 
 namespace BookApi.Controllers;
 
 [ApiController]
 [Produces("application/json")]
 [Route("api/books")]
-public class BookController : Controller
+public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;
 
@@ -33,14 +32,11 @@ public class BookController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateBook([FromBody] BookDto bookDto)
     {
-        var book = bookDto.ToBook();
-
-        if (book is null)
+        if (bookDto is null)
             return BadRequest();
 
-        var result = await _bookService.CreateBook(book);
-
-        return Json(result);
+        var result = await _bookService.CreateBook(bookDto);
+        return StatusCode(201, result);
     }
 
     /// <summary>
@@ -59,14 +55,12 @@ public class BookController : Controller
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateBook(string id, [FromBody] BookDto bookDto)
     {
-        var book = bookDto.ToBook();
-
-        if (book is null)
+        if (bookDto is null)
             return BadRequest();
 
-        var result = await _bookService.UpdateBook(book, id);
+        await _bookService.UpdateBook(bookDto, id);
 
-        return Json(result);
+        return NoContent();
     }
 
     /// <summary>
@@ -97,7 +91,7 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 
     /// <summary>
@@ -116,7 +110,7 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 
     /// <summary>
@@ -135,7 +129,7 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 
     /// <summary>
@@ -154,7 +148,7 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 
     /// <summary>
@@ -173,7 +167,7 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 
     /// <summary>
@@ -192,7 +186,7 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 
     /// <summary>
@@ -214,7 +208,7 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 
     /// <summary>
@@ -240,7 +234,7 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 
     /// <summary>
@@ -259,6 +253,6 @@ public class BookController : Controller
 
         var result = await _bookService.ReadBooks(readBooksRequest);
 
-        return Json(result);
+        return Ok(result);
     }
 }

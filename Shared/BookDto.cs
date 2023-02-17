@@ -1,7 +1,7 @@
 ﻿using Entities.JsonConverters;
 using System.Text.Json.Serialization;
 
-namespace BookApi.Data;
+namespace Shared;
 
 /// <summary>
 /// Data Transfer Object used to receive Book data from requests.

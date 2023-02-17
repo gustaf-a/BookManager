@@ -1,5 +1,6 @@
 ﻿using Contracts;
-using Entities.Data;
+using Service.Contracts;
+using Shared;
 
 namespace BookApi.Services;
 
@@ -8,24 +9,29 @@ public class BookService : IBookService
     private readonly ILoggerManager _loggerManager;
     private readonly IBookRepository _bookRepository;
 
-    public BookService(ILoggerManager loggerManager,IBookRepository bookRepository)
+    public BookService(ILoggerManager loggerManager, IBookRepository bookRepository)
     {
         _loggerManager = loggerManager;
         _bookRepository = bookRepository;
     }
 
-    public async Task<Book> CreateBook(Book book)
+    public async Task<BookDto> CreateBook(BookDto bookDto)
     {
         _loggerManager.LogInfo($"Create book request received.");
+
+        var book = bookDto.ToBook();
+
+        if (book == null)
+            throw new Exception("Failed to parse input data. Please review data sent.");
 
         var createdBook = await _bookRepository.CreateBook(book);
 
         _loggerManager.LogInfo($"Create book request successfully handled. Created: {createdBook.Id}.");
 
-        return createdBook;
+        return createdBook.ToBookDto();
     }
 
-    public async Task<IEnumerable<Book>> ReadBooks(ReadBooksRequest readBooksRequest)
+    public async Task<IEnumerable<BookDto>> ReadBooks(ReadBooksRequest readBooksRequest)
     {
         _loggerManager.LogInfo($"Read book request received.");
 
@@ -33,18 +39,25 @@ public class BookService : IBookService
 
         _loggerManager.LogInfo($"Read book request successfully handled. Returning {books.Count()} book(s).");
 
-        return books;
+        return books.ToBooksDto();
     }
 
-    public async Task<Book> UpdateBook(Book book, string bookId)
+    public async Task<bool> UpdateBook(BookDto bookDto, string bookId)
     {
         _loggerManager.LogInfo($"Update book request received for book: {bookId}.");
 
-        var updatedBook = await _bookRepository.UpdateBook(book, bookId);
+        var book = bookDto.ToBook();
 
-        _loggerManager.LogInfo($"Update book request successfully handled. Book {updatedBook} updated.");
+        if (book == null)
+            throw new Exception("Failed to parse input data. Please review data sent.");
 
-        return updatedBook;
+        book.Id = bookId;
+
+        var updatedBook = await _bookRepository.UpdateBook(book);
+
+        _loggerManager.LogInfo($"Update book request successfully handled. Book {updatedBook.Id} updated.");
+
+        return true;
     }
 
     public async Task<bool> DeleteBook(string bookId)

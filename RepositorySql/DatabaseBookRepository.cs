@@ -1,6 +1,6 @@
 ﻿using Contracts;
-using Entities.Data;
 using RepositorySql.Database;
+using Shared;
 
 namespace RepositorySql;
 
@@ -31,9 +31,9 @@ public class DatabaseBookRepository : IBookRepository
         return books;
     }
 
-    public async Task<Book> UpdateBook(Book book, string bookId)
+    public async Task<Book> UpdateBook(Book book)
     {
-        var updatedBook = await _databaseAccess.UpdateBook(book, bookId);
+        var updatedBook = await _databaseAccess.UpdateBook(book);
 
         return updatedBook;
     }

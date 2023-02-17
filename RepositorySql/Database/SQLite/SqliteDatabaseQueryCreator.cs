@@ -1,7 +1,7 @@
-﻿using Entities.Data;
-using Entities.ModelsSql;
+﻿using Entities.ModelsSql;
 using Microsoft.Extensions.Options;
 using RepositorySql.Configuration;
+using Shared;
 using System.Globalization;
 
 namespace RepositorySql.Database.SQLite;
@@ -215,13 +215,13 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     /// Example:
     ///  UPDATE books SET author = @Author, title = @Title, price = @Price, publish_date = @Publish_date WHERE id = @Id;
     /// </summary>
-    public SqlQuery Update(Book book, string bookId)
+    public SqlQuery Update(Book book)
     {
         if (book is null)
             throw new ArgumentNullException($"{nameof(book)} cannot be null.");
 
-        if (string.IsNullOrWhiteSpace(bookId))
-            throw new ArgumentNullException($"{nameof(bookId)} cannot be null.");
+        if (string.IsNullOrWhiteSpace(book.Id))
+            throw new ArgumentNullException($"{nameof(book.Id)} cannot be null.");
 
         var bookSqlite = book.ToBookSqlite();
 
@@ -244,7 +244,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         sqlQuery.QueryString.Append($" WHERE {nameof(BookSqlite.Id).ToLower()} = {idPlaceHolder};");
 
-        sqlQuery.Parameters.Add(idPlaceHolder, bookId);
+        sqlQuery.Parameters.Add(idPlaceHolder, book.Id);
 
         return sqlQuery;
     }

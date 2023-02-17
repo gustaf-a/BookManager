@@ -1,9 +1,9 @@
-﻿using Entities.Data;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Moq;
 using RepositorySql.Configuration;
 using RepositorySql.Database;
 using RepositorySql.Database.SQLite;
+using Shared;
 
 namespace BookApiUnitTests.Database.SQLite;
 
