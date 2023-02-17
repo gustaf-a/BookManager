@@ -1,9 +1,5 @@
 ﻿using Contracts;
-using Contracts.EF;
 using Microsoft.AspNetCore.Diagnostics;
-using RepositoryEFCore;
-using Service.Contracts;
-using Service.EF;
 using Shared;
 using System.Net;
 
