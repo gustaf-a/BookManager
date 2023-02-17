@@ -2,5 +2,5 @@
 
 public interface IServiceManagerFactory
 {
-    public IServiceManager GetService();
+    public IServiceManager GetServiceManager();
 }

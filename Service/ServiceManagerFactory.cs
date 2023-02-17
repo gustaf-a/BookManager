@@ -19,7 +19,7 @@ public class ServiceManagerFactory : IServiceManagerFactory
         _serviceProvider = serviceProvider;
     }
 
-    public IServiceManager GetService()
+    public IServiceManager GetServiceManager()
     {
         if(_featureManager.IsEnabledAsync(FeatureFlags.UsqSqlDatabase).Result)
         {
