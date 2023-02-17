@@ -36,8 +36,7 @@ public class BookController : ControllerBase
             return BadRequest();
 
         var result = await _bookService.CreateBook(bookDto);
-
-        return CreatedAtRoute("id", new { result.Id }, result);
+        return StatusCode(201, result);
     }
 
     /// <summary>

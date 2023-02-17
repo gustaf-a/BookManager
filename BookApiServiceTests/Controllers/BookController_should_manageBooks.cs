@@ -35,13 +35,15 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
     {
         // -------------- Create book --------------
 
+        // Arrange
+
         var expectedBook = new TestBook
         {
             Author = "TestLastname, TestFirstName",
             Title = "Test Book",
             Genre = "Test genre",
             Price = 38.95,
-            PublishDate = new DateOnly(2008, 6, 1),
+            PublishDate = "2008-06-01",
             Description = "Test description"
         };
 
@@ -60,7 +62,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
 
         //// Assert
 
-        createdBookResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        createdBookResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var createContent = await createdBookResponse.Content.ReadAsStringAsync();
 
@@ -125,7 +127,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
             Title = "Test Book",
             Genre = "Test genre",
             Price = 38.95,
-            PublishDate = new DateOnly(2008, 6, 1),
+            PublishDate = "2008-06-01",
             Description = "Test description"
         };
 
@@ -135,7 +137,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
             title = expectedBook.Title,
             genre = expectedBook.Genre,
             price = expectedBook.Price,
-            publish_date = "2008-06-01", // As string directly to improve test readability
+            publish_date = expectedBook.PublishDate,
             description = expectedBook.Description
         };
 
@@ -143,7 +145,8 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         var createdBookResponse = await _client.PostAsync($"{ControllerBaseRoute}", GetJsonStringContent(payloadCreate));
 
         // Assert
-        createdBookResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        createdBookResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var createContent = await createdBookResponse.Content.ReadAsStringAsync();
 
@@ -162,7 +165,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
             Title = "Test Book",
             Genre = "Test genre",
             Price = 38.95,
-            PublishDate = new DateOnly(2008, 6, 1),
+            PublishDate = "2008-06-01",
             Description = "Test very much updated description"
         };
 
@@ -175,11 +178,15 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         var partialupdateResponse = await _client.PutAsync($"{ControllerBaseRoute}/{createdBook.Id}", GetJsonStringContent(payloadPartialUpdate));
 
         // Assert
-        partialupdateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        partialupdateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        var partialUpdateContent = await partialupdateResponse.Content.ReadAsStringAsync();
+        // -------------- Get Partially updated book --------------
 
-        var partiallyUpdatedBook = JsonSerializer.Deserialize<TestBook>(partialUpdateContent);
+        var getPartiallyUpdatedResponse = await _client.GetAsync($"{ControllerBaseRoute}/id/{createdBook.Id}");
+
+        var getPartiallyUpdatedContent = await getPartiallyUpdatedResponse.Content.ReadAsStringAsync();
+
+        var partiallyUpdatedBook = JsonSerializer.Deserialize<List<TestBook>>(getPartiallyUpdatedContent).FirstOrDefault(); ;
 
         partiallyUpdatedBook.Should().NotBeNull()
             .And.BeEquivalentTo(expectedPartiallyUpdatedBook);
@@ -193,7 +200,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
             Title = "Updated Book",
             Genre = "Updated genre",
             Price = 10,
-            PublishDate = new DateOnly(2015, 4, 4),
+            PublishDate = "2015-04-04",
             Description = "Test updated description"
         };
 
@@ -203,7 +210,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
             title = expectedUpdatedBook.Title,
             genre = expectedUpdatedBook.Genre,
             price = expectedUpdatedBook.Price,
-            publish_date = "2015-04-04", // As string directly to improve test readability
+            publish_date = expectedUpdatedBook.PublishDate,
             description = expectedUpdatedBook.Description
         };
 
@@ -211,14 +218,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         var updateResponse = await _client.PutAsync($"{ControllerBaseRoute}/{createdBook.Id}", GetJsonStringContent(payloadUpdate));
 
         // Assert
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var updateContent = await updateResponse.Content.ReadAsStringAsync();
-
-        var updatedBook = JsonSerializer.Deserialize<TestBook>(updateContent);
-
-        updatedBook.Should().NotBeNull()
-            .And.BeEquivalentTo(expectedUpdatedBook);
+        updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         // -------------- Get book --------------
 
@@ -233,7 +233,8 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         var getByIdBook = JsonSerializer.Deserialize<List<TestBook>>(getContent).FirstOrDefault();
 
         getByIdBook.Should().NotBeNull()
-            .And.BeEquivalentTo(updatedBook);
+            .And.BeEquivalentTo(expectedUpdatedBook, options =>
+                options.Excluding(createdTestBook => createdTestBook.Id));
 
         // -------------- Delete book --------------
 
