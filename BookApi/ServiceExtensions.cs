@@ -33,7 +33,7 @@ public static class ServiceExtensions
                 var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                 if (contextFeature != null)
                 {
-                    loggerManager.LogError(contextFeature.Error, $"Exception thrown by request sent to endpoint: {contextFeature.Endpoint}.");
+                    loggerManager.LogError($"Global exception handling: Exception thrown by request sent to endpoint: {contextFeature.Endpoint}. Message: {contextFeature.Error.Message}");
 
                     await context.Response.WriteAsync(new ErrorDetails
                     {
