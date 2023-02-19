@@ -1,5 +1,13 @@
 ﻿using Contracts;
+using Contracts.EF;
 using Microsoft.AspNetCore.Diagnostics;
+using RepositoryEFCore;
+using RepositorySql.Database.SQLite;
+using RepositorySql.Database;
+using RepositorySql;
+using Service.Contracts;
+using Service.EF;
+using Service.SQL;
 using Shared;
 using System.Net;
 
@@ -43,5 +51,24 @@ public static class ServiceExtensions
                 }
             });
         });
+    }
+
+    public static void ConfigureEfCoreServices(this IServiceCollection services, IConfigurationRoot configurationRoot)
+    {
+        services.AddScoped<ServiceEfManager>();
+
+        services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+        services.AddSqlServer<RepositoryContext>(configurationRoot.GetConnectionString("sqlConnection"));
+    }
+
+    public static void ConfigureSqliteServices(this IServiceCollection services)
+    {
+        services.AddScoped<ServiceSqlManager>();
+
+        services.AddSingleton<IBookRepository, DatabaseBookRepository>();
+        services.AddSingleton<IDatabaseAccess, SqliteDatabaseAccess>();
+        services.AddSingleton<IDatabaseIdGenerator, SqliteDatabaseIdGenerator>();
+        services.AddSingleton<IDatabaseQueryCreator, SqliteDatabaseQueryCreator>();
     }
 }

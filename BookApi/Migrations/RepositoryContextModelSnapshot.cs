@@ -24,7 +24,7 @@ namespace BookApi.Migrations
             modelBuilder.Entity("Entities.ModelsEf.BookEf", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(10)")
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("id");
 
                     b.Property<string>("Author")
@@ -45,7 +45,7 @@ namespace BookApi.Migrations
 
                     b.Property<string>("PublishDate")
                         .IsRequired()
-                        .HasColumnType("nvarchar(10)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("publish_date");
 
                     b.Property<string>("Title")
