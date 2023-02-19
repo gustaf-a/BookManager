@@ -16,13 +16,26 @@ Uppbyggt i tre lager: presentation, service och repository.
 
 ![Solution Flowchart](BookManager_diagram.png)
 
-## Run guide
+## Run guide 
 
-1. Kopiera appsettings_template.json och ge kopian namnet appsettings.json
-2. Ändra Data Source för ConnectionString för SQLite database.db-filen. DB-filen finns i solution root under Database-mappen.
-3. Kör via Visual Studio (enkel tillgång till Swagger) eller 'dotnet run'.
 
-Testerna kan köras via Test Explorer.
+1. Kopiera appsettings_template.json i BookApi-mappen och ge kopian namnet appsettings.json
+2. Konfigurera databas
+
+Sätt FeatureManagement:UseSqlDatabase till önskat värde (default är true) och ändra connection string.
+
+- Om UseSqlDatabase=true
+
+Ändra Data Source i ConnectionString Default så den pekar mot SQLite database-filen books.db som finns i solution root i Database-mappen.
+
+- Om UseSqlDatabase=false
+
+EF Core används med connectionstring sqlConnection.
+Använd med en databas lokalt eller via Azure.
+I Package Manager Console: "Add-Migration DatabaseCreation" och sen "Update-Database".
+
+
+3. Kör via Visual Studio (debug för att använda Swagger) eller 'dotnet run'.
 
 ## Future development
 
