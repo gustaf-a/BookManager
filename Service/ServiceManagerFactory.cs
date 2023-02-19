@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Microsoft.FeatureManagement;
 using Service.Contracts;
+using Service.EF;
 using Service.SQL;
 using Shared;
 
@@ -22,13 +23,29 @@ public class ServiceManagerFactory : IServiceManagerFactory
     public IServiceManager GetServiceManager()
     {
         if(_featureManager.IsEnabledAsync(FeatureFlags.UseSqlDatabase).Result)
-        {
-            return (IServiceManager)_serviceProvider.GetService(typeof(ServiceSqlManager)) 
-                ?? throw new Exception($"Failed to resolve {nameof(ServiceSqlManager)}. Ensure DI registration is correct.");
-        }
+            return ResolveServiceManager(typeof(ServiceSqlManager));
         else
-        {
-            throw new NotImplementedException($"Support for alternative to feature {nameof(FeatureFlags.UsqSqlDatabase)} not implemented. Please set feature flag in appsettings.json to true.");
-        }
+            return ResolveServiceManager(typeof(ServiceEfManager));
     }
+
+    private IServiceManager ResolveServiceManager(Type serviceManagerType)
+    {
+        _logger.LogInfo($"Using {serviceManagerType.Name}");
+
+        IServiceManager serviceManager;
+
+        try
+        {
+            serviceManager = (IServiceManager)_serviceProvider.GetService(serviceManagerType);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Unexpected error when resolving ServiceManager: {serviceManagerType.Name}");
+
+            throw;
+        }
+
+        return serviceManager ?? throw new Exception($"Failed to resolve ServiceManager '{serviceManagerType.Name}'. Ensure services are registered with DI.");
+    }
+       
 }
