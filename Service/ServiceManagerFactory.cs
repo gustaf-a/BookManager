@@ -21,7 +21,7 @@ public class ServiceManagerFactory : IServiceManagerFactory
 
     public IServiceManager GetServiceManager()
     {
-        if(_featureManager.IsEnabledAsync(FeatureFlags.UsqSqlDatabase).Result)
+        if(_featureManager.IsEnabledAsync(FeatureFlags.UseSqlDatabase).Result)
         {
             return (IServiceManager)_serviceProvider.GetService(typeof(ServiceSqlManager)) 
                 ?? throw new Exception($"Failed to resolve {nameof(ServiceSqlManager)}. Ensure DI registration is correct.");
