@@ -28,7 +28,7 @@ public class ServiceManagerFactory : IServiceManagerFactory
         }
         else
         {
-            throw new NotImplementedException($"Support for alternative to feature {nameof(FeatureFlags.UsqSqlDatabase)} not implemented.");
+            throw new NotImplementedException($"Support for alternative to feature {nameof(FeatureFlags.UsqSqlDatabase)} not implemented. Please set feature flag in appsettings.json to true.");
         }
     }
 }
