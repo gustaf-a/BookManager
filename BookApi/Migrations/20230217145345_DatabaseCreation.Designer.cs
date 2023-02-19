@@ -11,7 +11,7 @@ using RepositoryEFCore;
 namespace BookApi.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20230217143723_DatabaseCreation")]
+    [Migration("20230217145345_DatabaseCreation")]
     partial class DatabaseCreation
     {
         /// <inheritdoc />
@@ -27,7 +27,7 @@ namespace BookApi.Migrations
             modelBuilder.Entity("Entities.ModelsEf.BookEf", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(10)")
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("id");
 
                     b.Property<string>("Author")
@@ -48,7 +48,7 @@ namespace BookApi.Migrations
 
                     b.Property<string>("PublishDate")
                         .IsRequired()
-                        .HasColumnType("nvarchar(10)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("publish_date");
 
                     b.Property<string>("Title")

@@ -16,13 +16,13 @@ namespace BookApi.Migrations
                 name: "Books",
                 columns: table => new
                 {
-                    id = table.Column<string>(type: "nvarchar(10)", nullable: false),
+                    id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     author = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     price = table.Column<double>(type: "float", nullable: false),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     genre = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    publish_date = table.Column<string>(type: "nvarchar(10)", nullable: false)
+                    publish_date = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
