@@ -11,7 +11,7 @@ using RepositoryEFCore;
 namespace BookApi.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20230217145345_DatabaseCreation")]
+    [Migration("20230219085206_DatabaseCreation")]
     partial class DatabaseCreation
     {
         /// <inheritdoc />
