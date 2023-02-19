@@ -18,11 +18,9 @@ Uppbyggt i tre lager: presentation, service och repository.
 
 ## Run guide
 
-Skapa connectionString för SQLite database.db-filen. Den finns i solution root under Database-mappen.
-Exempel på databasens string finns i appsettings.json
-
-Ingen setup ska behövas. 
-Det enklaste är att öppna i Visual Studio och köra i debug för att komma åt Swagger.
+1. Kopiera appsettings_template.json och ge kopian namnet appsettings.json
+2. Ändra Data Source för ConnectionString för SQLite database.db-filen. DB-filen finns i solution root under Database-mappen.
+3. Kör via Visual Studio (enkel tillgång till Swagger) eller 'dotnet run'.
 
 Testerna kan köras via Test Explorer.
 
