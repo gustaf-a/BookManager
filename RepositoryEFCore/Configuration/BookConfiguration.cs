@@ -17,7 +17,7 @@ public class BookConfiguration : IEntityTypeConfiguration<BookEf>
                 Title = "Deploying with JRuby",
                 Genre = "Computer",
                 Price = 33.00,
-                PublishDate = "2021-08-15",
+                PublishDate = "2012-08-15",
                 Description = "Deploying with JRuby is the missing link between enjoying JRuby and using it in the real world to build high-performance, scalable applications."
             },
             new BookEf
@@ -104,7 +104,7 @@ public class BookConfiguration : IEntityTypeConfiguration<BookEf>
             {
                 Id = "B10",
                 Author = "O'Brien, Tim",
-                Title = "Microsoft.NET: The Programming Bible",
+                Title = "Microsoft .NET: The Programming Bible",
                 Genre = "Computer",
                 Price = 36.95,
                 PublishDate = "2000-12-09",
@@ -118,7 +118,7 @@ public class BookConfiguration : IEntityTypeConfiguration<BookEf>
                 Genre = "Computer",
                 Price = 34.95,
                 PublishDate = "2007-12-01",
-                Description = "Accessibility has a reputation of being dull, dry, and unfriendly toward graphic design.But there is a better way: well - styled semantic markup that lets you provide the best possible results for all of your users.This book will help you provide images, video, Flash and PDF in an accessible way that looks great to your sighted users, but is still accessible to all users."
+                Description = "Accessibility has a reputation of being dull, dry, and unfriendly toward graphic design. But there is a better way: well-styled semantic markup that lets you provide the best possible results for all of your users. This book will help you provide images, video, Flash and PDF in an accessible way that looks great to your sighted users, but is still accessible to all users."
             },
             new BookEf
             {
@@ -128,7 +128,7 @@ public class BookConfiguration : IEntityTypeConfiguration<BookEf>
                 Genre = "Computer",
                 Price = 38.95,
                 PublishDate = "2008-06-01",
-                Description = "The last couple of years have seen big changes in server-side web programming.Now it’s the client’s turn; Dojo is the toolkit to make it happen and Mastering Dojo shows you how."
+                Description = "The last couple of years have seen big changes in server-side web programming. Now it’s the client’s turn; Dojo is the toolkit to make it happen and Mastering Dojo shows you how."
             },
             new BookEf
             {
@@ -138,7 +138,7 @@ public class BookConfiguration : IEntityTypeConfiguration<BookEf>
                 Genre = "Computer",
                 Price = 20.00,
                 PublishDate = "2012-03-01",
-                Description = "Speak directly to your system.With its simple commands, flags, and parameters, a well-formed command-line application is the quickest way to automate a backup, a build, or a deployment and simplify your life."
+                Description = "Speak directly to your system. With its simple commands, flags, and parameters, a well-formed command-line application is the quickest way to automate a backup, a build, or a deployment and simplify your life."
             }
         );
     }
