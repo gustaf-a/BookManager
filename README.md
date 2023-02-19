@@ -34,6 +34,7 @@ EF Core används med connectionstring sqlConnection.
 Använd med en databas lokalt eller via Azure.
 I Package Manager Console: "Add-Migration DatabaseCreation" och sen "Update-Database".
 
+Tips: Om du behöver seeda en databas med testdata, använd books_seeding.sql i RepositorySql.
 
 3. Kör via Visual Studio (debug för att använda Swagger) eller 'dotnet run'.
 
