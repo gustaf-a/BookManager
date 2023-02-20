@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApi", "BookApi\BookApi.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApiServiceTests", "BookApiServiceTests\BookApiServiceTests.csproj", "{611B2415-FFC9-4215-9D0C-74DC15289A04}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApiUnitTests", "BookApiUnitTests\BookApiUnitTests.csproj", "{A58B725D-3BCA-465E-8F49-E6E08447B1A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositorySqlTests", "BookApiUnitTests\RepositorySqlTests.csproj", "{A58B725D-3BCA-465E-8F49-E6E08447B1A3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{0B0823FE-BC70-4E2D-BB01-BF6B72D30D5E}"
 EndProject
