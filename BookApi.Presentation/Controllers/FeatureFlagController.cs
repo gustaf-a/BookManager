@@ -15,16 +15,16 @@ public class FeatureFlagController : ControllerBase
         _featureManager = featureManager;
     }
 
-    [HttpGet(FeatureFlags.UsqSqlDatabase)]
+    [HttpGet(FeatureFlags.UseSqlDatabase)]
     public async Task<IActionResult> UseSqlDatabaseStatus()
     {
-        if (await _featureManager.IsEnabledAsync(FeatureFlags.UsqSqlDatabase))
+        if (await _featureManager.IsEnabledAsync(FeatureFlags.UseSqlDatabase))
         {
-            return Ok($"Feature {FeatureFlags.UsqSqlDatabase} enabled");
+            return Ok($"Feature {FeatureFlags.UseSqlDatabase} enabled");
         }
         else
         {
-            return BadRequest($"Feature {FeatureFlags.UsqSqlDatabase} not enabled");
+            return BadRequest($"Feature {FeatureFlags.UseSqlDatabase} not enabled");
         }
     }
 }

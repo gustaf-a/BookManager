@@ -15,7 +15,7 @@ public class BookController : ControllerBase
 
     public BookController(IServiceManagerFactory serviceManagerFactory)
     {
-        _serviceManager = serviceManagerFactory.GetService();
+        _serviceManager = serviceManagerFactory.GetServiceManager();
 
         _bookService = _serviceManager.BookService;
     }

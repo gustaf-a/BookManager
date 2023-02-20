@@ -1,28 +1,40 @@
 # BookManager API
 
-Ett API skrivet i C# för böcker med en SQLite databas skapat med Test Driven Development (TDD).
-Uppbyggt i tre lager: presentation, service och repository.
+Ett API skrivet i C# för böcker med en SQLite fildatabas.
+Uppbyggt i tre lager med contracts emellan: presentation, service och data access.
 
-
-- Service test som täcker CRUD
-- Unit test
+- Service test som täcker CRUD och Unit tests båda använts för utveckling enligt TDD (Test Driven Development)
 - Github Projects använt vid utvecklingen
 - Full beskrivning av processen (se nedan)
-- Repository pattern, Options pattern
-- Extension methods
-- Global exception handling
-- Dynamiskt byggda SQL queries med parametrar som skyddar mot SQL Injection
-- Abstraktion för log service i separat LoggerService-projekt
+- Repository pattern, Options pattern, simple factory pattern, extension methods
+- Global exception handling med Middleware
+- Dynamiskt byggda SQL queries med parametrar som skyddar mot SQL Injection skickade till DAPPER för databas access
+- Dynamiskt byggda Entity Framework Core queries med unit testade expressions
+- Log service i separat LoggerService-projekt
 
 ![Solution Flowchart](BookManager_diagram.png)
 
-## Run guide
+## Run guide 
 
-1. Kopiera appsettings_template.json och ge kopian namnet appsettings.json
-2. Ändra Data Source för ConnectionString för SQLite database.db-filen. DB-filen finns i solution root under Database-mappen.
-3. Kör via Visual Studio (enkel tillgång till Swagger) eller 'dotnet run'.
 
-Testerna kan köras via Test Explorer.
+1. Kopiera appsettings_template.json i BookApi-mappen och ge kopian namnet appsettings.json
+2. Konfigurera databas
+
+Sätt FeatureManagement:UseSqlDatabase till önskat värde (default är true) och ändra connection string.
+
+- Om UseSqlDatabase=true
+
+Ändra Data Source i ConnectionString Default så den pekar mot SQLite database-filen books.db som finns i solution root i Database-mappen.
+
+- Om UseSqlDatabase=false
+
+EF Core används med connectionstring sqlConnection.
+Använd med en databas lokalt eller via Azure.
+I Package Manager Console: "Add-Migration DatabaseCreation" och sen "Update-Database".
+
+Tips: Om du behöver seeda en databas med testdata, använd books_seeding.sql i RepositorySql.
+
+3. Kör via Visual Studio (debug för att använda Swagger) eller 'dotnet run'.
 
 ## Future development
 

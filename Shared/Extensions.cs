@@ -74,4 +74,14 @@ public static class Extensions
         => DateOnly.MinValue.Equals(publishDate)
             ? null
             : publishDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+    public static int ToSubstringLength(this ReadBooksRequest.DatePrecision datePrecision)
+    => datePrecision switch
+    {
+        ReadBooksRequest.DatePrecision.None => 0,
+        ReadBooksRequest.DatePrecision.Year => 4,
+        ReadBooksRequest.DatePrecision.Month => 7,
+        ReadBooksRequest.DatePrecision.Day => 10,
+        _ => throw new NotImplementedException($"Substring length not found for DatePrecision {datePrecision}.")
+    };
 }

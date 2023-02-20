@@ -178,7 +178,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         var datePrecisionLength = readBooksRequest.FilterByDatePrecision.ToSubstringLength();
 
-        var dateOnlyString = readBooksRequest.FilterByDateValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        var dateOnlyString = readBooksRequest.FilterByDateValue.GetConvertedDateOnlyValue();
 
         // Possible values coming from DateOnly are limited so no need for parameters
         sqlQuery.QueryString.Append($" WHERE substring({fieldToSortBy.ToLower()},1,{datePrecisionLength}) = substring('{dateOnlyString}',1,{datePrecisionLength})");
