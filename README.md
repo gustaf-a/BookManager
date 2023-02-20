@@ -1,18 +1,16 @@
 # BookManager API
 
-Ett API skrivet i C# för böcker med en SQLite databas skapat med Test Driven Development (TDD).
-Uppbyggt i tre lager: presentation, service och repository.
+Ett API skrivet i C# för böcker med en SQLite fildatabas.
+Uppbyggt i tre lager med contracts emellan: presentation, service och data access.
 
-
-- Service test som täcker CRUD
-- Unit test
+- Service test som täcker CRUD och Unit tests båda använts för utveckling enligt TDD (Test Driven Development)
 - Github Projects använt vid utvecklingen
 - Full beskrivning av processen (se nedan)
-- Repository pattern, Options pattern
-- Extension methods
-- Global exception handling
-- Dynamiskt byggda SQL queries med parametrar som skyddar mot SQL Injection
-- Abstraktion för log service i separat LoggerService-projekt
+- Repository pattern, Options pattern, simple factory pattern, extension methods
+- Global exception handling med Middleware
+- Dynamiskt byggda SQL queries med parametrar som skyddar mot SQL Injection skickade till DAPPER för databas access
+- Dynamiskt byggda Entity Framework Core queries med unit testade expressions
+- Log service i separat LoggerService-projekt
 
 ![Solution Flowchart](BookManager_diagram.png)
 
