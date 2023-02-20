@@ -4,6 +4,7 @@ using RepositoryEFCore.QueryHelper;
 using Shared;
 using System.Linq.Expressions;
 using Neleus.LambdaCompare;
+using Microsoft.EntityFrameworkCore;
 
 namespace RepositoryEFCoreTests;
 
@@ -86,7 +87,7 @@ public class QueryHelperTests
         // Arrange
         var textFilter = "B";
 
-        Expression<Func<BookEf, bool>> expectedExpression = b => b.Id.Contains(textFilter, StringComparison.InvariantCultureIgnoreCase);
+        Expression<Func<BookEf, bool>> expectedExpression = b => EF.Functions.Like(b.Id, $"%{textFilter}%");
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -107,7 +108,7 @@ public class QueryHelperTests
         // Arrange
         var textFilter = "Joe";
 
-        Expression<Func<BookEf, bool>> expectedExpression = b => b.Author.Contains(textFilter, StringComparison.InvariantCultureIgnoreCase);
+        Expression<Func<BookEf, bool>> expectedExpression = b => EF.Functions.Like(b.Author, $"%{textFilter}%");
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -128,7 +129,7 @@ public class QueryHelperTests
         // Arrange
         var textFilter = "best-seller";
 
-        Expression<Func<BookEf, bool>> expectedExpression = b => b.Description.Contains(textFilter, StringComparison.InvariantCultureIgnoreCase);
+        Expression<Func<BookEf, bool>> expectedExpression = b => EF.Functions.Like(b.Description, $"%{textFilter}%");
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -149,7 +150,7 @@ public class QueryHelperTests
         // Arrange
         var textFilter = "Fantasy";
 
-        Expression<Func<BookEf, bool>> expectedExpression = b => b.Genre.Contains(textFilter, StringComparison.InvariantCultureIgnoreCase);
+        Expression<Func<BookEf, bool>> expectedExpression = b => EF.Functions.Like(b.Genre, $"%{textFilter}%");
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -170,7 +171,7 @@ public class QueryHelperTests
         // Arrange
         var textFilter = ".NET";
 
-        Expression<Func<BookEf, bool>> expectedExpression = b => b.Title.Contains(textFilter, StringComparison.InvariantCultureIgnoreCase);
+        Expression<Func<BookEf, bool>> expectedExpression = b => EF.Functions.Like(b.Title, $"%{textFilter}%");
 
         var readBooksRequest = new ReadBooksRequest
         {

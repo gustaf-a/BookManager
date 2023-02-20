@@ -1,4 +1,5 @@
 ﻿using Entities.ModelsEf;
+using Microsoft.EntityFrameworkCore;
 using Shared;
 using System.Linq.Expressions;
 
@@ -27,11 +28,11 @@ public static class QueryHelperBookEf
     {
         return readBooksRequest.SortResultByField switch
         {
-            nameof(Book.Id) => b => b.Id.Contains(readBooksRequest.FilterByTextValue, StringComparison.InvariantCultureIgnoreCase),
-            nameof(Book.Author) => b => b.Author.Contains(readBooksRequest.FilterByTextValue, StringComparison.InvariantCultureIgnoreCase),
-            nameof(Book.Description) => b => b.Description.Contains(readBooksRequest.FilterByTextValue, StringComparison.InvariantCultureIgnoreCase),
-            nameof(Book.Genre) => b => b.Genre.Contains(readBooksRequest.FilterByTextValue, StringComparison.InvariantCultureIgnoreCase),
-            nameof(Book.Title) => b => b.Title.Contains(readBooksRequest.FilterByTextValue, StringComparison.InvariantCultureIgnoreCase),
+            nameof(Book.Id) => b => EF.Functions.Like(b.Id, $"%{readBooksRequest.FilterByTextValue}%"),
+            nameof(Book.Author) => b => EF.Functions.Like(b.Author, $"%{readBooksRequest.FilterByTextValue}%"),
+            nameof(Book.Description) => b => EF.Functions.Like(b.Description, $"%{readBooksRequest.FilterByTextValue}%"),
+            nameof(Book.Genre) => b => EF.Functions.Like(b.Genre, $"%{readBooksRequest.FilterByTextValue}%"),
+            nameof(Book.Title) => b => EF.Functions.Like(b.Title, $"%{readBooksRequest.FilterByTextValue}%"),
 
             nameof(Book.PublishDate) => throw new Exception($"{nameof(Book.PublishDate)} not treated as text. Please use {nameof(readBooksRequest.FilterByDate)}"),
             nameof(Book.Price) => throw new Exception($"{nameof(Book.Price)} not treated as text. Please use {nameof(readBooksRequest.FilterByDouble)}"),
