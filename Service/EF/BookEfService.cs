@@ -36,9 +36,7 @@ public sealed class BookEfService : IBookService
         
         try
         {
-            //TODO interpret filters
-
-            var booksEf = await _repositoryManager.Book.GetAllBooks(false);
+            var booksEf = await _repositoryManager.Book.GetBooks(readBooksRequest, false);
 
             _logger.LogInfo($"Read book request successfully handled. Returning {booksEf.Count()} book(s).");
 
