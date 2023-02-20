@@ -11,11 +11,13 @@ public class BookController : ControllerBase
 {
     private readonly IServiceManager _serviceManager;
 
-    private IBookService _bookService => _serviceManager.BookService;
+    private readonly IBookService _bookService;
 
     public BookController(IServiceManagerFactory serviceManagerFactory)
     {
-        _serviceManager = serviceManagerFactory.GetService();
+        _serviceManager = serviceManagerFactory.GetServiceManager();
+
+        _bookService = _serviceManager.BookService;
     }
 
     /// <summary>

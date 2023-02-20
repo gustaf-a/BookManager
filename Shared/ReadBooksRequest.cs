@@ -24,6 +24,8 @@ public class ReadBooksRequest
     public string SortResultByField { get; set; } = nameof(Book.Id);
     public FieldType SortResultByFieldType { get; set; } = FieldType.Text;
 
+    public bool HasFilters => FilterByDate || FilterByDouble || FilterByText;
+
     public bool FilterByText => !string.IsNullOrWhiteSpace(FilterByTextValue);
     public string FilterByTextValue { get; set; } = string.Empty;
 
