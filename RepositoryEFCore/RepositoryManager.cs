@@ -17,6 +17,6 @@ public sealed class RepositoryManager : IRepositoryManager
 
     public IBookEfRepository Book => _bookRepository.Value;
 
-    public void Save()
-        => _repositoryContext.SaveChanges();
+    public async Task SaveAsync()
+        => await _repositoryContext.SaveChangesAsync();
 }
