@@ -1,4 +1,4 @@
-﻿namespace RepositorySql.Database;
+﻿namespace Contracts;
 
 public interface IDatabaseIdGenerator
 {
