@@ -57,7 +57,9 @@ public static class ServiceExtensions
 
         services.AddScoped<IRepositoryManager, RepositoryManager>();
 
-        services.AddSqlServer<RepositoryContext>(configurationRoot.GetConnectionString("sqlConnection"));
+        services.AddSqlServer<RepositoryContext>(
+            configurationRoot.GetConnectionString("sqlConnection"), 
+            serviceProviderOptions => serviceProviderOptions.EnableRetryOnFailure());
     }
 
     public static void ConfigureSqliteServices(this IServiceCollection services)
