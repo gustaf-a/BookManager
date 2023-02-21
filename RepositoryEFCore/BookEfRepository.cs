@@ -19,6 +19,27 @@ public class BookEfRepository : RepositoryBase<BookEf>, IBookEfRepository
         _idGenerator = idGenerator;
     }
 
+    //----------------------- CREATE ---------------------
+
+    public void CreateBook(BookEf bookEf)
+    {
+        ArgumentNullException.ThrowIfNull(bookEf, nameof(bookEf));
+
+        bookEf.Id = GetBookId();
+        if (string.IsNullOrWhiteSpace(bookEf.Id))
+            throw new Exception("Failed to create new ID.");
+
+        Create(bookEf);
+    }
+
+    private string? GetBookId()
+    {
+        var booksWithCorrectPrefix = FindByCondition(b => b.Id.StartsWith(_databaseOptions.IdCharacterPrefix), false).ToList();
+
+        var maxCurrentId = QueryHelperBookEf.FindMaxCurrentId(booksWithCorrectPrefix, _databaseOptions.IdCharacterPrefix);
+
+        return _idGenerator.GenerateId(maxCurrentId);
+    }
     public Task<IEnumerable<BookEf>> GetBooks(ReadBooksRequest readBooksRequest, bool trackChanges)
     {
         if (readBooksRequest == null)
