@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using RepositorySql;
 using RepositorySql.Configuration;
-using RepositorySql.Database.SQLite;
 using Shared;
 using System.Globalization;
 
@@ -448,7 +447,7 @@ public class SqliteDatabaseQueryCreatorTests
         var getValuesRequest = new GetValueRequest
         {
             ColumnName = "Id",
-            IgnoreFirstCharacters = 2,
+            IgnoreFirstCharacters = 1,
             GetMaxValue = true
         };
 

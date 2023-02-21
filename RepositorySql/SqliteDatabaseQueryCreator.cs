@@ -327,6 +327,6 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     // Variable source is internal, so no need for parameters for SQL Injection protection
     private static string GetCastSubstringQuery(GetValueRequest getValueRequest)
     {
-        return $"CAST(SUBSTRING({getValueRequest.ColumnName.ToLower()}, {getValueRequest.IgnoreFirstCharacters}) AS UNSIGNED)";
+        return $"CAST(SUBSTRING({getValueRequest.ColumnName.ToLower()}, {getValueRequest.IgnoreFirstCharacters + 1}) AS UNSIGNED)";
     }
 }
