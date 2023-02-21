@@ -41,6 +41,16 @@ public class BookEfRepository : RepositoryBase<BookEf>, IBookEfRepository
 
         return _idGenerator.GenerateId(maxCurrentId);
     }
+
+    //----------------------- DELETE ---------------------
+
+    public void DeleteBook(BookEf bookEf)
+    {
+        Delete(bookEf);
+    }
+
+    //----------------------- READ ---------------------
+
     public async Task<IEnumerable<BookEf>> GetBooks(ReadBooksRequest readBooksRequest, bool trackChanges)
     {
         if (readBooksRequest == null)
