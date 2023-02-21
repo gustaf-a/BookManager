@@ -1,10 +1,11 @@
 ﻿using Contracts;
+using IdGeneratorService;
 using LoggerService;
 using Microsoft.FeatureManagement;
 using NLog;
-using RepositorySql.Configuration;
 using Service;
 using Service.Contracts;
+using Shared.Configuration;
 
 namespace BookApi;
 
@@ -42,6 +43,7 @@ public class Startup
         services.AddFeatureManagement();
 
         services.AddScoped<IServiceManagerFactory, ServiceManagerFactory>();
+        services.AddSingleton<IIdGenerator, IdGenerator>();
 
         services.ConfigureSqliteServices();
 

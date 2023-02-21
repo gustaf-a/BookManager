@@ -1,8 +1,8 @@
 ﻿using Contracts;
 using Entities.ModelsSql;
 using Microsoft.Extensions.Options;
-using RepositorySql.Configuration;
 using Shared;
+using Shared.Configuration;
 
 namespace RepositorySql;
 
@@ -11,9 +11,9 @@ public class DatabaseBookRepository : IBookRepository
     private readonly DatabaseOptions _databaseOptions;
 
     private readonly IDatabaseAccess _databaseAccess;
-    private readonly IDatabaseIdGenerator _databaseIdGenerator;
+    private readonly IIdGenerator _databaseIdGenerator;
 
-    public DatabaseBookRepository(IOptions<DatabaseOptions> databaseOptions, IDatabaseAccess databaseAccess, IDatabaseIdGenerator databaseIdGenerator)
+    public DatabaseBookRepository(IOptions<DatabaseOptions> databaseOptions, IDatabaseAccess databaseAccess, IIdGenerator databaseIdGenerator)
     {
         ArgumentNullException.ThrowIfNull(databaseOptions?.Value);
         _databaseOptions = databaseOptions.Value;

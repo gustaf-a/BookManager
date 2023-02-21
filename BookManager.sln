@@ -39,6 +39,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{B0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryEFCoreTests", "RepositoryEFCoreTests\RepositoryEFCoreTests.csproj", "{402C055C-E17B-446B-BA43-765322330092}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdGeneratorService", "IdGeneratorService\IdGeneratorService.csproj", "{2BB2E3F3-7663-4A91-9B27-60C640431BEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdGeneratorServiceTests", "IdGeneratorServiceTests\IdGeneratorServiceTests.csproj", "{4682B0E8-7353-4FF2-8458-44EE8CD02877}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +101,14 @@ Global
 		{402C055C-E17B-446B-BA43-765322330092}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{402C055C-E17B-446B-BA43-765322330092}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{402C055C-E17B-446B-BA43-765322330092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BB2E3F3-7663-4A91-9B27-60C640431BEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB2E3F3-7663-4A91-9B27-60C640431BEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB2E3F3-7663-4A91-9B27-60C640431BEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BB2E3F3-7663-4A91-9B27-60C640431BEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4682B0E8-7353-4FF2-8458-44EE8CD02877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4682B0E8-7353-4FF2-8458-44EE8CD02877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4682B0E8-7353-4FF2-8458-44EE8CD02877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4682B0E8-7353-4FF2-8458-44EE8CD02877}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

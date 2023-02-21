@@ -1,9 +1,9 @@
 ﻿using Contracts;
 using Contracts.EF;
+using IdGeneratorService;
 using Microsoft.AspNetCore.Diagnostics;
 using RepositoryEFCore;
 using RepositorySql;
-using Service.Contracts;
 using Service.EF;
 using Service.SQL;
 using Shared;
@@ -66,7 +66,6 @@ public static class ServiceExtensions
 
         services.AddSingleton<IBookRepository, DatabaseBookRepository>();
         services.AddSingleton<IDatabaseAccess, SqliteDatabaseAccess>();
-        services.AddSingleton<IDatabaseIdGenerator, SqliteDatabaseIdGenerator>();
         services.AddSingleton<IDatabaseQueryCreator, SqliteDatabaseQueryCreator>();
     }
 }

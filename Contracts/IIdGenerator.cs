@@ -1,6 +1,6 @@
 ﻿namespace Contracts;
 
-public interface IDatabaseIdGenerator
+public interface IIdGenerator
 {
     public string GenerateId(string currentMaxId);
 }

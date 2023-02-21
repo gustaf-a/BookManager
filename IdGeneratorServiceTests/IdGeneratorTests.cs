@@ -1,14 +1,15 @@
-﻿using Microsoft.Extensions.Options;
-using RepositorySql;
-using RepositorySql.Configuration;
+﻿using FluentAssertions;
+using IdGeneratorService;
+using Microsoft.Extensions.Options;
+using Shared.Configuration;
 
 namespace BookApiUnitTests.Database.SQLite;
 
-public class SqliteDatabaseIdGeneratorTests
+public class IdGeneratorTests
 {
     private readonly IOptions<DatabaseOptions> _databaseOptions;
 
-    public SqliteDatabaseIdGeneratorTests()
+    public IdGeneratorTests()
     {
         var databaseOptions = new DatabaseOptions
         {
@@ -23,7 +24,7 @@ public class SqliteDatabaseIdGeneratorTests
     public void GenerateId_StartsNewSequence_When_Database_Returns_Null()
     {
         // Arrange
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(_databaseOptions);
+        var databaseIdGenerator = new IdGenerator(_databaseOptions);
 
         // Act
         var newId = databaseIdGenerator.GenerateId("");
@@ -38,7 +39,7 @@ public class SqliteDatabaseIdGeneratorTests
     public void GenerateId_Increments_IdReturned_By1(string currentMaxId, string expectedNewId)
     {
         // Arrange
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(_databaseOptions);
+        var databaseIdGenerator = new IdGenerator(_databaseOptions);
 
         // Act
         var newId = databaseIdGenerator.GenerateId(currentMaxId);
@@ -53,7 +54,7 @@ public class SqliteDatabaseIdGeneratorTests
     public void GenerateId_StartsOnNewIdSequence_WhenCurrentIdPrefix_DifferentFromConfigured(string currentMaxId, string expectedNewId)
     {
         // Arrange
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(_databaseOptions);
+        var databaseIdGenerator = new IdGenerator(_databaseOptions);
 
         // Act
         var newId = databaseIdGenerator.GenerateId(currentMaxId);

@@ -1,16 +1,16 @@
 ﻿using Contracts;
 using Microsoft.Extensions.Options;
-using RepositorySql.Configuration;
+using Shared.Configuration;
 
-namespace RepositorySql;
+namespace IdGeneratorService;
 
-public class SqliteDatabaseIdGenerator : IDatabaseIdGenerator
+public class IdGenerator : IIdGenerator
 {
     private readonly string _idCharacterPrefix;
     private readonly int _idSequenceStartNumber;
     private readonly int _prefixLength;
 
-    public SqliteDatabaseIdGenerator(IOptions<DatabaseOptions> options)
+    public IdGenerator(IOptions<DatabaseOptions> options)
     {
         var databaseOptions = options.Value;
 

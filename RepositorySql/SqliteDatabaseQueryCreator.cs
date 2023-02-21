@@ -1,7 +1,7 @@
 ﻿using Entities.ModelsSql;
 using Microsoft.Extensions.Options;
-using RepositorySql.Configuration;
 using Shared;
+using Shared.Configuration;
 
 namespace RepositorySql;
 

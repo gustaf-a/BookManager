@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookApi.Presentation\BookApi.Presentation.csproj" />
+    <ProjectReference Include="..\IdGeneratorService\IdGeneratorService.csproj" />
     <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
     <ProjectReference Include="..\RepositoryEFCore\RepositoryEFCore.csproj" />
     <ProjectReference Include="..\RepositorySql\RepositorySql.csproj" />
