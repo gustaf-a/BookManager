@@ -39,6 +39,11 @@ public static class Extensions
         }
     }
 
+    //Conforms to RepositorySql pattern and validates date.
+    //To be replaced with better validation to allow direct BookDto->BookEf conversion. (2023-02-21)
+    public static BookEf ToBookEf(this BookDto bookDto)
+        => bookDto.ToBook().ToBookEf();
+
     public static BookEf ToBookEf(this Book book)
         => new()
         {
