@@ -2,5 +2,5 @@
 
 public interface IDatabaseIdGenerator
 {
-    public Task<string> GenerateId();
+    public string GenerateId(string currentMaxId);
 }

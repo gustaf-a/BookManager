@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
-using Moq;
 using RepositorySql;
 using RepositorySql.Configuration;
-using RepositorySql.Database.SQLite;
-using Shared;
 
 namespace BookApiUnitTests.Database.SQLite;
 
@@ -23,16 +20,13 @@ public class SqliteDatabaseIdGeneratorTests
     }
 
     [Fact]
-    public async Task GenerateId_StartsNewSequence_When_Database_Returns_Null()
+    public void GenerateId_StartsNewSequence_When_Database_Returns_Null()
     {
         // Arrange
-        var databaseAccessMock = new Mock<IDatabaseAccess>();
-        databaseAccessMock.Setup(d => d.GetValue(It.IsAny<GetValueRequest>())).ReturnsAsync("");
-
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _databaseOptions);
+        var databaseIdGenerator = new SqliteDatabaseIdGenerator(_databaseOptions);
 
         // Act
-        var newId = await databaseIdGenerator.GenerateId();
+        var newId = databaseIdGenerator.GenerateId("");
 
         // Assert
         newId.Should().Be("B1");
@@ -41,16 +35,13 @@ public class SqliteDatabaseIdGeneratorTests
     [Theory]
     [InlineData("B1", "B2")]
     [InlineData("B100", "B101")]
-    public async Task GenerateId_Increments_IdReturned_By1(string currentMaxId, string expectedNewId)
+    public void GenerateId_Increments_IdReturned_By1(string currentMaxId, string expectedNewId)
     {
         // Arrange
-        var databaseAccessMock = new Mock<IDatabaseAccess>();
-        databaseAccessMock.Setup(d => d.GetValue(It.IsAny<GetValueRequest>())).ReturnsAsync(currentMaxId);
-
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _databaseOptions);
+        var databaseIdGenerator = new SqliteDatabaseIdGenerator(_databaseOptions);
 
         // Act
-        var newId = await databaseIdGenerator.GenerateId();
+        var newId = databaseIdGenerator.GenerateId(currentMaxId);
 
         // Assert
         newId.Should().Be(expectedNewId);
@@ -59,16 +50,13 @@ public class SqliteDatabaseIdGeneratorTests
     [Theory]
     [InlineData("A5", "B1")]
     [InlineData("A1", "B1")]
-    public async Task GenerateId_StartsOnNewIdSequence_WhenCurrentIdPrefix_DifferentFromConfigured(string currentMaxId, string expectedNewId)
+    public void GenerateId_StartsOnNewIdSequence_WhenCurrentIdPrefix_DifferentFromConfigured(string currentMaxId, string expectedNewId)
     {
         // Arrange
-        var databaseAccessMock = new Mock<IDatabaseAccess>();
-        databaseAccessMock.Setup(d => d.GetValue(It.IsAny<GetValueRequest>())).ReturnsAsync(currentMaxId);
-
-        var databaseIdGenerator = new SqliteDatabaseIdGenerator(databaseAccessMock.Object, _databaseOptions);
+        var databaseIdGenerator = new SqliteDatabaseIdGenerator(_databaseOptions);
 
         // Act
-        var newId = await databaseIdGenerator.GenerateId();
+        var newId = databaseIdGenerator.GenerateId(currentMaxId);
 
         // Assert
         newId.Should().Be(expectedNewId);
