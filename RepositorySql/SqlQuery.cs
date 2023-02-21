@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace RepositorySql.Database.SQLite;
+namespace RepositorySql;
 
 public class SqlQuery
 {

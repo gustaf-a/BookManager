@@ -17,23 +17,57 @@ public sealed class BookEfService : IBookService
         _logger = logger;
     }
 
-    public Task<BookDto> CreateBook(BookDto BookDto)
+    public async Task<BookDto> CreateBook(BookDto bookDto)
     {
-        throw new NotImplementedException();
+        var bookEf = bookDto.ToBookEf();
+
+        if (bookEf == null)
+            throw new Exception("Failed to parse input data. Please review data sent.");
+
+        _logger.LogInfo($"Create book request received.");
+
+        _repositoryManager.Book.CreateBook(bookEf);
+
+        await _repositoryManager.SaveAsync();
+
+        _logger.LogInfo($"Create book request successfully handled.");
+
+        return bookEf.ToBookDto();
     }
 
-    public Task<bool> DeleteBook(string bookId)
+    public async Task<bool> DeleteBook(string bookId)
     {
-        throw new NotImplementedException();
+        var bookEf = await _repositoryManager.Book.GetBook(bookId, false);
+        if (bookEf == null)
+            throw new Exception($"Couldn't find book with ID: {bookId}");
+
+        _repositoryManager.Book.DeleteBook(bookEf);
+
+        await _repositoryManager.SaveAsync();
+
+        return true;
+    }
+
+    public async Task<bool> UpdateBook(BookDto bookDto, string bookId)
+    {
+        var bookEf = await _repositoryManager.Book.GetBook(bookId, true);
+        if (bookEf == null)
+            throw new Exception($"Couldn't find book with ID: {bookId}");
+
+        bookEf.UpdateBookEf(bookDto.ToBookEf());
+
+        await _repositoryManager.SaveAsync();
+
+        return true;
     }
 
     public async Task<IEnumerable<BookDto>> ReadBooks(ReadBooksRequest readBooksRequest)
     {
-        if(readBooksRequest == null)
+        if (readBooksRequest == null)
             throw new ArgumentNullException(nameof(readBooksRequest));
 
         _logger.LogInfo($"Read book request received.");
-        
+
         try
         {
             var booksEf = await _repositoryManager.Book.GetBooks(readBooksRequest, false);
@@ -47,10 +81,5 @@ public sealed class BookEfService : IBookService
             _logger.LogError($"Error when calling repository from service layer {nameof(ReadBooks)}: {ex.Message}");
             throw;
         }
-    }
-
-    public Task<bool> UpdateBook(BookDto BookDto, string bookId)
-    {
-        throw new NotImplementedException();
     }
 }

@@ -1,10 +1,9 @@
 ﻿using Entities.ModelsSql;
 using Microsoft.Extensions.Options;
-using RepositorySql.Configuration;
 using Shared;
-using System.Globalization;
+using Shared.Configuration;
 
-namespace RepositorySql.Database.SQLite;
+namespace RepositorySql;
 
 /// <summary>
 /// Used to build parametrized SQL query strings to adhere to best security practices.
@@ -328,6 +327,6 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     // Variable source is internal, so no need for parameters for SQL Injection protection
     private static string GetCastSubstringQuery(GetValueRequest getValueRequest)
     {
-        return $"CAST(SUBSTRING({getValueRequest.ColumnName.ToLower()}, {getValueRequest.IgnoreFirstCharacters}) AS UNSIGNED)";
+        return $"CAST(SUBSTRING({getValueRequest.ColumnName.ToLower()}, {getValueRequest.IgnoreFirstCharacters + 1}) AS UNSIGNED)";
     }
 }

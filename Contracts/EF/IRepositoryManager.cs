@@ -8,5 +8,5 @@ public interface IRepositoryManager
 {
     public IBookEfRepository Book { get; }
 
-    public void Save();
+    public Task SaveAsync();
 }

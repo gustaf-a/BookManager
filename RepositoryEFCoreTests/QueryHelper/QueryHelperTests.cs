@@ -361,4 +361,32 @@ public class QueryHelperTests
 
         sortedBooksIdOrder.Should().Be(expectedIdOrder);
     }
+
+    [Fact]
+    public void FindMaxCurrentId_Returns_Empty_WhenNoBooks()
+    {
+        // Arrange
+        IQueryable<BookEf> books = new List<BookEf>().AsQueryable();
+
+        // Act
+        var foundMaxId = QueryHelperBookEf.FindMaxCurrentId(books, "B");
+
+        // Assert
+        foundMaxId.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void FindMaxCurrentId_Returns_MaxId_AmongBooks()
+    {
+        // Arrange
+        var expectedMaxId = "B11";
+
+        IQueryable<BookEf> books = _books.AsQueryable();
+
+        // Act
+        var foundMaxId = QueryHelperBookEf.FindMaxCurrentId(books, "B");
+
+        // Assert
+        foundMaxId.Should().Be(expectedMaxId);
+    }
 }

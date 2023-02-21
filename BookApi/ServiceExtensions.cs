@@ -1,11 +1,9 @@
 ﻿using Contracts;
 using Contracts.EF;
+using IdGeneratorService;
 using Microsoft.AspNetCore.Diagnostics;
 using RepositoryEFCore;
-using RepositorySql.Database.SQLite;
-using RepositorySql.Database;
 using RepositorySql;
-using Service.Contracts;
 using Service.EF;
 using Service.SQL;
 using Shared;
@@ -59,7 +57,9 @@ public static class ServiceExtensions
 
         services.AddScoped<IRepositoryManager, RepositoryManager>();
 
-        services.AddSqlServer<RepositoryContext>(configurationRoot.GetConnectionString("sqlConnection"));
+        services.AddSqlServer<RepositoryContext>(
+            configurationRoot.GetConnectionString("sqlConnection"), 
+            serviceProviderOptions => serviceProviderOptions.EnableRetryOnFailure());
     }
 
     public static void ConfigureSqliteServices(this IServiceCollection services)
@@ -68,7 +68,6 @@ public static class ServiceExtensions
 
         services.AddSingleton<IBookRepository, DatabaseBookRepository>();
         services.AddSingleton<IDatabaseAccess, SqliteDatabaseAccess>();
-        services.AddSingleton<IDatabaseIdGenerator, SqliteDatabaseIdGenerator>();
         services.AddSingleton<IDatabaseQueryCreator, SqliteDatabaseQueryCreator>();
     }
 }

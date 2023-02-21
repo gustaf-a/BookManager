@@ -1,8 +1,7 @@
-﻿using Entities.ModelsSql;
-using Shared;
+﻿using Shared;
 using System.Globalization;
 
-namespace RepositorySql.Database.SQLite;
+namespace Entities.ModelsSql;
 
 public static class Extensions
 {

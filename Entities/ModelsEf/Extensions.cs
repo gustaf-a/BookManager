@@ -38,4 +38,48 @@ public static class Extensions
             return null;
         }
     }
+
+    //Conforms to RepositorySql pattern and validates date.
+    //To be replaced with better validation to allow direct BookDto->BookEf conversion. (2023-02-21)
+    public static BookEf ToBookEf(this BookDto bookDto)
+        => bookDto.ToBook().ToBookEf();
+
+    public static BookEf ToBookEf(this Book book)
+        => new()
+        {
+            Id = book.Id,
+            Author = book.Author,
+            Description = book.Description,
+            Genre = book.Genre,
+            Price = book.Price,
+            PublishDate = book.PublishDate.GetConvertedDateOnlyValue(),
+            Title = book.Title
+        };
+
+    public static void UpdateBookEf(this BookEf bookEf, BookEf bookEfUpdated)
+    {
+        if(NotDefault(bookEfUpdated.Author))
+            bookEf.Author = bookEfUpdated.Author;
+
+        if (NotDefault(bookEfUpdated.Description))
+            bookEf.Description = bookEfUpdated.Description;
+
+        if (NotDefault(bookEfUpdated.Genre))
+            bookEf.Genre = bookEfUpdated.Genre;
+
+        if (NotDefault(bookEfUpdated.Price))
+            bookEf.Price = bookEfUpdated.Price;
+
+        if (NotDefault(bookEfUpdated.PublishDate))
+            bookEf.PublishDate = bookEfUpdated.PublishDate;
+
+        if (NotDefault(bookEfUpdated.Title))
+            bookEf.Title = bookEfUpdated.Title;
+    }
+
+    private static bool NotDefault(string? value)
+        => !string.IsNullOrWhiteSpace(value);
+
+    private static bool NotDefault(double value)
+        => value > double.MinValue;
 }

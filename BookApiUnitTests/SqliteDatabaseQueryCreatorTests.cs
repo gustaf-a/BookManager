@@ -1,12 +1,11 @@
 ﻿using Entities.ModelsSql;
 using Microsoft.Extensions.Options;
-using RepositorySql.Configuration;
-using RepositorySql.Database;
-using RepositorySql.Database.SQLite;
+using RepositorySql;
 using Shared;
+using Shared.Configuration;
 using System.Globalization;
 
-namespace BookApiUnitTests.Database.SQLite;
+namespace RepositorySqlTests;
 
 public class SqliteDatabaseQueryCreatorTests
 {
@@ -448,7 +447,7 @@ public class SqliteDatabaseQueryCreatorTests
         var getValuesRequest = new GetValueRequest
         {
             ColumnName = "Id",
-            IgnoreFirstCharacters = 2,
+            IgnoreFirstCharacters = 1,
             GetMaxValue = true
         };
 
