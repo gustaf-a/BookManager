@@ -1,4 +1,4 @@
-﻿namespace RepositorySql.Configuration;
+﻿namespace Shared.Configuration;
 
 public class ConnectionStringsOptions
 {
