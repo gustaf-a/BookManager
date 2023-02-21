@@ -1,6 +1,6 @@
 ﻿using Shared;
 
-namespace RepositorySql.Database;
+namespace RepositorySql;
 
 public interface IDatabaseAccess
 {

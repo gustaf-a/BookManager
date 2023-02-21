@@ -2,9 +2,8 @@
 using Microsoft.Extensions.Options;
 using RepositorySql.Configuration;
 using Shared;
-using System.Globalization;
 
-namespace RepositorySql.Database.SQLite;
+namespace RepositorySql;
 
 /// <summary>
 /// Used to build parametrized SQL query strings to adhere to best security practices.

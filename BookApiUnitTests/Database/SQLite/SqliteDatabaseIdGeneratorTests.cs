@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Moq;
+using RepositorySql;
 using RepositorySql.Configuration;
-using RepositorySql.Database;
 using RepositorySql.Database.SQLite;
 using Shared;
 

@@ -1,6 +1,4 @@
-﻿using RepositorySql.Database.SQLite;
-
-namespace Entities.ModelsSql;
+﻿namespace Entities.ModelsSql;
 
 //Used to get full control over the conversion to and from database
 //Needed as the naming of PublishDate in Book-object doesn't translate to SQLite publish_date with nameof

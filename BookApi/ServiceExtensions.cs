@@ -2,8 +2,6 @@
 using Contracts.EF;
 using Microsoft.AspNetCore.Diagnostics;
 using RepositoryEFCore;
-using RepositorySql.Database.SQLite;
-using RepositorySql.Database;
 using RepositorySql;
 using Service.Contracts;
 using Service.EF;
