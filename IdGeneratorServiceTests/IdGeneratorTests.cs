@@ -51,15 +51,13 @@ public class IdGeneratorTests
     [Theory]
     [InlineData("A5", "B1")]
     [InlineData("A1", "B1")]
-    public void GenerateId_StartsOnNewIdSequence_WhenCurrentIdPrefix_DifferentFromConfigured(string currentMaxId, string expectedNewId)
+    public void GenerateId_ThrowsException_WhenCurrentIdPrefix_DifferentFromConfigured(string currentMaxId, string expectedNewId)
     {
         // Arrange
         var databaseIdGenerator = new IdGenerator(_databaseOptions);
 
         // Act
-        var newId = databaseIdGenerator.GenerateId(currentMaxId);
-
-        // Assert
-        newId.Should().Be(expectedNewId);
+        databaseIdGenerator.Invoking(d => d.GenerateId(currentMaxId))
+            .Should().Throw<Exception>();
     }
 }

@@ -25,7 +25,7 @@ public class IdGenerator : IIdGenerator
             return GetStartOfNewSequence();
 
         if (!ConfigurationPrefixMatches(currentMaxId))
-            return GetStartOfNewSequence();
+            throw new Exception($"Found max ID '{currentMaxId}' doesn't match expected prefix {_idCharacterPrefix}");
 
         var newId = GetNextId(currentMaxId);
 
@@ -33,7 +33,7 @@ public class IdGenerator : IIdGenerator
     }
 
     private bool ConfigurationPrefixMatches(ReadOnlySpan<char> currentMaxId)
-        => _idCharacterPrefix.Equals(currentMaxId[.._prefixLength].ToString());
+        => currentMaxId.StartsWith(_idCharacterPrefix);
 
     private string GetStartOfNewSequence()
         => _idCharacterPrefix + _idSequenceStartNumber;
