@@ -39,15 +39,15 @@ public static class Extensions
         }
     }
 
-    public static BookEf ToBookEf(this BookDto bookDto)
+    public static BookEf ToBookEf(this Book book)
         => new()
         {
-            Id = bookDto.Id,
-            Author = bookDto.Author,
-            Description = bookDto.Description,
-            Genre = bookDto.Genre,
-            Price = bookDto.Price,
-            PublishDate = bookDto.Publish_date,
-            Title = bookDto.Title
+            Id = book.Id,
+            Author = book.Author,
+            Description = book.Description,
+            Genre = book.Genre,
+            Price = book.Price,
+            PublishDate = book.PublishDate.GetConvertedDateOnlyValue(),
+            Title = book.Title
         };
 }
