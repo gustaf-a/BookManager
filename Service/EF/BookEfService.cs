@@ -19,27 +19,46 @@ public sealed class BookEfService : IBookService
 
     public async Task<BookDto> CreateBook(BookDto bookDto)
     {
-        //Conforms to RepositorySql pattern and validates date.
-        //To be replaced with better validation to allow direct BookDto->BookEf conversion. (2023-02-21)
-        var book = bookDto.ToBook();
+        var bookEf = bookDto.ToBookEf();
 
-        if (book == null)
+        if (bookEf == null)
             throw new Exception("Failed to parse input data. Please review data sent.");
 
         _logger.LogInfo($"Create book request received.");
 
-        _repositoryManager.Book.CreateBook(book.ToBookEf());
+        _repositoryManager.Book.CreateBook(bookEf);
 
         await _repositoryManager.SaveAsync();
 
         _logger.LogInfo($"Create book request successfully handled.");
 
-        return book.ToBookDto();
+        return bookEf.ToBookDto();
     }
 
-    public Task<bool> DeleteBook(string bookId)
+    public async Task<bool> DeleteBook(string bookId)
     {
-        throw new NotImplementedException();
+        var bookEf = await _repositoryManager.Book.GetBook(bookId, false);
+        if (bookEf == null)
+            throw new Exception($"Couldn't find book with ID: {bookId}");
+
+        _repositoryManager.Book.DeleteBook(bookEf);
+
+        await _repositoryManager.SaveAsync();
+
+        return true;
+    }
+
+    public async Task<bool> UpdateBook(BookDto bookDto, string bookId)
+    {
+        var bookEf = await _repositoryManager.Book.GetBook(bookId, true);
+        if (bookEf == null)
+            throw new Exception($"Couldn't find book with ID: {bookId}");
+
+        bookEf.UpdateBookEf(bookDto.ToBookEf());
+
+        await _repositoryManager.SaveAsync();
+
+        return true;
     }
 
     public async Task<IEnumerable<BookDto>> ReadBooks(ReadBooksRequest readBooksRequest)
@@ -62,10 +81,5 @@ public sealed class BookEfService : IBookService
             _logger.LogError($"Error when calling repository from service layer {nameof(ReadBooks)}: {ex.Message}");
             throw;
         }
-    }
-
-    public Task<bool> UpdateBook(BookDto BookDto, string bookId)
-    {
-        throw new NotImplementedException();
     }
 }
