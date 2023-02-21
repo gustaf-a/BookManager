@@ -17,9 +17,24 @@ public sealed class BookEfService : IBookService
         _logger = logger;
     }
 
-    public Task<BookDto> CreateBook(BookDto BookDto)
+    public async Task<BookDto> CreateBook(BookDto bookDto)
     {
-        throw new NotImplementedException();
+        //Conforms to RepositorySql pattern and validates date.
+        //To be replaced with better validation to allow direct BookDto->BookEf conversion. (2023-02-21)
+        var book = bookDto.ToBook();
+
+        if (book == null)
+            throw new Exception("Failed to parse input data. Please review data sent.");
+
+        _logger.LogInfo($"Create book request received.");
+
+        _repositoryManager.Book.CreateBook(book.ToBookEf());
+
+        await _repositoryManager.SaveAsync();
+
+        _logger.LogInfo($"Create book request successfully handled.");
+
+        return book.ToBookDto();
     }
 
     public Task<bool> DeleteBook(string bookId)
@@ -29,11 +44,11 @@ public sealed class BookEfService : IBookService
 
     public async Task<IEnumerable<BookDto>> ReadBooks(ReadBooksRequest readBooksRequest)
     {
-        if(readBooksRequest == null)
+        if (readBooksRequest == null)
             throw new ArgumentNullException(nameof(readBooksRequest));
 
         _logger.LogInfo($"Read book request received.");
-        
+
         try
         {
             var booksEf = await _repositoryManager.Book.GetBooks(readBooksRequest, false);
