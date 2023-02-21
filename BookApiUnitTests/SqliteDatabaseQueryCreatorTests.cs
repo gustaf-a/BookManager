@@ -1,11 +1,11 @@
 ﻿using Entities.ModelsSql;
 using Microsoft.Extensions.Options;
 using RepositorySql;
-using RepositorySql.Configuration;
 using Shared;
+using Shared.Configuration;
 using System.Globalization;
 
-namespace BookApiUnitTests.Database.SQLite;
+namespace RepositorySqlTests;
 
 public class SqliteDatabaseQueryCreatorTests
 {
