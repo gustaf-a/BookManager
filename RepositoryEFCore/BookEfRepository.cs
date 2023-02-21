@@ -1,15 +1,22 @@
-﻿using Contracts.EF;
+﻿using Contracts;
+using Contracts.EF;
 using Entities.ModelsEf;
 using RepositoryEFCore.QueryHelper;
 using Shared;
+using Shared.Configuration;
 
 namespace RepositoryEFCore;
 
 public class BookEfRepository : RepositoryBase<BookEf>, IBookEfRepository
 {
-    public BookEfRepository(RepositoryContext repositoryContext)
+    private readonly DatabaseOptions _databaseOptions;
+    private readonly IIdGenerator _idGenerator;
+
+    public BookEfRepository(RepositoryContext repositoryContext, DatabaseOptions databaseOptions, IIdGenerator idGenerator)
         : base(repositoryContext)
     {
+        _databaseOptions = databaseOptions;
+        _idGenerator = idGenerator;
     }
 
     public Task<IEnumerable<BookEf>> GetBooks(ReadBooksRequest readBooksRequest, bool trackChanges)
