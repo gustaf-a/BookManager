@@ -95,4 +95,19 @@ public static class QueryHelperBookEf
     /// </summary>
     private static IQueryable<BookEf> OrderById(IQueryable<BookEf> books)
         => books.OrderBy(b => b.Id.Substring(2)).ThenBy(b => b.Id.Substring(1, 1));
+
+    public static string FindMaxCurrentId(IEnumerable<BookEf> booksWithCorrectIdPrefix, string idCharacterPrefix)
+    {
+        if (booksWithCorrectIdPrefix == null
+            || !booksWithCorrectIdPrefix.Any())
+            return string.Empty;
+
+        var bookWithMaxIdNumber = booksWithCorrectIdPrefix.OrderByDescending(
+            b => GetNumberFromId(idCharacterPrefix, b)).First();
+
+        return bookWithMaxIdNumber.Id ?? string.Empty;
+    }
+
+    private static int GetNumberFromId(string idCharacterPrefix, BookEf b)
+        => int.Parse(b.Id.Substring(idCharacterPrefix.Length));
 }

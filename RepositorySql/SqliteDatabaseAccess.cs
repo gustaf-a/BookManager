@@ -2,11 +2,10 @@
 using Entities.ModelsSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
-using RepositorySql.Configuration;
-using RepositorySql.Database.SQLite;
 using Shared;
+using Shared.Configuration;
 
-namespace RepositorySql.Database.SQLite;
+namespace RepositorySql;
 
 /// <summary>
 /// SQLite database access class using Dapper with parameters for protection against SQL injection

@@ -1,30 +1,51 @@
 ﻿using Contracts;
-using RepositorySql.Database;
+using Entities.ModelsSql;
+using Microsoft.Extensions.Options;
 using Shared;
+using Shared.Configuration;
 
 namespace RepositorySql;
 
 public class DatabaseBookRepository : IBookRepository
 {
-    private readonly IDatabaseAccess _databaseAccess;
-    private readonly IDatabaseIdGenerator _databaseIdGenerator;
+    private readonly DatabaseOptions _databaseOptions;
 
-    public DatabaseBookRepository(IDatabaseAccess databaseAccess, IDatabaseIdGenerator databaseIdGenerator)
+    private readonly IDatabaseAccess _databaseAccess;
+    private readonly IIdGenerator _databaseIdGenerator;
+
+    public DatabaseBookRepository(IOptions<DatabaseOptions> databaseOptions, IDatabaseAccess databaseAccess, IIdGenerator databaseIdGenerator)
     {
+        ArgumentNullException.ThrowIfNull(databaseOptions?.Value);
+        _databaseOptions = databaseOptions.Value;
+        
         _databaseAccess = databaseAccess;
         _databaseIdGenerator = databaseIdGenerator;
     }
 
     public async Task<Book> CreateBook(Book book)
     {
-        if(book is null)
+        if (book is null)
             throw new ArgumentNullException(nameof(book));
 
-        book.Id = await _databaseIdGenerator.GenerateId();
+        book.Id = await GetBookId();
 
         var createdBook = await _databaseAccess.CreateBook(book);
 
         return createdBook;
+    }
+
+    private async Task<string> GetBookId()
+    {
+        var getValuesRequest = new GetValueRequest
+        {
+            ColumnName = nameof(BookSqlite.Id),
+            IgnoreFirstCharacters = _databaseOptions.IdCharacterPrefixLength,
+            GetMaxValue = true
+        };
+
+        var currentMaxId = await _databaseAccess.GetValue(getValuesRequest);
+
+        return _databaseIdGenerator.GenerateId(currentMaxId);
     }
 
     public async Task<IEnumerable<Book>> ReadBooks(ReadBooksRequest readBooksRequest)

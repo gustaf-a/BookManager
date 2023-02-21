@@ -1,6 +1,4 @@
-﻿using Shared;
-
-namespace RepositorySql.Database.SQLite;
+﻿namespace RepositorySql;
 
 internal static class Extensions
 {

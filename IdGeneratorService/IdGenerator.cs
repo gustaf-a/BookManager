@@ -1,22 +1,17 @@
-﻿using Entities.ModelsSql;
+﻿using Contracts;
 using Microsoft.Extensions.Options;
-using RepositorySql.Configuration;
-using Shared;
+using Shared.Configuration;
 
-namespace RepositorySql.Database.SQLite;
+namespace IdGeneratorService;
 
-public class SqliteDatabaseIdGenerator : IDatabaseIdGenerator
+public class IdGenerator : IIdGenerator
 {
     private readonly string _idCharacterPrefix;
     private readonly int _idSequenceStartNumber;
     private readonly int _prefixLength;
 
-    private readonly IDatabaseAccess _databaseAccess;
-
-    public SqliteDatabaseIdGenerator(IDatabaseAccess databaseAccess, IOptions<DatabaseOptions> options)
+    public IdGenerator(IOptions<DatabaseOptions> options)
     {
-        _databaseAccess = databaseAccess ?? throw new ArgumentNullException(nameof(IDatabaseAccess)); ;
-
         var databaseOptions = options.Value;
 
         _idCharacterPrefix = databaseOptions.IdCharacterPrefix;
@@ -24,22 +19,13 @@ public class SqliteDatabaseIdGenerator : IDatabaseIdGenerator
         _prefixLength = databaseOptions.IdCharacterPrefixLength;
     }
 
-    public async Task<string> GenerateId()
+    public string GenerateId(string currentMaxId)
     {
-        var getValuesRequest = new GetValueRequest
-        {
-            ColumnName = nameof(BookSqlite.Id),
-            IgnoreFirstCharacters = _prefixLength + 1,
-            GetMaxValue = true
-        };
-
-        var currentMaxId = await _databaseAccess.GetValue(getValuesRequest);
-
         if (string.IsNullOrWhiteSpace(currentMaxId))
             return GetStartOfNewSequence();
 
         if (!ConfigurationPrefixMatches(currentMaxId))
-            return GetStartOfNewSequence();
+            throw new Exception($"Found max ID '{currentMaxId}' doesn't match expected prefix {_idCharacterPrefix}");
 
         var newId = GetNextId(currentMaxId);
 
@@ -47,7 +33,7 @@ public class SqliteDatabaseIdGenerator : IDatabaseIdGenerator
     }
 
     private bool ConfigurationPrefixMatches(ReadOnlySpan<char> currentMaxId)
-        => _idCharacterPrefix.Equals(currentMaxId[.._prefixLength].ToString());
+        => currentMaxId.StartsWith(_idCharacterPrefix);
 
     private string GetStartOfNewSequence()
         => _idCharacterPrefix + _idSequenceStartNumber;

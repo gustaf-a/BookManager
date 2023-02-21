@@ -1,7 +1,6 @@
-﻿using RepositorySql.Database.SQLite;
-using Shared;
+﻿using Shared;
 
-namespace RepositorySql.Database;
+namespace RepositorySql;
 
 public interface IDatabaseQueryCreator
 {
