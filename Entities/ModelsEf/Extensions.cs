@@ -38,4 +38,16 @@ public static class Extensions
             return null;
         }
     }
+
+    public static BookEf ToBookEf(this BookDto bookDto)
+        => new()
+        {
+            Id = bookDto.Id,
+            Author = bookDto.Author,
+            Description = bookDto.Description,
+            Genre = bookDto.Genre,
+            Price = bookDto.Price,
+            PublishDate = bookDto.Publish_date,
+            Title = bookDto.Title
+        };
 }
