@@ -24,10 +24,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         if (string.IsNullOrWhiteSpace(databaseOptions?.SqliteConnectionStringName))
             throw new Exception($"Failed to find ConnectionString name for {nameof(databaseOptions.SqliteConnectionStringName)}");
 
-        if (!"Default".Equals(databaseOptions?.SqliteConnectionStringName))
-            throw new NotImplementedException("Currently only 'Default' value for connectionstring supported. Sorry.");
-
-        _connectionString = connectionStringsOptions.Value.Default;
+        _connectionString = connectionStringsOptions.Value.sqlite;
 
         if (string.IsNullOrWhiteSpace(_connectionString))
             throw new Exception($"Invalid ConnectionString: {databaseOptions.SqliteConnectionStringName}");
