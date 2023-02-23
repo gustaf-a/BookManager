@@ -1,10 +1,14 @@
-﻿namespace Shared;
+﻿using Shared.RequestParameters;
+
+namespace Shared;
 
 /// <summary>
 /// Contains parameters parsed from API request to the rest of the application.
 /// </summary>
 public class ReadBooksRequest
 {
+    public BookParameters BookParameters { get; set; } = new BookParameters();
+
     public enum FieldType
     {
         Text,
