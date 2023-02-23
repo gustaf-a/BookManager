@@ -1,6 +1,7 @@
 ﻿using Entities.ModelsEf;
 using Microsoft.EntityFrameworkCore;
 using Shared;
+using Shared.RequestParameters;
 using System.Linq.Expressions;
 
 namespace RepositoryEFCore.QueryHelper;
@@ -110,4 +111,10 @@ public static class QueryHelperBookEf
 
     private static int GetNumberFromId(string idCharacterPrefix, BookEf b)
         => int.Parse(b.Id.Substring(idCharacterPrefix.Length));
+
+    /// <summary>
+    /// Returns number of items to skip to get the items on the provided pageNumber.
+    /// </summary>
+    public static int GetItemsToSkip(int pageNumber, int pageSize)
+        => (pageNumber - 1) * pageSize;
 }

@@ -41,7 +41,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
             FilterByTextValue = bookId
         });
 
-        if (booksResult.Any())
+        if (!booksResult.Any())
             throw new BookNotFoundException(bookId);
 
         if (booksResult.Count() > 1)

@@ -389,4 +389,20 @@ public class QueryHelperTests
         // Assert
         foundMaxId.Should().Be(expectedMaxId);
     }
+
+    [Theory]
+    [InlineData(1, 10, 0)]
+    [InlineData(2, 10, 10)]
+    [InlineData(5, 10, 40)]
+    [InlineData(2, 5, 5)]
+    [InlineData(3, 5, 10)]
+    [InlineData(2, 50, 50)]
+    public void GetItemsToSkip_Returns_Correct(int pageNumber, int pageSize, int expectedToSkip)
+    {
+        // Act
+        var itemsToSkip = QueryHelperBookEf.GetItemsToSkip(pageNumber, pageSize);
+
+        // Assert
+        itemsToSkip.Should().Be(expectedToSkip);
+    }
 }

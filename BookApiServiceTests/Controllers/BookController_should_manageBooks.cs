@@ -54,7 +54,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
             title = expectedBook.Title,
             genre = expectedBook.Genre,
             price = expectedBook.Price,
-            publish_date = "2008-06-01", // As string directly to improve test readability
+            publish_date = "2008-06-01",
             description = expectedBook.Description
         };
         

@@ -4,6 +4,8 @@ namespace BookApiServiceTests.TestData;
 
 internal static class TestDataHelper
 {
+    internal const string EmptyBookCollectionId = "nobooks";
+
     private static readonly string DataFilePath = Path.Combine(Environment.CurrentDirectory, @"TestData\testbooks.json");
 
     /// <summary>
@@ -25,7 +27,7 @@ internal static class TestDataHelper
         if (!booksToGet.Any())
             return books.ToList();
 
-        return GetSortedSelectionOfBooks(books, booksToGet);
+        return GetSortedSelectionOfBooks(books, booksToGet.ToList());
     }
 
     private static IEnumerable<TestBook> GetAllBooks()
@@ -41,9 +43,12 @@ internal static class TestDataHelper
         return testBooks;
     }
 
-    private static List<TestBook> GetSortedSelectionOfBooks(IEnumerable<TestBook> books, IEnumerable<string> booksToGet)
+    private static List<TestBook> GetSortedSelectionOfBooks(IEnumerable<TestBook> books, List<string> booksToGet)
     {
         var selectedBooks = new List<TestBook>();
+
+        if (booksToGet.Contains(EmptyBookCollectionId))
+            return selectedBooks;
 
         foreach (var bookId in booksToGet)
             selectedBooks.Add(books.Single(b => b.Id == bookId));
