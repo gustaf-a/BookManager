@@ -4,7 +4,7 @@ namespace BookApiServiceTests.TestData;
 
 internal static class TestDataHelper
 {
-    internal const string EmptyBookCollectionId = "no books";
+    internal const string EmptyBookCollectionId = "nobooks";
 
     private static readonly string DataFilePath = Path.Combine(Environment.CurrentDirectory, @"TestData\testbooks.json");
 
