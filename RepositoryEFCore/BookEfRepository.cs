@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RepositoryEFCore.QueryHelper;
 using Shared;
 using Shared.Configuration;
+using Shared.RequestParameters;
 
 namespace RepositoryEFCore;
 
@@ -62,26 +63,32 @@ public class BookEfRepository : RepositoryBase<BookEf>, IBookEfRepository
     }
 
     private async Task<IEnumerable<BookEf>> GetBooksByCondition(ReadBooksRequest readBooksRequest, bool trackChanges)
-    { 
+    {
         var findExpression = QueryHelperBookEf.CreateFindExpression(readBooksRequest);
 
         var foundBooks = FindByCondition(findExpression, trackChanges);
 
-        return readBooksRequest.SortResult
-            ? await QueryHelperBookEf.OrderBooksBy(foundBooks, readBooksRequest).ToListAsync()
-            : await foundBooks.ToListAsync();
+        if (readBooksRequest.SortResult)
+            foundBooks = QueryHelperBookEf.OrderBooksBy(foundBooks, readBooksRequest);
+
+        return await GetPaginatedQuery(readBooksRequest.BookParameters, foundBooks).ToListAsync();
     }
 
     private async Task<IEnumerable<BookEf>> GetAllBooks(ReadBooksRequest readBooksRequest, bool trackChanges)
     {
         var allBooks = FindAll(trackChanges);
 
-        return readBooksRequest.SortResult
-            ? await QueryHelperBookEf.OrderBooksBy(allBooks, readBooksRequest).ToListAsync()
-            : await allBooks.ToListAsync();
+        if (readBooksRequest.SortResult)
+            allBooks = QueryHelperBookEf.OrderBooksBy(allBooks, readBooksRequest);
+
+        return await GetPaginatedQuery(readBooksRequest.BookParameters, allBooks).ToListAsync();
     }
 
     public async Task<BookEf> GetBook(string bookId, bool trackChanges)
-        => await FindByCondition(b => b.Id.Equals(bookId), trackChanges)
-            .FirstOrDefaultAsync();
+        => await FindByCondition(b => b.Id.Equals(bookId), trackChanges).FirstOrDefaultAsync();
+
+    private static IQueryable<BookEf> GetPaginatedQuery(BookParameters bookParameters, IQueryable<BookEf> books)
+        => books
+            .Skip(QueryHelperBookEf.GetItemsToSkip(bookParameters.PageNumber, bookParameters.PageSize))
+            .Take(bookParameters.PageSize);
 }

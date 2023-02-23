@@ -189,4 +189,39 @@ public class BookController_should_getBooks : IClassFixture<WebApplicationFactor
         booksCollection.Should().NotBeEmpty()
             .And.BeEquivalentTo(expectedResult);
     }
+
+    [Theory]
+    [InlineData("B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12 B13", "id", "13", "1")]
+    [InlineData(TestDataHelper.EmptyBookCollectionId, "id", "20", "2")]
+    [InlineData("B1 B2 B3 B4 B5 B6 B7 B8 B9 B10", "id", "10", "1")]
+    [InlineData("B11 B12 B13", "id", "10", "2")]
+    [InlineData("B13 B3 B4 B8 B9 B1 B10 B2 B6 B12 B11 B7 B5", "author", "13", "1")]
+    [InlineData("B13 B3", "author", "2", "1")]
+    [InlineData("B4 B8", "author", "2", "2")]
+    [InlineData("B7 B2 B11 B9 B3 B8 B1 B5 B4 B10 B13 B12 B6", "description", "13", "1")]
+    [InlineData("B8", "description", "1", "6")]
+    [InlineData("B4 B5 B8 B6 B7 B9", "genre", "7", "2")]
+    [InlineData(TestDataHelper.EmptyBookCollectionId, "genre", "13", "2")]
+    [InlineData("B12 B13 B1", "published", "5", "3")]
+    [InlineData("B12 B10", "title", "2", "4")]
+    public async Task GetAllBooks_SortedByField_WhenFieldIsAddedToRoute_WithCorrectPaging(string bookIdsToGet, string field, string pageSize, string pageNumber)
+    {
+        // Arrange
+        var expectedResult = TestDataHelper.GetBooks(bookIdsToGet);
+
+        // Act
+        var response = await _client.GetAsync($"{ControllerBaseRoute}/{field}?pageNumber={pageNumber}&pageSize={pageSize}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var content = await response.Content.ReadAsStringAsync();
+
+        var booksCollection = JsonSerializer.Deserialize<List<TestBook>>(content);
+
+        //Asserting only by ID first to assert sorting and to improve readability of test failure message (hard to compare sorting order otherwise)
+        booksCollection.Select(b => b.Id).Should().BeEquivalentTo(expectedResult.Select(e => e.Id), config => config.WithStrictOrdering());
+
+        booksCollection.Should().BeEquivalentTo(expectedResult);
+    }
 }

@@ -13,6 +13,7 @@ Uppbyggt i tre lager som kommunicerar via contracts (interfaces i separat projek
 - Log service i separat LoggerService-projekt
 - FeatureFlag för att bestämma vilket repository som ska användas
 - Controller för att se status på feature flags
+- Paging för requests med default 20 böcker åt gången som skickas
 
 ![Solution Flowchart](BookManager_diagram.png)
 
@@ -49,7 +50,8 @@ Se Book Manager projektet i Github Projects.
 - Middleware för ASP.NET Core (global exception handling)
 - Github Projects med Pull Request och kanban
 - Testat att bygga en query creator (SqliteDatabaseQueryCreator). Kul, men jag hade nog använt Entity Framework Core från början om jag gjort det igen
-- Arkitektur med contracts i separata projekt.
+- Arkitektur med contracts i separata projekt
+- Paging
 
 ## Lessons learned
 

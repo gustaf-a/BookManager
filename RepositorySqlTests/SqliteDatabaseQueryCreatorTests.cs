@@ -107,7 +107,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_WithoutParameters_WhenDefault_ReadBooksRequest()
     {
         // Arrange
-        var expectedQuery = "SELECT * FROM books;";
+        var expectedQuery = "SELECT * FROM books LIMIT 20;";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -129,7 +129,7 @@ public class SqliteDatabaseQueryCreatorTests
         // Arrange
         //9 is for IdNumberMaxLength set in appsettings
         //2 is for starting point when IdCharacterPrefixLength is Length 1 in appsettings
-        var expectedQuery = "SELECT * FROM books ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC);";
+        var expectedQuery = "SELECT * FROM books ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC) LIMIT 20;";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -156,7 +156,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_BySqliteFieldToSortBy_WithoutParameters(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.FieldType fieldType)
     {
         // Arrange
-        var expectedQuery = $"SELECT * FROM books ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+        var expectedQuery = $"SELECT * FROM books ORDER BY {sqliteFieldToSortBy.ToLower()} LIMIT 20;";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -177,7 +177,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_WhereLike_ValueToFilterBy_WhenSortBy_Id()
     {
         // Arrange
-        var expectedQuery = "SELECT * FROM books WHERE id LIKE @FilterByTextValue ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC);";
+        var expectedQuery = "SELECT * FROM books WHERE id LIKE @FilterByTextValue ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC) LIMIT 20;";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -206,7 +206,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_WhereLike_ValueToFilterBy_WhenSortBy_TextValue(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.FieldType fieldType, string valueToFilterBy)
     {
         // Arrange
-        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} LIKE @FilterByTextValue ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} LIKE @FilterByTextValue ORDER BY {sqliteFieldToSortBy.ToLower()} LIMIT 20;";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -233,7 +233,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_Where_FilterByDoubleValue(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.FieldType fieldType, double valueToFilterBy)
     {
         // Arrange
-        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} = @FilterByDoubleValue ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} = @FilterByDoubleValue ORDER BY {sqliteFieldToSortBy.ToLower()} LIMIT 20;";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -260,7 +260,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Read_ReturnsSelectAllBooksQuery_Where_FilterByDoubleValue_Ranged(string fieldToSortBy, string sqliteFieldToSortBy, ReadBooksRequest.FieldType fieldType, double valueToFilterBy, double valueToFilterBy2)
     {
         // Arrange
-        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} BETWEEN @FilterByDoubleValue AND @FilterByDoubleValue2 ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+        var expectedQuery = $"SELECT * FROM books WHERE {sqliteFieldToSortBy.ToLower()} BETWEEN @FilterByDoubleValue AND @FilterByDoubleValue2 ORDER BY {sqliteFieldToSortBy.ToLower()} LIMIT 20;";
 
         var readBooksRequest = new ReadBooksRequest
         {
@@ -311,13 +311,120 @@ public class SqliteDatabaseQueryCreatorTests
 
         var dateOnlyString = readBooksRequest.FilterByDateValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-        var expectedQuery = $"SELECT * FROM books WHERE substring({sqliteFieldToSortBy.ToLower()},1,{datePrecisionLength}) = substring('{dateOnlyString}',1,{datePrecisionLength}) ORDER BY {sqliteFieldToSortBy.ToLower()} ASC;";
+        var expectedQuery = $"SELECT * FROM books WHERE substring({sqliteFieldToSortBy.ToLower()},1,{datePrecisionLength}) = substring('{dateOnlyString}',1,{datePrecisionLength}) ORDER BY {sqliteFieldToSortBy.ToLower()} LIMIT 20;";
 
         // Act
         var query = _queryCreator.Read(readBooksRequest);
 
         // Assert
         query.QueryString.ToString().Should().Be(expectedQuery);
+    }
+
+    [Theory]
+    [InlineData(1, 10)]
+    [InlineData(1, 15)]
+    [InlineData(1, 2)]
+    [InlineData(1, 1)]
+    public void CreatePaginationQuery_Returns_Correct_SQL_for_Id_WhenFirstPage(int pageNumber, int pageSize)
+    {
+        // Arrange
+        var expectedQuery = $"SELECT * FROM books ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC) LIMIT {pageSize};";
+
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResult = true,
+            BookParameters = new Shared.RequestParameters.BookParameters { PageNumber = pageNumber, PageSize = pageSize }
+        };
+
+        // Act
+        var query = _queryCreator.Read(readBooksRequest);
+
+        // Assert
+        query.QueryString.ToString().Should().Be(expectedQuery);
+
+        query.Parameters.Count().Should().Be(0);
+    }
+
+    [Theory]
+    [InlineData(2, 10, 10)]
+    [InlineData(5, 10, 40)]
+    [InlineData(2, 5, 5)]
+    [InlineData(3, 5, 10)]
+    [InlineData(2, 50, 50)]
+    public void CreatePaginationQuery_Returns_Correct_SQL_for_Id_WhenNotFirstPage(int pageNumber, int pageSize, int expectedToSkip)
+    {
+        // Arrange
+        var expectedQuery = $"SELECT * FROM books WHERE id NOT IN ( SELECT id FROM books ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC) LIMIT {expectedToSkip}) ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC) LIMIT {pageSize};";
+
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResult = true,
+            BookParameters = new Shared.RequestParameters.BookParameters { PageNumber = pageNumber, PageSize = pageSize }
+        };
+
+        // Act
+        var query = _queryCreator.Read(readBooksRequest);
+
+        // Assert
+        query.QueryString.ToString().Should().Be(expectedQuery);
+
+        query.Parameters.Count().Should().Be(0);
+    }
+
+    [Theory]
+    [InlineData(1, 10, nameof(Book.Author), nameof(BookSqlite.Author))]
+    [InlineData(1, 10, nameof(Book.Description), nameof(BookSqlite.Description))]
+    [InlineData(1, 5, nameof(Book.Genre), nameof(BookSqlite.Genre))]
+    [InlineData(1, 50, nameof(Book.Price), nameof(BookSqlite.Price))]
+    [InlineData(1, 10, nameof(Book.PublishDate), nameof(BookSqlite.Publish_date))]
+    [InlineData(1, 5, nameof(Book.Title), nameof(BookSqlite.Title))]
+    public void CreatePaginationQuery_Returns_Correct_SQL_for_not_ID_FirstPage(int pageNumber, int pageSize, string fieldToSortBy, string sqliteFieldToSortBy)
+    {
+        // Arrange
+        var expectedQuery = $"SELECT * FROM books ORDER BY {sqliteFieldToSortBy.ToLower()} LIMIT {pageSize};";
+
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResult = true,
+            SortResultByField = fieldToSortBy,
+            BookParameters = new Shared.RequestParameters.BookParameters { PageNumber = pageNumber, PageSize = pageSize }
+        };
+
+        // Act
+        var query = _queryCreator.Read(readBooksRequest);
+
+        // Assert
+        query.QueryString.ToString().Should().Be(expectedQuery);
+
+        query.Parameters.Count().Should().Be(0);
+    }
+
+    [Theory]
+    [InlineData(2, 10, 10, nameof(Book.Author), nameof(BookSqlite.Author))]
+    [InlineData(3, 10, 20, nameof(Book.Description), nameof(BookSqlite.Description))]
+    [InlineData(4, 5, 15, nameof(Book.Genre), nameof(BookSqlite.Genre))]
+    [InlineData(2, 50, 50, nameof(Book.Price), nameof(BookSqlite.Price))]
+    [InlineData(5, 10, 40, nameof(Book.PublishDate), nameof(BookSqlite.Publish_date))]
+    [InlineData(3, 5, 10, nameof(Book.Title), nameof(BookSqlite.Title))]
+    public void CreatePaginationQuery_Returns_Correct_SQL_for_not_ID_NotFirstPage(int pageNumber, int pageSize, int expectedToSkip, string fieldToSortBy, string sqliteFieldToSortBy)
+    {
+        // Arrange
+        var expectedQuery = $"SELECT * FROM books WHERE id NOT IN ( SELECT id FROM books ORDER BY {sqliteFieldToSortBy.ToLower()} LIMIT {expectedToSkip}) ORDER BY {sqliteFieldToSortBy.ToLower()} LIMIT {pageSize};";
+
+        var readBooksRequest = new ReadBooksRequest
+        {
+            SortResult = true,
+            SortResultByField = fieldToSortBy,
+            BookParameters = new Shared.RequestParameters.BookParameters { PageNumber = pageNumber, PageSize = pageSize }
+        };
+
+        // Act
+        var query = _queryCreator.Read(readBooksRequest);
+
+        // Assert
+        query.QueryString.ToString().Should().Be(expectedQuery);
+
+        query.Parameters.Count().Should().Be(0);
     }
 
     // --------------------- UPDATE ------------------------------------

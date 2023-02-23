@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Shared;
 using Shared.Configuration;
+using Shared.RequestParameters;
 
 namespace RepositorySql;
 
@@ -74,7 +75,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     /// Creates SQL Query using parameters to read objects from database.
     /// 
     /// Example sql query:
-    /// SELECT * FROM books ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC);
+    ///  SELECT * FROM books ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC) LIMIT 20;
     /// </summary>
     public SqlQuery Read(ReadBooksRequest readBooksRequest)
     {
@@ -87,7 +88,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         AddFiltersToQuery(sqlQuery, readBooksRequest);
 
-        AddSortingToQuery(sqlQuery, readBooksRequest);
+        AddSortingAndPagingToQuery(sqlQuery, readBooksRequest);
 
         sqlQuery.QueryString.Append(';');
 
@@ -184,26 +185,41 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     }
 
     /// <summary>
-    /// Appends SQL query for sorting by different columns.
+    /// Appends SQL query for sorting by different columns and paging results, skipping pages and limiting result size.
     /// 
     /// Example:
-    ///  ORDER BY description ASC
+    ///  WHERE id NOT IN ( SELECT id FROM books ORDER BY description ASC LIMIT 10 ) ORDER BY description ASC LIMIT 10
+    ///
     ///  
     /// Example2:
-    ///   ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC)
+    ///   ORDER BY CAST(SUBSTRING(id,2,9) AS NUMERIC) LIMIT 20
     /// </summary>
-    private void AddSortingToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
+    private void AddSortingAndPagingToQuery(SqlQuery sqlQuery, ReadBooksRequest readBooksRequest)
+    {
+        var sortingQuery = GetSortingQueryString(readBooksRequest);
+
+        var itemsToSkip = GetItemsToSkip(readBooksRequest.BookParameters.PageNumber, readBooksRequest.BookParameters.PageSize);
+
+        if (itemsToSkip > 0)
+            sqlQuery.QueryString.Append($" WHERE id NOT IN ( SELECT id FROM books {sortingQuery} LIMIT {itemsToSkip})");
+
+        if(!string.IsNullOrEmpty(sortingQuery))
+            sqlQuery.QueryString.Append($" {sortingQuery}");
+
+        sqlQuery.QueryString.Append($" LIMIT {readBooksRequest.BookParameters.PageSize}");
+    }
+
+    public static int GetItemsToSkip(int pageNumber, int pageSize)
+        => (pageNumber - 1) * pageSize;
+
+    private string GetSortingQueryString(ReadBooksRequest readBooksRequest)
     {
         if (!readBooksRequest.SortResult)
-            return;
+            return string.Empty;
 
-        if (readBooksRequest.SortResultByField == nameof(Book.Id))
-        {
-            sqlQuery.QueryString.Append($" ORDER BY CAST(SUBSTRING(id,{_idNumbersStartPosition},{_databaseOptions.IdNumberMaxLength}) AS NUMERIC)");
-            return;
-        }
-
-        sqlQuery.QueryString.Append($" ORDER BY {readBooksRequest.SortResultByField.ToBookSqliteName()} ASC");
+        return nameof(Book.Id).Equals(readBooksRequest.SortResultByField)
+                    ? $"ORDER BY CAST(SUBSTRING(id,{_idNumbersStartPosition},{_databaseOptions.IdNumberMaxLength}) AS NUMERIC)"
+                    : $"ORDER BY {readBooksRequest.SortResultByField.ToBookSqliteName()}";
     }
 
     // --------------------- UPDATE ------------------------------------
