@@ -7,7 +7,7 @@ Uppbyggt i tre lager som kommunicerar via contracts (interfaces i separat projek
 - Github Projects använt vid utvecklingen
 - Full beskrivning av processen (se nedan)
 - Repository pattern, Options pattern, simple factory pattern, extension methods
-- Global exception handling med Middleware
+- Global exception handling med Middleware och custom exceptions
 - Dynamiskt byggda SQL queries med parametrar som skyddar mot SQL Injection skickade till DAPPER för databas access
 - Entity Framework Core queries byggda med unit testade expressions
 - Log service i separat LoggerService-projekt

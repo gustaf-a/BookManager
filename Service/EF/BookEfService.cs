@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Contracts.EF;
+using Entities.Exceptions;
 using Entities.ModelsEf;
 using Service.Contracts;
 using Shared;
@@ -38,8 +39,8 @@ public sealed class BookEfService : IBookService
     public async Task<bool> DeleteBook(string bookId)
     {
         var bookEf = await _repositoryManager.Book.GetBook(bookId, false);
-        if (bookEf == null)
-            throw new Exception($"Couldn't find book with ID: {bookId}");
+        if (bookEf is null)
+            throw new BookNotFoundException(bookId);
 
         _repositoryManager.Book.DeleteBook(bookEf);
 
@@ -52,7 +53,7 @@ public sealed class BookEfService : IBookService
     {
         var bookEf = await _repositoryManager.Book.GetBook(bookId, true);
         if (bookEf == null)
-            throw new Exception($"Couldn't find book with ID: {bookId}");
+            throw new BookNotFoundException(bookId);
 
         bookEf.UpdateBookEf(bookDto.ToBookEf());
 

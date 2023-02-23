@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Entities.Exceptions;
 using Entities.ModelsSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
@@ -23,10 +24,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         if (string.IsNullOrWhiteSpace(databaseOptions?.SqliteConnectionStringName))
             throw new Exception($"Failed to find ConnectionString name for {nameof(databaseOptions.SqliteConnectionStringName)}");
 
-        if (!"Default".Equals(databaseOptions?.SqliteConnectionStringName))
-            throw new NotImplementedException("Currently only 'Default' value for connectionstring supported. Sorry.");
-
-        _connectionString = connectionStringsOptions.Value.Default;
+        _connectionString = connectionStringsOptions.Value.sqlite;
 
         if (string.IsNullOrWhiteSpace(_connectionString))
             throw new Exception($"Invalid ConnectionString: {databaseOptions.SqliteConnectionStringName}");
@@ -43,8 +41,11 @@ public class SqliteDatabaseAccess : IDatabaseAccess
             FilterByTextValue = bookId
         });
 
-        if (booksResult.Count() != 1)
-            throw new Exception($"Failed to get single book. Instead got {booksResult.Count()}.");
+        if (booksResult.Any())
+            throw new BookNotFoundException(bookId);
+
+        if (booksResult.Count() > 1)
+            throw new TooManyBooksFoundException(bookId, booksResult.Count());
 
         return booksResult.First();
     }
