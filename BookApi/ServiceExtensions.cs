@@ -24,33 +24,6 @@ public static class ServiceExtensions
         });
     }
 
-    /// <summary>
-    /// Adds Exception handling middleware
-    /// </summary>
-    public static void ConfigureExceptionHandler(this WebApplication app, ILoggerManager loggerManager)
-    {
-        app.UseExceptionHandler(appError =>
-        {
-            appError.Run(async context =>
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                context.Response.ContentType = "application/json";
-
-                var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-                if (contextFeature != null)
-                {
-                    loggerManager.LogError($"Global exception handling: Exception thrown by request sent to endpoint: {contextFeature.Endpoint}. Message: {contextFeature.Error.Message}");
-
-                    await context.Response.WriteAsync(new ErrorDetails
-                    {
-                        StatusCode = context.Response.StatusCode,
-                        Message = $"Internal Server Error: {contextFeature.Error.Message}"
-                    }.ToString());
-                }
-            });
-        });
-    }
-
     public static void ConfigureEfCoreServices(this IServiceCollection services, IConfigurationRoot configurationRoot)
     {
         services.AddScoped<ServiceEfManager>();

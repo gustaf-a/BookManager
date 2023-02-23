@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Entities.Exceptions;
 using Entities.ModelsSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
@@ -43,8 +44,11 @@ public class SqliteDatabaseAccess : IDatabaseAccess
             FilterByTextValue = bookId
         });
 
-        if (booksResult.Count() != 1)
-            throw new Exception($"Failed to get single book. Instead got {booksResult.Count()}.");
+        if (booksResult.Any())
+            throw new BookNotFoundException(bookId);
+
+        if (booksResult.Count() > 1)
+            throw new TooManyBooksFoundException(bookId, booksResult.Count());
 
         return booksResult.First();
     }
