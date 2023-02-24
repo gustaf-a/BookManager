@@ -1,12 +1,12 @@
 ﻿using Entities.JsonConverters;
 using System.Text.Json.Serialization;
 
-namespace Shared;
+namespace Shared.DataTransferObjects;
 
 /// <summary>
-/// Data Transfer Object used to receive Book data from requests.
+/// Data Transfer Object used to send Book data.
 /// </summary>
-public class BookDto
+public record BookDto
 {
     [JsonPropertyName("id")]
     public string Id { get; set; } = string.Empty;
