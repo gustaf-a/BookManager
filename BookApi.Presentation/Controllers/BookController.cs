@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared;
+using Shared.DataTransferObjects;
 using Shared.RequestParameters;
 
 namespace BookApi.Controllers;
@@ -35,12 +36,13 @@ public class BookController : ControllerBase
     /// </summary>
     /// <returns>Returns created book</returns>
     [HttpPost]
-    public async Task<IActionResult> CreateBook([FromBody] BookDto bookDto)
+    public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto bookForCreationDto)
     {
-        if (bookDto is null)
+        if (bookForCreationDto is null)
             return BadRequest();
 
-        var result = await _bookService.CreateBook(bookDto);
+        var result = await _bookService.CreateBook(bookForCreationDto);
+
         return StatusCode(201, result);
     }
 
@@ -58,12 +60,12 @@ public class BookController : ControllerBase
     /// </summary>
     /// <returns>Returns updated book</returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBook(string id, [FromBody] BookDto bookDto)
+    public async Task<IActionResult> UpdateBook(string id, [FromBody] BookForUpdateDto bookForUpdateDto)
     {
-        if (bookDto is null)
+        if (bookForUpdateDto is null)
             return BadRequest();
 
-        await _bookService.UpdateBook(bookDto, id);
+        await _bookService.UpdateBook(bookForUpdateDto, id);
 
         return NoContent();
     }

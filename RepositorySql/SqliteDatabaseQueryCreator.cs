@@ -44,15 +44,13 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     /// INSERT INTO books(id,author,title,genre,price,publish_date,description)
     /// VALUES (@Id,@Author,@Title,@Genre,@Price,@Publish_date,@Description);
     /// </summary>
-    public SqlQuery Create(Book book)
+    public SqlQuery Create(BookSqlite bookSqlite)
     {
-        if (book == null)
-            throw new ArgumentNullException($"{nameof(Book)} cannot be null.");
+        if (bookSqlite == null)
+            throw new ArgumentNullException($"{nameof(bookSqlite)} cannot be null.");
 
-        if (string.IsNullOrWhiteSpace(book.Id))
-            throw new ArgumentNullException($"Book {nameof(Book.Id)} cannot be null.");
-
-        var bookSqlite = book.ToBookSqlite();
+        if (string.IsNullOrWhiteSpace(bookSqlite.Id))
+            throw new ArgumentNullException($"Book {nameof(bookSqlite.Id)} cannot be null.");
 
         var propertyNames = BookSqlite.GetPropertyNames();
 
@@ -178,7 +176,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         var datePrecisionLength = readBooksRequest.FilterByDatePrecision.ToSubstringLength();
 
-        var dateOnlyString = readBooksRequest.FilterByDateValue.GetConvertedDateOnlyValue();
+        var dateOnlyString = readBooksRequest.FilterByDateValue.ToDateOnlyString();
 
         // Possible values coming from DateOnly are limited so no need for parameters
         sqlQuery.QueryString.Append($" WHERE substring({fieldToSortBy.ToLower()},1,{datePrecisionLength}) = substring('{dateOnlyString}',1,{datePrecisionLength})");
@@ -230,15 +228,13 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
     /// Example:
     ///  UPDATE books SET author = @Author, title = @Title, price = @Price, publish_date = @Publish_date WHERE id = @Id;
     /// </summary>
-    public SqlQuery Update(Book book)
+    public SqlQuery Update(BookSqlite bookSqlite)
     {
-        if (book is null)
-            throw new ArgumentNullException($"{nameof(book)} cannot be null.");
+        if (bookSqlite is null)
+            throw new ArgumentNullException($"{nameof(bookSqlite)} cannot be null.");
 
-        if (string.IsNullOrWhiteSpace(book.Id))
-            throw new ArgumentNullException($"{nameof(book.Id)} cannot be null.");
-
-        var bookSqlite = book.ToBookSqlite();
+        if (string.IsNullOrWhiteSpace(bookSqlite.Id))
+            throw new ArgumentNullException($"{nameof(bookSqlite.Id)} cannot be null.");
 
         var propertiesToUpdate = bookSqlite.GetProperties();
 
@@ -259,7 +255,7 @@ public class SqliteDatabaseQueryCreator : IDatabaseQueryCreator
 
         sqlQuery.QueryString.Append($" WHERE {nameof(BookSqlite.Id).ToLower()} = {idPlaceHolder};");
 
-        sqlQuery.Parameters.Add(idPlaceHolder, book.Id);
+        sqlQuery.Parameters.Add(idPlaceHolder, bookSqlite.Id);
 
         return sqlQuery;
     }

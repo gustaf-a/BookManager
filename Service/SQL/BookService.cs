@@ -1,6 +1,8 @@
-﻿using Contracts;
+﻿using AutoMapper;
+using Contracts;
 using Service.Contracts;
 using Shared;
+using Shared.DataTransferObjects;
 
 namespace Service.SQL;
 
@@ -9,18 +11,20 @@ public class BookService : IBookService
     private readonly ILoggerManager _loggerManager;
     private readonly IBookRepository _bookRepository;
 
-    public BookService(ILoggerManager loggerManager, IBookRepository bookRepository)
+    private readonly IMapper _mapper;
+
+    public BookService(ILoggerManager loggerManager, IBookRepository bookRepository, IMapper mapper)
     {
         _loggerManager = loggerManager;
         _bookRepository = bookRepository;
+        _mapper = mapper;
     }
 
-    public async Task<BookDto> CreateBook(BookDto bookDto)
+    public async Task<BookDto> CreateBook(BookForCreationDto bookDto)
     {
         _loggerManager.LogInfo($"Create book request received.");
 
-        var book = bookDto.ToBook();
-
+        var book = _mapper.Map<Book>(bookDto);
         if (book == null)
             throw new Exception("Failed to parse input data. Please review data sent.");
 
@@ -28,7 +32,9 @@ public class BookService : IBookService
 
         _loggerManager.LogInfo($"Create book request successfully handled. Created: {createdBook.Id}.");
 
-        return createdBook.ToBookDto();
+        var bookToReturn = _mapper.Map<BookDto>(createdBook);
+
+        return bookToReturn;
     }
 
     public async Task<IEnumerable<BookDto>> ReadBooks(ReadBooksRequest readBooksRequest)
@@ -39,15 +45,16 @@ public class BookService : IBookService
 
         _loggerManager.LogInfo($"Read book request successfully handled. Returning {books.Count()} book(s).");
 
-        return books.ToBooksDto();
+        var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(books);
+
+        return booksToReturn;
     }
 
-    public async Task<bool> UpdateBook(BookDto bookDto, string bookId)
+    public async Task<bool> UpdateBook(BookForUpdateDto bookDto, string bookId)
     {
         _loggerManager.LogInfo($"Update book request received for book: {bookId}.");
 
-        var book = bookDto.ToBook();
-
+        var book = _mapper.Map<Book>(bookDto);
         if (book == null)
             throw new Exception("Failed to parse input data. Please review data sent.");
 
@@ -74,5 +81,4 @@ public class BookService : IBookService
 
         return deleteResponse;
     }
-
 }

@@ -44,7 +44,7 @@ public static class QueryHelperBookEf
 
     private static Expression<Func<BookEf, bool>> CreateFindByDateExpression(ReadBooksRequest readBooksRequest)
     {
-        var filterByDate = readBooksRequest.FilterByDateValue.GetConvertedDateOnlyValue();
+        var filterByDate = readBooksRequest.FilterByDateValue.ToDateOnlyString();
 
         if (string.IsNullOrWhiteSpace(filterByDate))
             throw new Exception($"Failed to convert from DateOnly to string: {readBooksRequest.FilterByDateValue}");
