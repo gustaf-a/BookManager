@@ -1,40 +1,9 @@
 ﻿using Shared;
-using System.Globalization;
 
 namespace Entities.ModelsSql;
 
 public static class Extensions
 {
-    //This is unlikely to change and can be stored as a constant instead of in configurations.
-    private const string DateFormat = "yyyy-MM-dd";
-
-    public static IEnumerable<Book> ToBooks(this IEnumerable<BookSqlite> values)
-        => values.Select(b => b.ToBook());
-
-    public static Book ToBook(this BookSqlite value)
-        => new()
-        {
-            Id = value.Id,
-            Author = value.Author,
-            Description = value.Description,
-            Genre = value.Genre,
-            Price = value.Price,
-            PublishDate = DateOnly.ParseExact(value.Publish_date, DateFormat, CultureInfo.InvariantCulture),
-            Title = value.Title
-        };
-
-    public static BookSqlite ToBookSqlite(this Book book)
-        => new()
-        {
-            Id = book.Id,
-            Author = book.Author,
-            Description = book.Description,
-            Genre = book.Genre,
-            Price = book.Price,
-            Publish_date = book.PublishDate.GetConvertedDateOnlyValue(),
-            Title = book.Title
-        };
-
     public static string ToBookSqliteName(this string bookName)
         => bookName switch
         {
