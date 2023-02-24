@@ -48,6 +48,8 @@ public class Startup
         services.ConfigureSqliteServices();
 
         services.ConfigureEfCoreServices(_configurationManager);
+
+        services.AddAutoMapper(typeof(Program));
     }
 
     public void Configure(WebApplication app)

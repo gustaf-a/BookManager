@@ -34,7 +34,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
     // --------------------- COMMON ------------------------------------
 
-    private async Task<Book> GetBook(string bookId)
+    private async Task<BookSqlite> GetBook(string bookId)
     {
         var booksResult = await ReadBooks(new ReadBooksRequest
         {
@@ -61,7 +61,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
     // --------------------- CREATE ------------------------------------
 
-    public async Task<Book> CreateBook(Book book)
+    public async Task<BookSqlite> CreateBook(BookSqlite book)
     {
         var sqlQuery = _queryCreator.Create(book);
 
@@ -75,7 +75,7 @@ public class SqliteDatabaseAccess : IDatabaseAccess
 
     // --------------------- READ ------------------------------------
 
-    public async Task<IEnumerable<Book>> ReadBooks(ReadBooksRequest readBooksRequest)
+    public async Task<IEnumerable<BookSqlite>> ReadBooks(ReadBooksRequest readBooksRequest)
     {
         var query = _queryCreator.Read(readBooksRequest);
 
@@ -84,18 +84,18 @@ public class SqliteDatabaseAccess : IDatabaseAccess
         return result;
     }
 
-    private async Task<IEnumerable<Book>> ExecuteReaderQuery(SqlQuery sqlQuery)
+    private async Task<IEnumerable<BookSqlite>> ExecuteReaderQuery(SqlQuery sqlQuery)
     {
         using var connection = new SqliteConnection(_connectionString);
 
         var result = await connection.QueryAsync<BookSqlite>(sqlQuery.QueryString.ToString(), new DynamicParameters(sqlQuery.Parameters));
 
-        return result.ToBooks();
+        return result;
     }
 
     // --------------------- UPDATE ------------------------------------
 
-    public async Task<Book> UpdateBook(Book book)
+    public async Task<BookSqlite> UpdateBook(BookSqlite book)
     {
         var sqlQuery = _queryCreator.Update(book);
 

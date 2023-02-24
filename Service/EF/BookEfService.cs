@@ -1,9 +1,11 @@
-﻿using Contracts;
+﻿using AutoMapper;
+using Contracts;
 using Contracts.EF;
 using Entities.Exceptions;
 using Entities.ModelsEf;
 using Service.Contracts;
 using Shared;
+using Shared.DataTransferObjects;
 
 namespace Service.EF;
 
@@ -12,16 +14,18 @@ public sealed class BookEfService : IBookService
     private readonly IRepositoryManager _repositoryManager;
     private readonly ILoggerManager _logger;
 
-    public BookEfService(IRepositoryManager repositoryManager, ILoggerManager logger)
+    private readonly IMapper _mapper;
+
+    public BookEfService(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper)
     {
         _repositoryManager = repositoryManager;
         _logger = logger;
+        _mapper = mapper;
     }
 
-    public async Task<BookDto> CreateBook(BookDto bookDto)
+    public async Task<BookDto> CreateBook(BookForCreationDto bookDto)
     {
-        var bookEf = bookDto.ToBookEf();
-
+        var bookEf = _mapper.Map<BookEf>(bookDto);
         if (bookEf == null)
             throw new Exception("Failed to parse input data. Please review data sent.");
 
@@ -31,31 +35,24 @@ public sealed class BookEfService : IBookService
 
         await _repositoryManager.SaveAsync();
 
-        _logger.LogInfo($"Create book request successfully handled.");
+        _logger.LogInfo($"Create book request successfully handled. Created: {bookEf.Id}.");
 
-        return bookEf.ToBookDto();
+        var bookToReturn = _mapper.Map<BookDto>(bookEf);
+
+        return bookToReturn;
     }
 
-    public async Task<bool> DeleteBook(string bookId)
+    public async Task<bool> UpdateBook(BookForUpdateDto bookDto, string bookId)
     {
-        var bookEf = await _repositoryManager.Book.GetBook(bookId, false);
-        if (bookEf is null)
-            throw new BookNotFoundException(bookId);
+        var bookEfFromInput = _mapper.Map<BookEf>(bookDto);
+        if (bookEfFromInput == null)
+            throw new Exception("Failed to parse input data. Please review data sent.");
 
-        _repositoryManager.Book.DeleteBook(bookEf);
-
-        await _repositoryManager.SaveAsync();
-
-        return true;
-    }
-
-    public async Task<bool> UpdateBook(BookDto bookDto, string bookId)
-    {
         var bookEf = await _repositoryManager.Book.GetBook(bookId, true);
         if (bookEf == null)
             throw new BookNotFoundException(bookId);
 
-        bookEf.UpdateBookEf(bookDto.ToBookEf());
+        bookEf.UpdateBookEf(bookEfFromInput);
 
         await _repositoryManager.SaveAsync();
 
@@ -69,18 +66,25 @@ public sealed class BookEfService : IBookService
 
         _logger.LogInfo($"Read book request received.");
 
-        try
-        {
-            var booksEf = await _repositoryManager.Book.GetBooks(readBooksRequest, false);
+        var booksEf = await _repositoryManager.Book.GetBooks(readBooksRequest, false);
 
-            _logger.LogInfo($"Read book request successfully handled. Returning {booksEf.Count()} book(s).");
+        _logger.LogInfo($"Read book request successfully handled. Returning {booksEf.Count()} book(s).");
 
-            return booksEf.ToBooksDto();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error when calling repository from service layer {nameof(ReadBooks)}: {ex.Message}");
-            throw;
-        }
+        var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(booksEf);
+
+        return booksToReturn;
+    }
+
+    public async Task<bool> DeleteBook(string bookId)
+    {
+        var bookEf = await _repositoryManager.Book.GetBook(bookId, false);
+        if (bookEf is null)
+            throw new BookNotFoundException(bookId);
+
+        _repositoryManager.Book.DeleteBook(bookEf);
+
+        await _repositoryManager.SaveAsync();
+
+        return true;
     }
 }

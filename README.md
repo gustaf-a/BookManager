@@ -14,6 +14,7 @@ Uppbyggt i tre lager som kommunicerar via contracts (interfaces i separat projek
 - FeatureFlag för att bestämma vilket repository som ska användas
 - Controller för att se status på feature flags
 - Paging för requests med default 20 böcker åt gången som skickas
+- Automapper
 
 ![Solution Flowchart](BookManager_diagram.png)
 

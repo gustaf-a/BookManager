@@ -33,14 +33,14 @@ public class SqliteDatabaseQueryCreatorTests
     {
         _queryCreator.Invoking(y => y.Create(null))
             .Should().Throw<ArgumentNullException>()
-            .WithMessage("Value cannot be null. (Parameter 'Book cannot be null.')");
+            .WithMessage("Value cannot be null. (Parameter 'bookSqlite cannot be null.')");
     }
 
     [Fact]
     public void Create_ThrowsException_When_BookId_Null()
     {
         // Arrange
-        var book = new Book
+        var book = new BookSqlite
         {
             //Id = null,
             Author = "Testson, Tester",
@@ -48,7 +48,7 @@ public class SqliteDatabaseQueryCreatorTests
             Genre = "Testing",
             Price = 4.99,
             Description = "The most testing book you'll ever read.",
-            PublishDate = new DateOnly(2023, 02, 11)
+            Publish_date = "2023-02-11"
         };
 
         _queryCreator.Invoking(y => y.Create(book))
@@ -60,7 +60,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Create_ReturnsCreateBookQuery()
     {
         // Arrange
-        var book = new Book
+        var book = new BookSqlite
         {
             Id = "B2020",
             Author = "Testson, Tester",
@@ -68,7 +68,7 @@ public class SqliteDatabaseQueryCreatorTests
             Genre = "Testing",
             Price = 4.99,
             Description = "The most testing book you'll ever read.",
-            PublishDate = new DateOnly(2023, 02, 11)
+            Publish_date = "2023-02-11"
         };
 
         var expectedQuery = $"INSERT INTO books(id,author,title,genre,price,publish_date,description) " +
@@ -434,13 +434,13 @@ public class SqliteDatabaseQueryCreatorTests
     {
         _queryCreator.Invoking(y => y.Update(null))
             .Should().Throw<ArgumentNullException>()
-            .WithMessage("Value cannot be null. (Parameter 'book cannot be null.')");
+            .WithMessage("Value cannot be null. (Parameter 'bookSqlite cannot be null.')");
     }
 
     [Fact]
     public void Update_ThrowsException_When_BookId_Null()
     {
-        _queryCreator.Invoking(y => y.Update(new Book()))
+        _queryCreator.Invoking(y => y.Update(new BookSqlite()))
             .Should().Throw<ArgumentNullException>()
             .WithMessage("Value cannot be null. (Parameter 'Id cannot be null.')");
     }
@@ -449,7 +449,7 @@ public class SqliteDatabaseQueryCreatorTests
     public void Update_ReturnsUpdateBookQuery_AndIgnoresNullValues_AndIgnoresId()
     {
         // Arrange
-        var updateToThisBook = new Book()
+        var updateToThisBook = new BookSqlite()
         {
             Author = "Updated Author",
             Title = "New cooler title",
@@ -457,7 +457,7 @@ public class SqliteDatabaseQueryCreatorTests
             Id = "B16",
             Genre = null,
             Price = 10,
-            PublishDate = new DateOnly(1999, 12, 31)
+            Publish_date = "1999-12-31"
         };
 
         var expectedQuery = "UPDATE books SET author = @Author, title = @Title, price = @Price, publish_date = @Publish_date WHERE id = @Id;";
@@ -485,7 +485,7 @@ public class SqliteDatabaseQueryCreatorTests
         // Arrange
         var bookId = "B16";
 
-        var updateToThisBook = new Book()
+        var updateToThisBook = new BookSqlite()
         {
             Author = null,
             Title = "Only change this one",
@@ -493,7 +493,7 @@ public class SqliteDatabaseQueryCreatorTests
             Id = bookId,
             Genre = null,
             Price = double.MinValue,
-            PublishDate = DateOnly.MinValue
+            Publish_date = string.Empty
         };
 
         var expectedQuery = "UPDATE books SET title = @Title WHERE id = @Id;";

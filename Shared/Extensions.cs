@@ -4,6 +4,8 @@ namespace Shared;
 
 public static class Extensions
 {
+    private const string DateFormatting = "yyyy-MM-dd";
+
     public static DateOnly GetDateOnly(this ReadBooksRequest.DatePrecision datePrecision, int year, int month, int day)
     {
         if (datePrecision == ReadBooksRequest.DatePrecision.Day)
@@ -18,62 +20,15 @@ public static class Extensions
         return DateOnly.MinValue;
     }
 
-    public static Book ToBook(this BookDto bookDto)
-    {
-        if (bookDto is null)
-            return null;
+    public static DateOnly ToDateOnly(this string publishDate)
+        => string.IsNullOrWhiteSpace(publishDate)
+            ? DateOnly.MinValue
+            : DateOnly.ParseExact(publishDate, DateFormatting, CultureInfo.InvariantCulture);
 
-        return new Book
-        {
-            Id = bookDto.Id,
-            Author = bookDto.Author,
-            Description = bookDto.Description,
-            Genre = bookDto.Genre,
-            Price = bookDto.Price,
-            PublishDate = string.IsNullOrWhiteSpace(bookDto.Publish_date) ? DateOnly.MinValue : DateOnly.ParseExact(bookDto.Publish_date, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-            Title = bookDto.Title
-        };
-    }
-
-    public static IEnumerable<BookDto> ToBooksDto(this IEnumerable<Book> books)
-    {
-        if (books is null)
-            return null;
-
-        if (!books.Any())
-            return new List<BookDto>();
-
-        return books.Select(b => b.ToBookDto());
-    }
-
-    public static BookDto ToBookDto(this Book book)
-    {
-        if (book is null)
-            return null;
-
-        try
-        {
-            return new BookDto
-            {
-                Id = book.Id,
-                Author = book.Author,
-                Description = book.Description,
-                Genre = book.Genre,
-                Price = book.Price,
-                Publish_date = book.PublishDate.GetConvertedDateOnlyValue(),
-                Title = book.Title
-            };
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-    }
-
-    public static string? GetConvertedDateOnlyValue(this DateOnly publishDate)
+    public static string ToDateOnlyString(this DateOnly publishDate)
         => DateOnly.MinValue.Equals(publishDate)
-            ? null
-            : publishDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            ? string.Empty
+            : publishDate.ToString(DateFormatting, CultureInfo.InvariantCulture);
 
     public static int ToSubstringLength(this ReadBooksRequest.DatePrecision datePrecision)
     => datePrecision switch

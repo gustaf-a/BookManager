@@ -1,4 +1,5 @@
-﻿using Contracts;
+﻿using AutoMapper;
+using Contracts;
 using Entities.ModelsSql;
 using Microsoft.Extensions.Options;
 using Shared;
@@ -13,13 +14,17 @@ public class DatabaseBookRepository : IBookRepository
     private readonly IDatabaseAccess _databaseAccess;
     private readonly IIdGenerator _databaseIdGenerator;
 
-    public DatabaseBookRepository(IOptions<DatabaseOptions> databaseOptions, IDatabaseAccess databaseAccess, IIdGenerator databaseIdGenerator)
+    private readonly IMapper _mapper;
+
+    public DatabaseBookRepository(IOptions<DatabaseOptions> databaseOptions, IDatabaseAccess databaseAccess, IIdGenerator databaseIdGenerator, IMapper mapper)
     {
         ArgumentNullException.ThrowIfNull(databaseOptions?.Value);
         _databaseOptions = databaseOptions.Value;
-        
+
         _databaseAccess = databaseAccess;
         _databaseIdGenerator = databaseIdGenerator;
+
+        _mapper = mapper;
     }
 
     public async Task<Book> CreateBook(Book book)
@@ -29,7 +34,11 @@ public class DatabaseBookRepository : IBookRepository
 
         book.Id = await GetBookId();
 
-        var createdBook = await _databaseAccess.CreateBook(book);
+        var bookSqlite = _mapper.Map<BookSqlite>(book);
+
+        var createdBookSqlite = await _databaseAccess.CreateBook(bookSqlite);
+
+        var createdBook = _mapper.Map<Book>(createdBookSqlite);
 
         return createdBook;
     }
@@ -53,9 +62,11 @@ public class DatabaseBookRepository : IBookRepository
         if (readBooksRequest is null)
             throw new ArgumentNullException(nameof(readBooksRequest));
 
-        var books = await _databaseAccess.ReadBooks(readBooksRequest);
+        var booksSqlite = await _databaseAccess.ReadBooks(readBooksRequest);
 
-        return books;
+        var books = _mapper.Map<IEnumerable<Book>>(booksSqlite);
+
+        return  books;
     }
 
     public async Task<Book> UpdateBook(Book book)
@@ -63,7 +74,11 @@ public class DatabaseBookRepository : IBookRepository
         if (book is null)
             throw new ArgumentNullException(nameof(book));
 
-        var updatedBook = await _databaseAccess.UpdateBook(book);
+        var bookSqlite = _mapper.Map<BookSqlite>(book);
+
+        var updatedBookSqlite = await _databaseAccess.UpdateBook(bookSqlite);
+
+        var updatedBook = _mapper.Map<Book>(updatedBookSqlite);
 
         return updatedBook;
     }
