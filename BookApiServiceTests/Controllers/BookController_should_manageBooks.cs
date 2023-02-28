@@ -7,6 +7,8 @@ using System.Text.Json;
 
 namespace BookApiServiceTests.Controllers;
 
+//Read-tests are dependent on database items and cannot be run in parallel with manageBooks-tests
+[Collection("BookControllerTests")]
 /// <summary>
 /// Service tests for BookController testing Create, Update and Delete function.
 /// </summary>
