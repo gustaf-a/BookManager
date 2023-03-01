@@ -21,7 +21,11 @@ Uppbyggt i tre lager som kommunicerar via contracts (interfaces i separat projek
 ## Run guide 
 
 
-1. Kopiera appsettings_template.json i BookApi-mappen och ge kopian namnet appsettings.json
+1. Kopiera appsettings_template.json i BookApi-mappen och skapa två kopior
+
+- appsettings.json
+- appsettings.tests.json (sätt till books_test.db med UseSqlDatabase=true enligt nedan)
+
 2. Konfigurera databas
 
 Sätt FeatureManagement:UseSqlDatabase till önskat värde (default är true) och ändra connection string.
@@ -36,7 +40,7 @@ EF Core används med connectionstring sqlConnection.
 Använd med en databas lokalt eller via Azure.
 I Package Manager Console: "Add-Migration DatabaseCreation" och sen "Update-Database".
 
-Tips: Om du behöver seeda en databas med testdata, använd books_seeding.sql i RepositorySql.
+Tips: Om du behöver seeda en databas med testdata finns SQL kommandon i books_seeding.sql i RepositorySql.
 
 3. Kör via Visual Studio (debug för att använda Swagger) eller 'dotnet run'.
 

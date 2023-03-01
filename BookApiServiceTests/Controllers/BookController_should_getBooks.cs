@@ -1,16 +1,25 @@
 ﻿using BookApi;
 using BookApiServiceTests.TestData;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Shared.Configuration;
+using System.Configuration;
 using System.Net;
 using System.Text.Json;
 
 namespace BookApiServiceTests.Controllers;
 
+//Read-tests are dependent on database items and cannot be run in parallel with manageBooks-tests
+[Collection("BookControllerTests")]
 /// <summary>
 /// Service tests for BookController testing Read function.
 /// </summary>
 public class BookController_should_getBooks : IClassFixture<WebApplicationFactory<Startup>>
 {
+    private const string TestEnvironmentName = "tests";
+
     private readonly HttpClient _client;
 
     private const string ControllerBaseRoute = "api/books";
@@ -20,6 +29,7 @@ public class BookController_should_getBooks : IClassFixture<WebApplicationFactor
         _client = factory
                 .WithWebHostBuilder(builder =>
                 {
+                    builder.UseEnvironment(TestEnvironmentName);
                     builder.ConfigureServices(services =>
                     {
                         //Add services to override with fake/mock services here

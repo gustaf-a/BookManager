@@ -364,3 +364,4 @@ FodyWeavers.xsd
 BookApi/internal_logs/
 BookApi/appsettings.Development.json
 BookApi/appsettings.json
+BookApi/appsettings.tests.json

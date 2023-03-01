@@ -33,6 +33,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{B024335B-C601-487E-94FD-E69AA023430C}"
 	ProjectSection(SolutionItems) = preProject
 		Database\books.db = Database\books.db
+		Database\books_test.db = Database\books_test.db
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryEFCoreTests", "RepositoryEFCoreTests\RepositoryEFCoreTests.csproj", "{402C055C-E17B-446B-BA43-765322330092}"
@@ -45,7 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{328FF66F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositorySqlTests", "RepositorySqlTests\RepositorySqlTests.csproj", "{D2694598-C7CB-43E8-A72C-953952C33518}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApiTests", "BookApiTests\BookApiTests.csproj", "{3B3D216C-14B9-4CC3-8B46-0673257543F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookApiTests", "BookApiTests\BookApiTests.csproj", "{3B3D216C-14B9-4CC3-8B46-0673257543F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

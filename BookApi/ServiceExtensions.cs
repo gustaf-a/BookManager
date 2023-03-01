@@ -1,13 +1,9 @@
 ﻿using Contracts;
 using Contracts.EF;
-using IdGeneratorService;
-using Microsoft.AspNetCore.Diagnostics;
 using RepositoryEFCore;
 using RepositorySql;
 using Service.EF;
 using Service.SQL;
-using Shared;
-using System.Net;
 
 namespace BookApi;
 
