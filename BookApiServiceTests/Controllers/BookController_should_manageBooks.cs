@@ -1,5 +1,6 @@
 ﻿using BookApi;
 using BookApiServiceTests.TestData;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Text;
@@ -14,6 +15,8 @@ namespace BookApiServiceTests.Controllers;
 /// </summary>
 public class BookController_should_manageBooks : IClassFixture<WebApplicationFactory<Startup>>
 {
+    private const string TestEnvironmentName = "tests";
+
     private readonly HttpClient _client;
 
     private const string ControllerBaseRoute = "api/books";
@@ -23,6 +26,7 @@ public class BookController_should_manageBooks : IClassFixture<WebApplicationFac
         _client = factory
                 .WithWebHostBuilder(builder =>
                 {
+                    builder.UseEnvironment(TestEnvironmentName);
                     builder.ConfigureServices(services =>
                     {
                         //Add services to override with fake/mock services here
